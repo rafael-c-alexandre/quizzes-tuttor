@@ -15,37 +15,18 @@ import java.time.format.DateTimeFormatter
 @DataJpaTest
 class CreateTournamentTest extends Specification{
 
-    @Autowired
-    TournamentRepository tournamentRepository
 
 
-    def tournamentDto
-    def creationDate
-    def availableDate
-    def conclusionDate
-    def formatter
-    def adminService
+
+
 
     def setup(){
-        /*formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
-        tournamentDto = new TournamentDto()
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now()
-
-        tournamentDto.setCreationDate(creationDate.format(formatter))
-        tournamentDto.setAvailableDate(availableDate.format(formatter))
-        tournamentDto.setConclusionDate(conclusionDate.format(formatter))
-
-        tournamentDto.setState()
-
-        */
 
     }
 
     def "sucsessfully create a tournament"(){
-        given: "a tournamentDto"
+
 
         expect: false
     }

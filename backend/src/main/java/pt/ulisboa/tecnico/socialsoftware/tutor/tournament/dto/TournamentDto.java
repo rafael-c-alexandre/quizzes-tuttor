@@ -13,6 +13,7 @@ import java.util.List;
 
 
 public class TournamentDto {
+
     private Integer id;
     private String title;
     private String creationDate = null;
