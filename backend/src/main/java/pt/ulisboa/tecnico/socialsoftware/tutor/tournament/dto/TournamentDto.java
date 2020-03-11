@@ -15,6 +15,7 @@ import java.util.List;
 public class TournamentDto {
 
     private Integer id;
+    private Integer key;
     private String title;
     private String creationDate = null;
     private String availableDate = null;

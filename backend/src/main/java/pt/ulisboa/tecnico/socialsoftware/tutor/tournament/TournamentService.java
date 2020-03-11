@@ -30,7 +30,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class TournamentService {
-    /*
+
     @Autowired
     private TournamentRepository tournamentRepository;
 
@@ -75,7 +75,7 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-*/
+
 
 
 

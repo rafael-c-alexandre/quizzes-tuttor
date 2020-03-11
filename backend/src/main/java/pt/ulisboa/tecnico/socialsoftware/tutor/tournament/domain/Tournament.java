@@ -29,6 +29,9 @@ public class Tournament {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(unique=true, nullable = false)
+    private Integer key;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -44,11 +47,13 @@ public class Tournament {
     @Enumerated(EnumType.STRING)
     private Tournament.TournamentState state;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tournament", fetch = FetchType.LAZY, orphanRemoval=true)
+    @ManyToMany
     private Set<User> signedUsers = new HashSet<>();
 
-    @ManyToMany(mappedBy = "tournaments")
+
+    @ManyToMany
     private Set<Topic> topics = new HashSet<>();
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -115,9 +120,12 @@ public class Tournament {
         return signedUsers;
     }
 
+
     public void setSignedUsers(Set<User> signedUsers) {
         this.signedUsers = signedUsers;
     }
+
+
 
     public Set<Topic> getTopics() {
         return topics;
@@ -131,9 +139,12 @@ public class Tournament {
         return tournamentCreator;
     }
 
+
+
     public void setTournamentCreator(User tournamentCreator) {
         this.tournamentCreator = tournamentCreator;
     }
+
 
     public void addTopic(Topic topic){
         this.topics.add(topic);
