@@ -27,7 +27,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class Question {
     @SuppressWarnings("unused")
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE
+        DISABLED, REMOVED, AVAILABLE, ONHOLD
     }
 
     @Id
@@ -41,6 +41,7 @@ public class Question {
     private String content;
 
     private String title;
+
 
     @Column(name = "number_of_answers", columnDefinition = "integer default 0")
     private Integer numberOfAnswers = 0;

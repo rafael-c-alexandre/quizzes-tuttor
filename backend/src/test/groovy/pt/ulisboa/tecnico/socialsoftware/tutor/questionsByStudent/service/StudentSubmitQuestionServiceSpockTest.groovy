@@ -1,5 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.service
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*
@@ -7,20 +14,32 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Specification
 
+
+@DataJpaTest
 class StudentSubmitQuestionServiceSpockTest extends Specification{
     static final String TOPIC_ONE = "TopicOne"
     static final String COURSE_ONE ="CourseOne"
     static final String ACRONYM_ONE = "CO"
     static final String ACADEMIC_TERM = "1st term"
     static final String QUESTION_ONE = "What is the phase after Testing?"
+    static final int COURSE_ID = 14
     static final String OPTION1 = "Development"
     static final String OPTION2 = "Verification"
     static final String OPTION3 = "Validation"
     static final String OPTION4 = "Usage"
 
 
+    @Autowired
+    QuestionsByStudentService questionByStudentService
 
-    def questionByStudentService
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private TopicRepository topicRepository;
 
     def setup() {
         questionByStudentService = new QuestionsByStudentService()
@@ -28,12 +47,15 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
     }
 
     def "the topic and course exist and create question"()  {
-        given: "a topic"
+        given: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
+        courseRepository.save(course)
         and: "a topicDto"
         def tDto = new TopicDto()
         and: "a topic"
         def topic = new Topic(course, tDto)
+        topicRepository .save(topic)
+
         and: "a topicDto"
         def topicDto = new TopicDto(topic)
         topicDto.setName(TOPIC_ONE)
@@ -43,7 +65,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         def questionDto = new QuestionDto(question)
 
         when:
-        def result = questionByStudentService.studentSubmitQuestion(questionDto)
+        def result = questionByStudentService.studentSubmitQuestion(COURSE_ID, questionDto)
 
         then: "the returned data are correct"
         result.name == TOPIC_ONE
@@ -66,7 +88,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
 
         when:
 
-        questionByStudentService.studentSubmitQuestion(questionDto)
+        questionByStudentService.studentSubmitQuestion(COURSE_ID,questionDto)
 
         then:
         thrown(TutorException)
@@ -92,7 +114,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         def questionDto = new QuestionDto(question)
 
         when:
-        questionByStudentService.studentSubmitQuestion(questionDto)
+        questionByStudentService.studentSubmitQuestion(COURSE_ID, questionDto)
 
         then:
         thrown(TutorException)
@@ -113,7 +135,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
 
 
         when:
-        questionByStudentService.studentSubmitQuestion(questionDto)
+        questionByStudentService.studentSubmitQuestion(COURSE_ID, questionDto)
 
         then:
         thrown(TutorException)
@@ -128,14 +150,24 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         def topicDto = new TopicDto(topic)
         topicDto.setName(TOPIC_ONE)
         def question = new Question()
-        question.setTitle(QUESTION_ONE)
+        question.setTitle(null)
         def questionDto = new QuestionDto(question)
 
         when:
-        questionByStudentService.studentSubmitQuestion(questionDto)
+        questionByStudentService.studentSubmitQuestion(COURSE_ID, questionDto)
 
         then:
         thrown(TutorException)
+    }
+
+    @TestConfiguration
+    static class ServiceImplTestContextConfiguration {
+
+        @Bean
+        QuestionsByStudentService questionsByStudentService() {
+            return new QuestionsByStudentService()
+        }
+
     }
 
 
