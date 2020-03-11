@@ -15,10 +15,15 @@ public class QuestionsByStudentService {
 
     }
 
-    public void teacherEvaluatesQuestion(Question question){
-        question.setNumberOfCorrect(5);
-        return;
+    public int teacherEvaluatesQuestion(Question question){
+        //verificacoes discutivelmente pertinentes
+        if(question == null){
+            return -1;
+        }
+        if(question.getStatus()== Question.Status.DISABLED){
+            return -1;
+        }
+
+        return 0;
     }
-
-
 }
