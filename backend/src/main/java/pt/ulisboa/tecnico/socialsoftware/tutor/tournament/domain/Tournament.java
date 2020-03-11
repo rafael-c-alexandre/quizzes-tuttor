@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_CONSISTENT;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(
@@ -143,6 +143,12 @@ public class Tournament {
         this.signedUsers.add(user);
     }
 
+    public void closeTournament(){
+        if(this.state == TournamentState.CLOSED){
+            throw new TutorException(TOURNAMENT_ALREADY_CLOSED);
+        }
+    }
+
 
 
     @Override
@@ -161,17 +167,17 @@ public class Tournament {
 
     private void checkAvailableDate(LocalDateTime availableDate) {
         if (this.state.equals(Tournament.TournamentState.OPEN) && availableDate == null) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
         if (this.state.equals(Tournament.TournamentState.OPEN) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
     }
 
 
     private void checkTitle(String title) {
         if (title == null || title.trim().length() == 0) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Title");
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Title");
         }
     }
 
@@ -180,7 +186,7 @@ public class Tournament {
                 conclusionDate != null &&
                 availableDate != null &&
                 conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
+            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
         }
     }
 

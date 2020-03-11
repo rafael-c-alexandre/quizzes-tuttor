@@ -1,6 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 public enum ErrorMessage {
+
+    TOURNAMENT_ALREADY_CLOSED("Cant close an already closed tournament"),
+    TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
+
+
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
     QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
