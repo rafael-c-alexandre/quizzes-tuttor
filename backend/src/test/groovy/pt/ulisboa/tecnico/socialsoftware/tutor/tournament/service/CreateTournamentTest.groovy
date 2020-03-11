@@ -36,32 +36,12 @@ class CreateTournamentTest extends Specification{
     public static final User USER = new User("Pedro","Minorca",2, User.Role.STUDENT)
 
 
-    @Autowired
-    TournamentRepository tournamentRepository
 
 
-    def tournamentDto
-    def creationDate
-    def availableDate
-    def conclusionDate
-    def formatter
-    def adminService
+
+
 
     def setup(){
-        /*formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-
-        tournamentDto = new TournamentDto()
-        creationDate = LocalDateTime.now()
-        availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now()
-
-        tournamentDto.setCreationDate(creationDate.format(formatter))
-        tournamentDto.setAvailableDate(availableDate.format(formatter))
-        tournamentDto.setConclusionDate(conclusionDate.format(formatter))
-
-        tournamentDto.setState()
-
-        */
         adminService = new AdministrationService()
 
     }
@@ -73,6 +53,7 @@ class CreateTournamentTest extends Specification{
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate()
+
 
 
 
