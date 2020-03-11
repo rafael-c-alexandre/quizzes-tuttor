@@ -7,5 +7,4 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentR
 @Service
 public class TournamentService {
 
-
 }

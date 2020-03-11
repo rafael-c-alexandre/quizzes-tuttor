@@ -19,7 +19,7 @@ import spock.lang.Specification
 @DataJpaTest
 class CreateQuestionTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
+    public static final String ACRONYM = "\"yyyy-MM-dd HH:mm\""
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
