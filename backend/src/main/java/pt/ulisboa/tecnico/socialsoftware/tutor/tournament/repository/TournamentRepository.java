@@ -20,4 +20,7 @@ public interface TournamentRepository extends JpaRepository<Tournament, Integer>
     @Query(value = "SELECT * FROM tournaments t WHERE t.state = :state",nativeQuery = true)
     List<Tournament> findTournamentsByState(String state);
 
+    @Query(value = "SELECT MAX(id) FROM tournaments", nativeQuery = true)
+    Integer getMaxTournamentId();
+
 }

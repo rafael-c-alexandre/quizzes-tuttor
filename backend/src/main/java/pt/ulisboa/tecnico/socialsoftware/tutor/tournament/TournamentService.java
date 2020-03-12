@@ -50,10 +50,22 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listTournamentsByState(String state){
+        return tournamentRepository.findTournamentsByState(state).stream()
+                .map(tournament -> new TournamentDto(tournament))
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(TournamentDto tournamentDto){
 
 
          Tournament tournament = new Tournament(tournamentDto);
+
+
 
 
          if(tournamentDto.getTopics() != null){
@@ -61,6 +73,8 @@ public class TournamentService {
                  throw new TutorException(TOURNAMENT_NO_TOPICS);
              }
              for (TopicDto topicDto : tournamentDto.getTopics()){
+                 System.out.println("SKR");
+                 System.out.println(topicDto.getId());
                  Topic topic = topicRepository.findById(topicDto.getId())
                          .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND,topicDto.getId()));
                  tournament.addTopic(topic);
@@ -73,6 +87,7 @@ public class TournamentService {
              DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
              tournament.setCreationDate(LocalDateTime.parse(tournamentDto.getCreationDate(), formatter));
          }
+        tournamentDto.setId(tournamentRepository.getMaxTournamentId());
 
         tournamentRepository.save(tournament);
 
