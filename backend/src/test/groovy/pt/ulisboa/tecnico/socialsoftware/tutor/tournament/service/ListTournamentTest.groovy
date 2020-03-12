@@ -35,7 +35,7 @@ class ListTournamentTest extends Specification{
 
 
     def setup(){
-        topicRepository.deleteAll()
+
         def topic1 = new Topic()
         def topic2 = new Topic()
 

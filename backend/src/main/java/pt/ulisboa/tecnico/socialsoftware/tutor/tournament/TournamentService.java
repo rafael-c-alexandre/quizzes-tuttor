@@ -71,7 +71,7 @@ public class TournamentService {
          else{
              tournamentDto.setId(maxId + 1);
          }
-         
+
 
          Tournament tournament = new Tournament(tournamentDto);
 
