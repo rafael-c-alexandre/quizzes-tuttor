@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.SubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
@@ -28,12 +29,17 @@ public class QuestionsByStudentService {
 
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private SubmissionRepository submissionRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
     private TopicRepository topicRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -63,42 +69,39 @@ public class QuestionsByStudentService {
     }
 
     //PpA - Feature 2
-    public void makeQuestionAvailable(QuestionDto question){
-        question.setStatus("AVAILABLE");
-
+    public void makeSubmissionApproved(SubmissionDto submission, String justification){
+        submission.setStatus("APPROVED");
+        submission.setJustification(justification);
     }
-    public void makeQuestionRemoved(QuestionDto question){
-
-        question.setStatus("REMOVED");
+    public void makeSubmissionRejected(SubmissionDto submission,  String justification){
+        submission.setStatus("REJECTED");
+        submission.setJustification(justification);
     }
 
 
-    public QuestionDto teacherEvaluatesQuestion(User user, int questionId) {
+    public SubmissionDto teacherEvaluatesQuestion(User user, int submissionId) {
         //user é prof?
-        //o prof e a question estao no mesmo curso? -- nao ha course na questionDto...
-        //AVALIAR COMO?: 2 funcoes
-
         if (!user.getRole().toString().equals("TEACHER")) {
             throw new TutorException(NOT_TEACHER_ERROR);
         }
 
-
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId)); //erro errado
-        QuestionDto qDto = new QuestionDto(question);
-
+        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+        Question question = submission.getQuestion();
+        //QuestionDto qDto = new QuestionDto(question);
         Course course = question.getCourse();
         Set cexec = user.getCourseExecutions();
-
+        System.out.println(cexec.size());
+        SubmissionDto submissionDto = new SubmissionDto(submission);
         for (CourseExecution f : (Iterable<CourseExecution>) cexec) {
 
             if (f.getCourse().equals(course)) {
-                makeQuestionAvailable(qDto);
+                makeSubmissionApproved(submissionDto, "Question weel structered and correct");
 
-                return qDto;
+                return submissionDto;
             }
 
         }
-        makeQuestionRemoved(qDto);
-        return qDto;
+        makeSubmissionRejected(submissionDto, "Teacher is not assigned to this course");
+        return submissionDto;
     }
 }
