@@ -61,7 +61,7 @@ public class User implements UserDetails, Importable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<Tournament> createdTournaments = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<Tournament> signedTournaments = new HashSet<>();
 
     public User() {

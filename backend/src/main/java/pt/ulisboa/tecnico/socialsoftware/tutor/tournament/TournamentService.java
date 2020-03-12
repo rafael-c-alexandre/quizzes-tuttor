@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 
 import javax.persistence.EntityManager;
+import javax.validation.constraints.Null;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -62,6 +63,16 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(TournamentDto tournamentDto){
 
+         Integer maxId = tournamentRepository.getMaxTournamentId();
+
+         if(maxId == null) {
+             tournamentDto.setId(1);
+         }
+         else{
+             tournamentDto.setId(maxId + 1);
+         }
+
+
 
          Tournament tournament = new Tournament(tournamentDto);
 
@@ -87,7 +98,7 @@ public class TournamentService {
              DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
              tournament.setCreationDate(LocalDateTime.parse(tournamentDto.getCreationDate(), formatter));
          }
-        tournamentDto.setId(tournamentRepository.getMaxTournamentId());
+
 
         tournamentRepository.save(tournament);
 

@@ -10,9 +10,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
+
+import javax.persistence.EntityManager
 
 @DataJpaTest
 class ListTournamentTest extends Specification{
@@ -30,16 +31,14 @@ class ListTournamentTest extends Specification{
 
     @Autowired
     TopicRepository topicRepository
-
-    //@Autowired
-    //TournamentRepository tournamentRepository
+    
 
 
     def setup(){
+        topicRepository.deleteAll()
         def topic1 = new Topic()
         def topic2 = new Topic()
-        topic1.setId(1)
-        topic2.setId(2)
+
         topic1.setName("YO")
         topic2.setName("YA")
         topicRepository.save(topic1)
@@ -58,6 +57,26 @@ class ListTournamentTest extends Specification{
         topiclist.add(topicDto1)
         topiclist.add(topicDto2)
 
+        def topic3 = new Topic()
+        def topic4 = new Topic()
+
+        topic3.setName("3")
+        topic4.setName("4")
+        topicRepository.save(topic3)
+        topicRepository.save(topic4)
+
+
+        def topicDto3 = new TopicDto()
+        topicDto3.setId(topic3.getId())
+        def topicDto4 = new TopicDto()
+        topicDto4.setId(topic4.getId())
+
+        topicDto1.setName(topic3.getName())
+        topicDto2.setName(topic4.getName())
+
+        def topiclist2 = new ArrayList<TopicDto>()
+        topiclist2.add(topicDto3)
+        topiclist2.add(topicDto4)
 
         def tournamentDto = new TournamentDto()
 
@@ -77,11 +96,13 @@ class ListTournamentTest extends Specification{
         tournamentDto2.setCreationDate(CREATION_DATE)
         tournamentDto2.setId(3)
         tournamentDto2.setState(Tournament.TournamentState.CLOSED)
-        tournamentDto2.setTopics(topiclist)
+        tournamentDto2.setTopics(topiclist2)
 
+        System.out.println(topicRepository.findAll())
 
         tournamentService.createTournament(tournamentDto)
         tournamentService.createTournament(tournamentDto2)
+
 
     }
 
@@ -103,10 +124,12 @@ class ListTournamentTest extends Specification{
     def "missing open tournament"() {
         given: "a list of all tournaments"
         def allTournaments = tournamentService.listTournaments()
-        and:
+
         def openTournaments = tournamentService.listTournamentsByState('OPEN')
 
         expect:
+        allTournaments.size() != 0
+        openTournaments.size() != 0
         for (TournamentDto t : allTournaments) {
             if(t.getState() == Tournament.TournamentState.OPEN){
                 openTournaments.contains(t)
