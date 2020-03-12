@@ -1,71 +1,35 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.SubmissionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 
 @Service
-public class QuestionsByStudentService {
+public class TeacherEvaluatesSubmissionService {
 
-    @Autowired
-    private CourseRepository courseRepository;
     @Autowired
     private SubmissionRepository submissionRepository;
-
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
-    private TopicRepository topicRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @PersistenceContext
-    EntityManager entityManager;
-
-    //PpA - Feature 1
-    @Transactional( isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto studentSubmitQuestion(int courseId, QuestionDto questionDto) {
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-
-        verification(questionDto);
-
-        Question question = new Question(course, questionDto);
-        question.setCreationDate(LocalDateTime.now());
-        this.entityManager.persist(question);
-        QuestionDto qDto = new QuestionDto(question);
-        qDto.setStatus("ONHOLD");
-        return qDto;
-    }
-
-    private void verification(QuestionDto questionDto) {
-        if (questionDto.getKey() == null) {
-            int maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
-                    questionRepository.getMaxQuestionNumber() : 0;
-            questionDto.setKey(maxQuestionNumber + 1);
-        }
-    }
 
     //PpA - Feature 2
     public void makeSubmissionApproved(SubmissionDto submission, String justification){
@@ -81,7 +45,7 @@ public class QuestionsByStudentService {
     public SubmissionDto teacherEvaluatesQuestion(User user, int submissionId) {
         //user é prof?
         isTeacher(user);
-
+        //avalia uma submissao consoante
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
         Question question = submission.getQuestion();
         Course course = question.getCourse();
@@ -94,7 +58,7 @@ public class QuestionsByStudentService {
         for (CourseExecution f : cexec) {
 
             if (f.getCourse().equals(course)) {
-                makeSubmissionApproved(submissionDto, "Question weel structered and correct");
+                makeSubmissionApproved(submissionDto, "Question well structered and correct");
 
                 return submissionDto;
             }
@@ -108,11 +72,5 @@ public class QuestionsByStudentService {
         if (!user.getRole().toString().equals("TEACHER")) {
             throw new TutorException(NOT_TEACHER_ERROR);
         }
-    }
-
-    //PpA - Feature 3
-    public List<SubmissionDto> findQuestionsSubmittedByStudent(int userID) {
-
-        return submissionRepository.findSubmissionByStudent(userID).stream().map(SubmissionDto::new).collect(Collectors.toList());
     }
 }

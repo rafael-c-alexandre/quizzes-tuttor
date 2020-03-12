@@ -30,17 +30,10 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
     static final String QUESTION_ONE = "What is the phase after Testing?"
     static final int COURSE_ID = 14
     static final int QUESTION_ID =10
-    static final int WRONG_QUESTION_ID = 20
 
     static final String NAME = "Rito"
     static final String USERNAME = "Silva"
-    static final int KEY = 1
-    static final String ROLE = "TEACHER"
-
-    static final String OPTION1 = "Development"
-    static final String OPTION2 = "Verification"
-    static final String OPTION3 = "Validation"
-    static final String OPTION4 = "Usage"
+    static final int KEY = 10
 
     @Autowired
     QuestionsByStudentService questionByStudentService
@@ -180,123 +173,4 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         then:
         thrown(TutorException)
     }
-
-    //fUNC 2
-    def "the user is not a teacher"() {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        and: "a question"
-        def question = new Question()
-        question.setKey(QUESTION_ID)
-        question.setCourse(course)
-        and: "a submission"
-        def submission = new Submission(question, user.getId())
-        submission.setId(COURSE_ID)
-        submissionRepository.save(submission)
-
-        when:
-
-        questionByStudentService.teacherEvaluatesQuestion(user, submission.getId())
-
-        then:
-        thrown(TutorException)
-    }
-
-    def "the submission does not exist in the repository"() {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        and: "a question"
-        def question = new Question()
-        question.setKey(QUESTION_ID)
-        question.setCourse(course)
-        and: "a submission"
-        def submission = new Submission(question, user.getId())
-        submission.setId(COURSE_ID)
-
-        when:
-
-        questionByStudentService.teacherEvaluatesQuestion(user, submission.getId())
-
-        then:
-        thrown(TutorException)
-    }
-
-    def "the professor and submission exist and approves submission"()  {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: "a course execution"
-        def courseExecution = new CourseExecution(course, COURSE_ONE, COURSE_ONE, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-        Set<CourseExecution> set = new HashSet<CourseExecution>()
-        set.add(courseExecution)
-        user.setCourseExecutions(set)
-        and: "a question"
-        def question = new Question()
-        question.setKey(QUESTION_ID)
-        question.setCourse(course)
-        questionRepository.save(question);
-        and: "a submission"
-        def submission = new Submission(question, user.getId())
-        submissionRepository.save(submission)
-
-        when:
-        def result = questionByStudentService.teacherEvaluatesQuestion(user, submission.getId())
-
-        then: "the returned data are correct"
-        result.getStatus().toString() == "APPROVED"
-        and: "submission approved"
-    }
-
-    def "the professor and submission exist and rejects submission"()  {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(WRONG_COURSE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: "a course execution"
-        def courseExecution = new CourseExecution(course, COURSE_ONE, COURSE_ONE, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-        Set<CourseExecution> set = new HashSet<CourseExecution>()
-        set.add(courseExecution)
-        user.setCourseExecutions(set)
-        and: "a question"
-        def question = new Question()
-        question.setKey(QUESTION_ID)
-        question.setCourse(course)
-        questionRepository.save(question);
-        and: "a submission"
-        def submission = new Submission(question, user.getId())
-        submissionRepository.save(submission)
-
-        when:
-        def result = questionByStudentService.teacherEvaluatesQuestion(user, submission.getId())
-
-        then: "the returned data are correct"
-        result.getStatus().toString() == "APPROVED"
-        and: "submission approved"
-    }
-
-    @TestConfiguration
-    static class ServiceImplTestContextConfiguration {
-
-        @Bean
-        QuestionsByStudentService questionsByStudentService() {
-            return new QuestionsByStudentService()
-        }
-
-    }
-
-
-
 }
