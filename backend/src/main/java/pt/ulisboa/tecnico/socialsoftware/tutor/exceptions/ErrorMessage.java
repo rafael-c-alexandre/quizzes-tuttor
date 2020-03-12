@@ -8,7 +8,9 @@ public enum ErrorMessage {
     TOURNAMENT_INVALID_DATE("This tournament date is invalid"),
     TOURNAMENT_EMPTY_DATE("This tournament date is empty"),
     TOURNAMENT_NO_TOPICS("This tournament has no topics"),
+    TOURNAMENT_IS_NOT_OPEN("This tournament is not open, it is no possible the enrollment."),
 
+    USER_IS_NOT_STUDENT("This user is not a student"),
 
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),

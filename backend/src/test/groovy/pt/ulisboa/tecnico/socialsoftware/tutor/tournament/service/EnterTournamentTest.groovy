@@ -28,7 +28,6 @@ class EnterTournamentTest extends Specification{
     public static final TournamentState STATE = TournamentState.OPEN
     public static final User USER = new User("Pedro","Minorca",2, User.Role.STUDENT)
 
-
     @Autowired
     TournamentService tournamentService
 
@@ -39,12 +38,7 @@ class EnterTournamentTest extends Specification{
     TopicRepository topicRepository
 
 
-
-
-
     def formatter
-
-
 
     def setup(){
 

@@ -38,13 +38,7 @@ class CreateTournamentTest extends Specification{
     @Autowired
     TopicRepository topicRepository
 
-
-
-
-
     def formatter
-
-
 
     def setup(){
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
@@ -54,8 +48,6 @@ class CreateTournamentTest extends Specification{
 
     def "successfully create a tournament"(){
         given: "a tournamentDto"
-
-
 
         def topic = new Topic()
         topic.setId(1)
