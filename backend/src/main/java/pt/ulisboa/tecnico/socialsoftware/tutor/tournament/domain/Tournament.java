@@ -15,10 +15,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(
-        name = "tournaments",
-        indexes = {
-                @Index(name = "tournaments_indx_0", columnList = "key")
-        })
+        name = "tournaments"
+        )
 public class Tournament {
 
     public enum TournamentState {
@@ -29,11 +27,9 @@ public class Tournament {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
-    private Integer key;
-
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
 
     @Column(name = "available_date")
     private LocalDateTime availableDate;
@@ -47,15 +43,15 @@ public class Tournament {
     @Enumerated(EnumType.STRING)
     private Tournament.TournamentState state;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<User> signedUsers = new HashSet<>();
 
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private Set<Topic> topics = new HashSet<>();
 
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User tournamentCreator;
 
@@ -63,6 +59,7 @@ public class Tournament {
 
     public  Tournament(TournamentDto tournamentDto){
 
+        this.id = tournamentDto.getId();
         this.availableDate = tournamentDto.getAvailableDateDate();
         this.conclusionDate = tournamentDto.getConclusionDateDate();
         this.creationDate = tournamentDto.getCreationDateDate();
@@ -72,6 +69,7 @@ public class Tournament {
         setTitle(tournamentDto.getTitle());
         this.state = tournamentDto.getState();
 
+
     }
 
 
@@ -79,6 +77,20 @@ public class Tournament {
     public void setTitle(String title) {
         checkTitle(title);
         this.title = title;
+    }
+
+    public LocalDateTime getAvailableDate() {
+        return availableDate;
+    }
+
+    public LocalDateTime getConclusionDate() {
+        return conclusionDate;
+    }
+
+
+
+    public String getTitle() {
+        return title;
     }
 
     public void setConclusionDate(LocalDateTime conclusionDate) {
@@ -178,7 +190,7 @@ public class Tournament {
 
     private void checkAvailableDate(LocalDateTime availableDate) {
         if (availableDate == null) {
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
+            throw new TutorException(TOURNAMENT_EMPTY_DATE, "Available date");
         }
         if(availableDate.isBefore(LocalDateTime.now())){
             throw new TutorException(TOURNAMENT_INVALID_DATE);

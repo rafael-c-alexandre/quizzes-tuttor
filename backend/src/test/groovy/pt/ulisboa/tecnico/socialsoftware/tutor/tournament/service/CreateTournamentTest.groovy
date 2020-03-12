@@ -4,12 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament.TournamentState
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.*
 import spock.lang.Specification
+
+import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class CreateTournamentTest extends Specification{
@@ -25,28 +32,69 @@ class CreateTournamentTest extends Specification{
     @Autowired
     TournamentService tournamentService
 
+    @Autowired
+    TournamentRepository tournamentRepository
 
+    @Autowired
+    TopicRepository topicRepository
+
+
+
+
+
+    def formatter
 
 
 
     def setup(){
-
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        USER.setId(1)
 
     }
 
     def "successfully create a tournament"(){
-        /*given: "a tournament"
-        def tournament = new Tournament()
-        and: "a tournamentDto"
+        given: "a tournamentDto"
+
+
+
+        def topic = new Topic()
+        topic.setId(1)
+        topicRepository.save(topic)
+
+
+        def topicDto = new TopicDto()
+        topicDto.setId(topic.getId())
+
+        def topiclist = new ArrayList<TopicDto>()
+        topiclist.add(topicDto)
+
+
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
-        tournamentDto.setAvailableDate()
+        tournamentDto.setAvailableDate(AVAILABLE_DATE)
+        tournamentDto.setConclusionDate(CONCLUSION_DATE)
+        tournamentDto.setCreationDate(CREATION_DATE)
+        tournamentDto.setId(ID)
+        tournamentDto.setState(STATE)
+        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTopics(topiclist)
+
+        when:
+        tournamentService.createTournament(tournamentDto)
+
+        then: "The correct tournament is inside the repository"
+        tournamentRepository.count() == 1L
+        def result = tournamentRepository.findTournaments().get(0)
+        result.getId() != null
+        result.getCreationDate() != null
+        result.getAvailableDate().format(formatter) == AVAILABLE_DATE
+        result.getConclusionDate().format(formatter) == CONCLUSION_DATE
+        result.getState() == STATE
+        result.getTournamentCreator().getId() == USER.getId()
+        result.getTitle() == TOURNAMENT_TITLE
+        result.getTopics().size() == 1
 
 
-
-
-*/
-        expect: false
     }
 
     def "empty tournament title"(){
@@ -146,26 +194,6 @@ class CreateTournamentTest extends Specification{
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_NO_TOPICS
-    }
-
-    def "empty creation date"(){
-
-        given: "a tournamentDto"
-        def tournamentDto = new TournamentDto()
-        tournamentDto.setTitle(TOURNAMENT_TITLE)
-        tournamentDto.setAvailableDate(AVAILABLE_DATE)
-        tournamentDto.setConclusionDate(CONCLUSION_DATE)
-        tournamentDto.setCreationDate(null)
-        tournamentDto.setId(ID)
-        tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
-
-        when:
-        tournamentService.createTournament(tournamentDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_EMPTY_DATE
     }
 
     def "empty available date"(){
