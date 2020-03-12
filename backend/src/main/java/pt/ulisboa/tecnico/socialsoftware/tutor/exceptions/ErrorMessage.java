@@ -4,6 +4,10 @@ public enum ErrorMessage {
 
     TOURNAMENT_ALREADY_CLOSED("Cant close an already closed tournament"),
     TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
+    TOURNAMENT_TITLE_IS_EMPTY("This tournament title is empty"),
+    TOURNAMENT_INVALID_DATE("This tournament date is invalid"),
+    TOURNAMENT_EMPTY_DATE("This tournament date is empty"),
+    TOURNAMENT_NO_TOPICS("This tournament has no topics"),
 
 
     QUIZ_NOT_FOUND("Quiz not found with id %d"),

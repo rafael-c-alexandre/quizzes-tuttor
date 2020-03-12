@@ -37,8 +37,6 @@ public class TournamentService {
     @Autowired
     private TopicRepository topicRepository;
 
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Retryable(
             value = { SQLException.class },
@@ -56,7 +54,10 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(TournamentDto tournamentDto){
 
+        System.out.println(topicRepository);
+
          Tournament tournament = new Tournament(tournamentDto);
+
 
          if(tournamentDto.getTopics() != null){
              for (TopicDto topicDto : tournamentDto.getTopics()){
@@ -70,7 +71,7 @@ public class TournamentService {
              DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
              tournament.setCreationDate(LocalDateTime.parse(tournamentDto.getCreationDate(), formatter));
          }
-         entityManager.persist(tournament);
+
 
         return new TournamentDto(tournament);
     }

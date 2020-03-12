@@ -1,4 +1,4 @@
-<h1 align="center">Quizzes YEET Tutor</h1>
+<h1 align="center">Quizzes Tutor</h1>
 
 
 <p align="center">
