@@ -177,27 +177,34 @@ public class Tournament {
 
 
     private void checkAvailableDate(LocalDateTime availableDate) {
-        if (this.state.equals(Tournament.TournamentState.OPEN) && availableDate == null) {
+        if (availableDate == null) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
         }
-        if (this.state.equals(Tournament.TournamentState.OPEN) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Available date");
+        if(availableDate.isBefore(LocalDateTime.now())){
+            throw new TutorException(TOURNAMENT_INVALID_DATE);
+        }
+        if (this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(TOURNAMENT_INVALID_DATE);
         }
     }
 
 
     private void checkTitle(String title) {
         if (title == null || title.trim().length() == 0) {
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Title");
+            throw new TutorException(TOURNAMENT_TITLE_IS_EMPTY);
         }
     }
 
     private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if (this.state.equals(Tournament.TournamentState.OPEN) &&
-                conclusionDate != null &&
-                availableDate != null &&
+        if(conclusionDate == null){
+            throw new TutorException(TOURNAMENT_EMPTY_DATE);
+        }
+        if(conclusionDate.isBefore(LocalDateTime.now())){
+            throw new TutorException(TOURNAMENT_INVALID_DATE);
+        }
+        if (    this.availableDate != null &&
                 conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
+            throw new TutorException(TOURNAMENT_INVALID_DATE);
         }
     }
 
