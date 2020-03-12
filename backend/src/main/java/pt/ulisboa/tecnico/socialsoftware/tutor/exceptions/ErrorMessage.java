@@ -13,6 +13,7 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with name %d"),
 
+
     COURSE_NOT_FOUND("Course not found with id %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
@@ -51,6 +52,7 @@ public enum ErrorMessage {
     FENIX_ERROR("Fenix Error"),
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
+    NOT_TEACHER_ERROR("User is not teacher"),
 
 
     ACCESS_DENIED("You do not have permission to view this resource");

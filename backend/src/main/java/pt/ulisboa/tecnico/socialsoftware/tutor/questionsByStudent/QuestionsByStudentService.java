@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 
 @Service
@@ -37,6 +38,7 @@ public class QuestionsByStudentService {
     @PersistenceContext
     EntityManager entityManager;
 
+    //PpA - Feature 1
     @Transactional( isolation = Isolation.REPEATABLE_READ)
     public QuestionDto studentSubmitQuestion(int courseId, QuestionDto questionDto) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
@@ -55,19 +57,48 @@ public class QuestionsByStudentService {
         return qDto;
     }
 
+    //PpA - Feature 3
     public List<QuestionDto> findQuestionsSubmittedByStudent(int userID) {
         return questionRepository.findSubmittedQuestions(userID).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
-    public int teacherEvaluatesQuestion(Question question){
-        //verificacoes discutivelmente pertinentes
-        if(question == null){
-            return -1;
-        }
-        if(question.getStatus()== Question.Status.DISABLED){
-            return -1;
+    //PpA - Feature 2
+    public void makeQuestionAvailable(QuestionDto question){
+        question.setStatus("AVAILABLE");
+
+    }
+    public void makeQuestionRemoved(QuestionDto question){
+
+        question.setStatus("REMOVED");
+    }
+
+
+    public QuestionDto teacherEvaluatesQuestion(User user, int questionId) {
+        //user é prof?
+        //o prof e a question estao no mesmo curso? -- nao ha course na questionDto...
+        //AVALIAR COMO?: 2 funcoes
+
+        if (!user.getRole().toString().equals("TEACHER")) {
+            throw new TutorException(NOT_TEACHER_ERROR);
         }
 
-        return 0;
+
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId)); //erro errado
+        QuestionDto qDto = new QuestionDto(question);
+
+        Course course = question.getCourse();
+        Set cexec = user.getCourseExecutions();
+
+        for (CourseExecution f : (Iterable<CourseExecution>) cexec) {
+
+            if (f.getCourse().equals(course)) {
+                makeQuestionAvailable(qDto);
+
+                return qDto;
+            }
+
+        }
+        makeQuestionRemoved(qDto);
+        return qDto;
     }
 }

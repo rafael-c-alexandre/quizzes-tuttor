@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.TutorApplication
 import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
@@ -12,6 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 
@@ -23,6 +26,14 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
     static final String ACADEMIC_TERM = "1st term"
     static final String QUESTION_ONE = "What is the phase after Testing?"
     static final int COURSE_ID = 14
+    static final int QUESTION_ID =10
+    static final int WRONG_QUESTION_ID = 20
+
+    static final String NAME = "Rito"
+    static final String USERNAME = "Silva"
+    static final int KEY = 1
+    static final String ROLE = "TEACHER"
+
     static final String OPTION1 = "Development"
     static final String OPTION2 = "Verification"
     static final String OPTION3 = "Validation"
@@ -33,16 +44,18 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
     QuestionsByStudentService questionByStudentService
 
     @Autowired
-    private CourseRepository courseRepository;
+     CourseRepository courseRepository;
 
     @Autowired
-    private QuestionRepository questionRepository;
+     QuestionRepository questionRepository;
 
     @Autowired
-    private TopicRepository topicRepository;
+     TopicRepository topicRepository;
+
+    @Autowired
+     UserRepository userRepository;
 
     def setup() {
-        questionByStudentService = new QuestionsByStudentService()
 
     }
 
@@ -158,6 +171,62 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
 
         then:
         thrown(TutorException)
+    }
+
+    //fUNC 2
+    def "the user is not a teacher"() {
+        given: "a user"
+        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
+        userRepository.save(user)
+        and: "a questionDto"
+        def question = new Question()
+        question.setKey(QUESTIN_ID)
+        questionRepository.save(question)
+        def questionId = questionRepository.findAll().get(0).getId()
+        when:
+
+        questionByStudentService.teacherEvaluatesQuestion(user, questionId)
+
+        then:
+        thrown(TutorException)
+    }
+
+    def "the question does not exist in the repository"() {
+        given: "a user"
+        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
+        userRepository.save(user)
+        and: "a questionDto"
+        def question = new Question()
+        question.setKey(QUESTION_ID)
+        questionRepository.save(question)
+
+        when:
+
+        questionByStudentService.teacherEvaluatesQuestion(user, WRONG_QUESTION_ID)
+
+        then:
+        thrown(TutorException)
+    }
+
+    def "the professor and question exist and approves question"()  {
+        given: "a user"
+        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
+        and: "a course"
+        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
+        user.setCourseExecutions()
+        userRepository.save(user)
+        and: "a questionDto"
+        def question = new Question()
+        question.setKey(COURSE_ID)
+        questionRepository.save(question)
+        def questionId = questionRepository.findAll().get(0).getId()
+        when:
+
+        def result = questionByStudentService.teacherEvaluatesQuestion(user, questionId)
+
+        then: "the returned data are correct"
+        result.getStatus() == "AVAILABLE"
+        and: "question is created"
     }
 
     @TestConfiguration
