@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.TeacherEvaluatesSubmissionService
@@ -56,8 +55,6 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
 
     }
 
-
-    //fUNC 2
     def "the user is not a teacher"() {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
@@ -69,7 +66,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         and: "a submission"
-        def submission = new Submission(question, user.getId())
+        def submission = new Submission(question, user)
         submission.setId(SUBMISSION_ID)
         submissionRepository.save(submission)
 
@@ -92,7 +89,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         and: "a submission"
-        def submission = new Submission(question, user.getId())
+        def submission = new Submission(question, user)
         submission.setId(SUBMISSION_ID)
 
         when:
@@ -122,7 +119,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         question.setCourse(course)
         questionRepository.save(question);
         and: "a submission"
-        def submission = new Submission(question, user.getId())
+        def submission = new Submission(question, user)
         submissionRepository.save(submission)
 
         when:
@@ -152,7 +149,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         question.setCourse(course)
         questionRepository.save(question);
         and: "a submission"
-        def submission = new Submission(question, user.getId())
+        def submission = new Submission(question, user)
         submissionRepository.save(submission)
 
         when:
