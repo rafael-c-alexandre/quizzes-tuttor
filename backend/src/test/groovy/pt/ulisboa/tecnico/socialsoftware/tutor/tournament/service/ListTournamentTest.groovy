@@ -58,7 +58,6 @@ class ListTournamentTest extends Specification{
         topiclist.add(topicDto1)
         topiclist.add(topicDto2)
 
-
         def tournamentDto = new TournamentDto()
 
         tournamentDto.setTitle(TOURNAMENT_TITLE)
@@ -79,7 +78,6 @@ class ListTournamentTest extends Specification{
         tournamentDto2.setState(Tournament.TournamentState.CLOSED)
         tournamentDto2.setTopics(topiclist)
 
-
         tournamentService.createTournament(tournamentDto)
         tournamentService.createTournament(tournamentDto2)
 
@@ -90,13 +88,11 @@ class ListTournamentTest extends Specification{
         given: "a list of open tournaments"
         def result = tournamentService.listTournamentsByState("OPEN")
 
-
         expect:
         result.size() == 1
         for (TournamentDto t : result) {
             t.getState() == Tournament.TournamentState.OPEN
         }
-
     }
 
 

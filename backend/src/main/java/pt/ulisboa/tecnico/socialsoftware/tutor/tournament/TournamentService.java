@@ -62,19 +62,15 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(TournamentDto tournamentDto){
 
-
          Tournament tournament = new Tournament(tournamentDto);
 
 
-
-
+         //tournament topics
          if(tournamentDto.getTopics() != null){
              if(tournamentDto.getTopics().isEmpty()){
                  throw new TutorException(TOURNAMENT_NO_TOPICS);
              }
              for (TopicDto topicDto : tournamentDto.getTopics()){
-                 System.out.println("SKR");
-                 System.out.println(topicDto.getId());
                  Topic topic = topicRepository.findById(topicDto.getId())
                          .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND,topicDto.getId()));
                  tournament.addTopic(topic);
@@ -93,6 +89,7 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
+
 
 
 

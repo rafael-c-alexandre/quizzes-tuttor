@@ -20,7 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class Tournament {
 
     public enum TournamentState {
-        OPEN, ONGOING, CLOSED
+        OPEN, CLOSED
     }
 
     @Id
@@ -69,10 +69,7 @@ public class Tournament {
         setTitle(tournamentDto.getTitle());
         this.state = tournamentDto.getState();
 
-
     }
-
-
 
     public void setTitle(String title) {
         checkTitle(title);
@@ -87,8 +84,6 @@ public class Tournament {
         return conclusionDate;
     }
 
-
-
     public String getTitle() {
         return title;
     }
@@ -97,7 +92,6 @@ public class Tournament {
         checkConclusionDate(conclusionDate);
         this.conclusionDate = conclusionDate;
     }
-
 
     public void setAvailableDate(LocalDateTime availableDate) {
         checkAvailableDate(availableDate);
@@ -151,16 +145,11 @@ public class Tournament {
         return tournamentCreator;
     }
 
-
-
     public void setTournamentCreator(User tournamentCreator) {
         this.tournamentCreator = tournamentCreator;
     }
 
-
-    public void addTopic(Topic topic){
-        this.topics.add(topic);
-    }
+    public void addTopic(Topic topic){this.topics.add(topic);}
 
     public void addUser(User user){
         this.signedUsers.add(user);
