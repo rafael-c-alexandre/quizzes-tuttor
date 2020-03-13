@@ -45,6 +45,7 @@ public class Question {
     @Column(name = "number_of_answers", columnDefinition = "integer default 0")
     private Integer numberOfAnswers = 0;
 
+
     @Column(name = "number_of_correct", columnDefinition = "integer default 0")
     private Integer numberOfCorrect = 0;
 

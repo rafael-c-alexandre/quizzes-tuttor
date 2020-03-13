@@ -104,6 +104,7 @@ public class QuizService {
         Quiz quiz = new Quiz(quizDto);
         quiz.setCourseExecution(courseExecution);
 
+
         if (quizDto.getQuestions() != null) {
             for (QuestionDto questionDto : quizDto.getQuestions()) {
                 Question question = questionRepository.findById(questionDto.getId())

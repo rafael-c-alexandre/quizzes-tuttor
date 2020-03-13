@@ -5,14 +5,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "users")
@@ -56,6 +60,12 @@ public class User implements UserDetails, Importable {
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval=true)
+    private Set<Tournament> createdTournaments = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    private Set<Tournament> signedTournaments = new HashSet<>();
 
     public User() {
     }
@@ -341,6 +351,20 @@ public class User implements UserDetails, Importable {
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
     }
+
+    public void enrollInTournament(Tournament tournament){
+        if(this.role == Role.STUDENT) {
+            if (tournament.getState() == Tournament.TournamentState.OPEN) {
+                signedTournaments.add(tournament);
+                tournament.addUser(this);
+            } else {
+                throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
+            }
+        }
+        else
+            throw new TutorException(USER_IS_NOT_STUDENT);
+    }
+
 
     @Override
     public String toString() {

@@ -80,4 +80,8 @@ public class AdministrationService {
         }
     }
 
+    public void CreateTournamentTest(){}
+
+    public void CreateCancelTournamentTest(){}
+
 }
