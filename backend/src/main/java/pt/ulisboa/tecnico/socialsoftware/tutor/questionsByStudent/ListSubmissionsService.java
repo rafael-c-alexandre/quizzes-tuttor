@@ -16,7 +16,6 @@ public class ListSubmissionsService {
 
     //PpA - Feature 3
     public List<SubmissionDto> findQuestionsSubmittedByStudent(int userID) {
-
         return submissionRepository.findSubmissionByStudent(userID).stream().map(SubmissionDto::new).collect(Collectors.toList());
     }
 }

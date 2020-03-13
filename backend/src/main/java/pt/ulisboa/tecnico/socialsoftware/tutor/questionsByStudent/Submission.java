@@ -35,7 +35,7 @@ public class Submission {
 
     }
 
-    public Submission(Question question, int userID) {
+    public Submission(Question question, User user) {
         this.question = question;
         this.user = user;
         this.justification = "";

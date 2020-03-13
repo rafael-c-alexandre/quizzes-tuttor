@@ -1,26 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.sql.SQLException;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -31,21 +24,43 @@ public class TeacherEvaluatesSubmissionService {
     @Autowired
     private SubmissionRepository submissionRepository;
 
-    //PpA - Feature 2
-    public void makeSubmissionApproved(SubmissionDto submission, String justification){
-        submission.setStatus("APPROVED");
-        submission.setJustification(justification);
-    }
-    public void makeSubmissionRejected(SubmissionDto submission,  String justification){
-        submission.setStatus("REJECTED");
-        submission.setJustification(justification);
-    }
+    @Autowired
+    private QuestionRepository questionRepository;
 
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void makeSubmissionApproved(SubmissionDto submissionDto, String justification, Submission submission){
+        submissionDto.setStatus("APPROVED");
+        submissionDto.setJustification(justification);
+        submission.setJustification(justification);
+        submission.setStatus(Submission.Status.APPROVED);
+        Question question = submission.getQuestion();
+        questionRepository.save(question);
+
+    }
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void makeSubmissionRejected(SubmissionDto submissionDto,  String justification, Submission submission){
+        submissionDto.setStatus("REJECTED");
+        submissionDto.setJustification(justification);
+        submission.setJustification(justification);
+        submission.setStatus(Submission.Status.REJECTED);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubmissionDto teacherEvaluatesQuestion(User user, int submissionId) {
-        //user é prof?
+        //due to the lack of information provided, we decided that the approval/rejection
+        //of the question by the teacher comes down to whether the teacher belongs to the question's course or not
         isTeacher(user);
-        //avalia uma submissao consoante
+
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
         isSubmitionOnHold(submission);
         System.out.println(submission.getStatus());
@@ -53,7 +68,7 @@ public class TeacherEvaluatesSubmissionService {
         Course course = question.getCourse();
         Set cexec = user.getCourseExecutions();
         SubmissionDto submissionDto = new SubmissionDto(submission);
-        return makeDecision(course, cexec, submissionDto);
+        return makeDecision(course, cexec, submissionDto, submission);
     }
 
     private void isSubmitionOnHold(Submission submission) {
@@ -62,17 +77,21 @@ public class TeacherEvaluatesSubmissionService {
         }
     }
 
-    private SubmissionDto makeDecision(Course course, Iterable<CourseExecution> cexec, SubmissionDto submissionDto) {
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SubmissionDto makeDecision(Course course, Iterable<CourseExecution> cexec, SubmissionDto submissionDto, Submission submission) {
         for (CourseExecution f : cexec) {
 
             if (f.getCourse().equals(course)) {
-                makeSubmissionApproved(submissionDto, "Question well structered and correct");
+                makeSubmissionApproved(submissionDto, "Question well structered and correct", submission);
 
                 return submissionDto;
             }
 
         }
-        makeSubmissionRejected(submissionDto, "Teacher is not assigned to this course");
+        makeSubmissionRejected(submissionDto, "Teacher is not assigned to this course", submission);
         return submissionDto;
     }
 

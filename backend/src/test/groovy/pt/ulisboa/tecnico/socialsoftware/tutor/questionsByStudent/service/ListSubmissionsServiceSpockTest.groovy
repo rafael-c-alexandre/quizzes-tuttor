@@ -4,16 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.ListSubmissionsService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -21,9 +18,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class ListSubmissionServiceSpockTest extends Specification{
+class ListSubmissionsServiceSpockTest extends Specification {
     static final String WRONG_COURSE = "WrongCourse"
-    static final int QUESTION_ID =10
+    static final int QUESTION_KEY =10
 
     static final String NAME = "Rito"
     static final String USERNAME = "Silva"
@@ -33,7 +30,7 @@ class ListSubmissionServiceSpockTest extends Specification{
     ListSubmissionsService listSubmissionsService
 
     @Autowired
-     CourseRepository courseRepository;
+    CourseRepository courseRepository;
 
     @Autowired
     CourseExecutionRepository courseExecutionRepository;
@@ -42,13 +39,13 @@ class ListSubmissionServiceSpockTest extends Specification{
     SubmissionRepository submissionRepository
 
     @Autowired
-     QuestionRepository questionRepository;
+    QuestionRepository questionRepository;
 
     @Autowired
-     TopicRepository topicRepository;
+    TopicRepository topicRepository;
 
     @Autowired
-     UserRepository userRepository;
+    UserRepository userRepository;
 
     def setup() {
 
@@ -67,7 +64,7 @@ class ListSubmissionServiceSpockTest extends Specification{
         and: "list empty"
     }
 
-    def "list a non-empty list of submissions"() {
+    def "list a non-empty list of submissions of size 1"() {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
@@ -77,19 +74,22 @@ class ListSubmissionServiceSpockTest extends Specification{
         courseRepository.save(course)
         and: "a question"
         def question = new Question()
-        question.setKey(QUESTION_ID)
+        question.setKey(QUESTION_KEY)
         question.setCourse(course)
         questionRepository.save(question);
         and: "a submission"
-        def submission = new Submission(question, user.getId())
+        def submission = new Submission(question, user)
         submissionRepository.save(submission)
+
 
         when:
         def result = listSubmissionsService.findQuestionsSubmittedByStudent(user.getId())
 
         then: "the returned list has 1 submission"
         result.size() == 1
-        and: "list empty"
+        result.get(0).question == question
+        result.get(0).user == user
+
     }
 
     @TestConfiguration
@@ -101,7 +101,4 @@ class ListSubmissionServiceSpockTest extends Specification{
         }
 
     }
-
-
-
 }
