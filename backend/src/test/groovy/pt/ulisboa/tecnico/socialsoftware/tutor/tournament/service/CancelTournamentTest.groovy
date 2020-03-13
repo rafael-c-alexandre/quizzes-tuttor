@@ -99,31 +99,7 @@ class CancelTournamentTest extends Specification{
         exception.getErrorMessage() == ErrorMessage.USER_NOT_FOUND
 
     }
-
-    def  "tournament canceled by non creator"(){
-
-        def tournamentDto = new TournamentDto()
-
-        tournamentDto.setTitle(TOURNAMENT_TITLE)
-        tournamentDto.setAvailableDate(AVAILABLE_DATE)
-        tournamentDto.setConclusionDate(CONCLUSION_DATE)
-        tournamentDto.setTournamentCreator(USER)
-        tournamentDto.setId(1)
-
-        userRepository.save(USER)
-        userRepository.save(USER2)
-
-        def tournament = new Tournament(tournamentDto)
-        tournamentRepository.save(tournament)
-
-        when:
-        tournamentService.cancelTournament(tournamentRepository.findAll().get(0).getId(),USER2.getId())
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_CANCELER_IS_NOT_CREATOR
-
-    }
+    
 
     def "cancel non open tournament"(){
 
