@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.EntityManager;
 import javax.validation.constraints.Null;
@@ -100,13 +101,26 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto enrollInTournament(User user, TournamentDto tournamentDto){
+        if(user.getRole() == User.Role.STUDENT) {
+            if (tournamentDto.getState() == Tournament.TournamentState.OPEN) {
+                if(!(tournamentDto.getSignedUsers().contains(user))){
+                    tournamentDto.addUser(user);
+                }
+                else{
+                    throw new TutorException(USER_IS_ALREADY_ENROLLED);
+                }
+            } else {
+                throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
+            }
+        }
+        else
+            throw new TutorException(USER_IS_NOT_STUDENT);
 
-
-
-
-
-
-
-
-
+        return tournamentDto;
+    }
 }

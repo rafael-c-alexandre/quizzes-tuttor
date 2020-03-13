@@ -9,13 +9,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class TournamentDto {
 
     private Integer id;
-    private Integer key;
     private String title;
     private String creationDate = null;
     private String availableDate = null;
@@ -25,6 +26,9 @@ public class TournamentDto {
     private User tournametCreator;
     private int numberOfSignedUsers;
     private int numberOfTopics;
+
+    private Set<User> signedUsers = new HashSet<>();
+
 
 
     @Transient
@@ -117,6 +121,9 @@ public class TournamentDto {
     public void setNumberOfTopics(int numberOfTopics) {
         this.numberOfTopics = numberOfTopics;
     }
+
+    public void addUser(User user) { this.signedUsers.add(user); }
+    public Set<User> getSignedUsers(){ return this.signedUsers; }
 
     public LocalDateTime getCreationDateDate() {
         if (getCreationDate() == null || getCreationDate().isEmpty()) {
