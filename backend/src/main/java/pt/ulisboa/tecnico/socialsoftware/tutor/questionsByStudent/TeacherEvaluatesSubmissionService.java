@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import java.sql.SQLException;
 import java.util.Set;
@@ -26,6 +28,9 @@ public class TeacherEvaluatesSubmissionService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Retryable(
@@ -56,17 +61,18 @@ public class TeacherEvaluatesSubmissionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto teacherEvaluatesQuestion(User user, int submissionId) {
+    public SubmissionDto teacherEvaluatesQuestion(UserDto user, int submissionId) {
         //due to the lack of information provided, we decided that the approval/rejection
         //of the question by the teacher comes down to whether the teacher belongs to the question's course or not
         isTeacher(user);
-
+        User student = userRepository.findByUsername(user.getUsername());
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
         isSubmitionOnHold(submission);
         System.out.println(submission.getStatus());
         Question question = submission.getQuestion();
         Course course = question.getCourse();
-        Set cexec = user.getCourseExecutions();
+
+        Set cexec = student.getCourseExecutions();
         SubmissionDto submissionDto = new SubmissionDto(submission);
         return makeDecision(course, cexec, submissionDto, submission);
     }
@@ -95,7 +101,8 @@ public class TeacherEvaluatesSubmissionService {
         return submissionDto;
     }
 
-    private void isTeacher(User user) {
+    private void isTeacher(UserDto user) {
+        if (user == null) throw new TutorException(USER_NOT_FOUND);
         if (!user.getRole().toString().equals("TEACHER")) {
             throw new TutorException(NOT_TEACHER_ERROR);
         }
