@@ -83,7 +83,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
 
         then:
         def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.NOT_TEACHER_ERROR
+        exception.errorMessage == NOT_TEACHER_ERROR
     }
 
     def "the submission does not exist in the repository"() {
@@ -179,6 +179,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
         userRepository.save(user)
+        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -198,8 +199,8 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionRepository.save(submission)
 
         when:
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user, submission.getId())
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user, submission.getId())
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(userDto, submission.getId())
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(userDto, submission.getId())
 
         then:
         thrown(TutorException)
