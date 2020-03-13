@@ -72,23 +72,9 @@ public class TournamentService {
          else{
              tournamentDto.setId(maxId + 1);
          }
-
-
          Tournament tournament = new Tournament(tournamentDto);
+         getTopics(tournamentDto, tournament);
 
-
-         //tournament topics
-         if(tournamentDto.getTopics() != null){
-             if(tournamentDto.getTopics().isEmpty()){
-                 throw new TutorException(TOURNAMENT_NO_TOPICS);
-             }
-             for (TopicDto topicDto : tournamentDto.getTopics()){
-                 Topic topic = topicRepository.findById(topicDto.getId())
-                         .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND,topicDto.getId()));
-                 tournament.addTopic(topic);
-
-             }
-         }
          if(tournamentDto.getCreationDate() == null){
              tournament.setCreationDate(LocalDateTime.now());
          } else{
@@ -96,11 +82,27 @@ public class TournamentService {
              tournament.setCreationDate(LocalDateTime.parse(tournamentDto.getCreationDate(), formatter));
          }
 
-
         tournamentRepository.save(tournament);
-
         return new TournamentDto(tournament);
     }
+
+    private void getTopics(TournamentDto tournamentDto, Tournament tournament) {
+        //tournament topics
+        if(tournamentDto.getTopics() != null){
+            if(tournamentDto.getTopics().isEmpty()){
+                throw new TutorException(TOURNAMENT_NO_TOPICS);
+            }
+            for (TopicDto topicDto : tournamentDto.getTopics()){
+                Topic topic = topicRepository.findById(topicDto.getId())
+                        .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND,topicDto.getId()));
+                tournament.addTopic(topic);
+
+            }
+        }
+        else
+            throw new TutorException(TOURNAMENT_NO_TOPICS);
+    }
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))

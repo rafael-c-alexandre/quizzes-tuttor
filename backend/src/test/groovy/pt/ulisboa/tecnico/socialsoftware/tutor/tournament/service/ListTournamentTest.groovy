@@ -13,8 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
-import javax.persistence.EntityManager
-
 @DataJpaTest
 class ListTournamentTest extends Specification{
 
@@ -88,7 +86,7 @@ class ListTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
         tournamentDto.setTopics(topiclist)
 
         def tournamentDto2 = new TournamentDto()

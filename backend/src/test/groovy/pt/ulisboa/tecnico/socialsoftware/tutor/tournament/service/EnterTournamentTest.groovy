@@ -6,8 +6,6 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament.TournamentState
@@ -16,8 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentR
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
-
-import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class EnterTournamentTest extends Specification{
@@ -147,7 +143,7 @@ class EnterTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(state)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
         return tournamentDto
     }
 
