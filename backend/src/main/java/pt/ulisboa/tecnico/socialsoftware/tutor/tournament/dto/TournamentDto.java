@@ -69,9 +69,14 @@ public class TournamentDto {
         return topics;
     }
 
+    public void setTopics(List<TopicDto> topics) {
+        this.topics = topics;
+    }
+
     public User getTournamentCreator() {
         return tournamentCreator;
     }
+
 
     public int getNumberOfSignedUsers() {
         return numberOfSignedUsers;
@@ -130,10 +135,6 @@ public class TournamentDto {
 
     public void setConclusionDate(String conclusionDate) {
         this.conclusionDate = conclusionDate;
-    }
-
-    public void setTopics(List<TopicDto> topics) {
-        this.topics = topics;
     }
 
     public void setTournamentCreator(User tournamentCreator) {

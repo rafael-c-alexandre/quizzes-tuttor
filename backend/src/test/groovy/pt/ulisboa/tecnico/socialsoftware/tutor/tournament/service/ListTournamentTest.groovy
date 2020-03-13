@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
+
 @DataJpaTest
 class ListTournamentTest extends Specification{
 
@@ -134,7 +135,7 @@ class ListTournamentTest extends Specification{
         }
     }
 
-        @TestConfiguration
+    @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {
 
         @Bean

@@ -58,6 +58,7 @@ class CreateTournamentTest extends Specification{
         def topiclist = new ArrayList<TopicDto>()
         topiclist.add(topicDto)
 
+
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
                 ID, STATE, USER, topiclist)
@@ -82,6 +83,7 @@ class CreateTournamentTest extends Specification{
 
     def "empty tournament title"(){
         given: "a tournamentDto"
+
         def tournamentDto = getTournamentDto(null,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
                 ID, STATE, USER, null)
@@ -95,6 +97,7 @@ class CreateTournamentTest extends Specification{
 
     def "available date before present date"(){
         given: "a tournamentDto"
+
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 "2003-09-22 12:12", CONCLUSION_DATE, CREATION_DATE,
                 ID, STATE, USER, null)
@@ -110,6 +113,7 @@ class CreateTournamentTest extends Specification{
 
     def "conclusion date before present date"(){
         given: "a tournamentDto"
+
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 "2003-09-22 12:12", CONCLUSION_DATE, CREATION_DATE,
                 ID, STATE, USER, null)
@@ -124,6 +128,7 @@ class CreateTournamentTest extends Specification{
 
     def "conclusion date before available date"(){
         given: "a tournamentDto"
+
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, CONCLUSION_DATE, AVAILABLE_DATE, CREATION_DATE,
                 ID, STATE, USER, null)
 
@@ -138,6 +143,7 @@ class CreateTournamentTest extends Specification{
 
     def "create tournament with no topics"(){
         given: "a tournamentDto"
+
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
                 ID, STATE, USER, null)
 
@@ -152,6 +158,7 @@ class CreateTournamentTest extends Specification{
     def "empty available date"(){
 
         given: "a tournamentDto"
+
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, null, CONCLUSION_DATE, CREATION_DATE,
                 ID, STATE, USER, null)
 
@@ -168,6 +175,7 @@ class CreateTournamentTest extends Specification{
     def "empty conclusion date"(){
 
         given: "a tournamentDto"
+
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, AVAILABLE_DATE, null, CREATION_DATE,
                 ID, STATE, USER, null)
 
