@@ -103,7 +103,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
 
     }
 
-    def "question submitted does not exist in the repository"()  {
+    def "student submit an empty question"()  {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
@@ -112,8 +112,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         courseRepository.save(course)
         and: "a questionDto"
         def question = new Question()
-        question.setKey(QUESTION_ID)
-        question.setCourse(course)
+        question.setId(QUESTION_ID)
         QuestionDto questionDto = new QuestionDto(question)
 
 

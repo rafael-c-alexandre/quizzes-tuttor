@@ -100,7 +100,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         thrown(TutorException)
     }
 
-    def "the professor and submission exist and approves submission"()  {
+    def "the professor and submission exist and approves submission, question goes to repository"()  {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
         userRepository.save(user)
@@ -117,7 +117,6 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         def question = new Question()
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
-        questionRepository.save(question);
         and: "a submission"
         def submission = new Submission(question, user)
         submissionRepository.save(submission)
@@ -127,6 +126,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
 
         then: "the returned data are correct"
         result.getStatus().toString() == "APPROVED"
+        result.getQuestion() ==  question
         and: "submission approved"
     }
 
@@ -135,10 +135,13 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
         userRepository.save(user)
         and: "a course"
-        def course = new Course(WRONG_COURSE, Course.Type.TECNICO)
+        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
+        and: "a wrong course"
+        def wrongCourse = new Course(WRONG_COURSE, Course.Type.TECNICO)
+        courseRepository.save(wrongCourse)
         and: "a course execution"
-        def courseExecution = new CourseExecution(course, COURSE_ONE, COURSE_ONE, Course.Type.TECNICO)
+        def courseExecution = new CourseExecution(wrongCourse, COURSE_ONE, COURSE_ONE, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
         Set<CourseExecution> set = new HashSet<CourseExecution>()
         set.add(courseExecution)
@@ -147,7 +150,6 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         def question = new Question()
         question.setKey(QUESTION_ID)
         question.setCourse(course)
-        questionRepository.save(question);
         and: "a submission"
         def submission = new Submission(question, user)
         submissionRepository.save(submission)
@@ -156,8 +158,9 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user, submission.getId())
 
         then: "the returned data are correct"
-        result.getStatus().toString() == "APPROVED"
-        and: "submission approved"
+        result.getStatus().toString() == "REJECTED"
+        result.getQuestion() ==  question
+        and: "submission rejected"
     }
 
     @TestConfiguration

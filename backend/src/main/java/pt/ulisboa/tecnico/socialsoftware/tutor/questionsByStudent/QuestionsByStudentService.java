@@ -38,8 +38,6 @@ public class QuestionsByStudentService {
     @Autowired
     private UserRepository userRepository;
 
-    @PersistenceContext
-    EntityManager entityManager;
 
     //PpA - Feature 1
     @Retryable(
@@ -54,8 +52,6 @@ public class QuestionsByStudentService {
         Submission submission = new Submission(question, user);
         SubmissionDto submissionDto = new SubmissionDto(submission);
         submissionRepository.save(submission);
-
-        this.entityManager.persist(submission);
 
         submissionDto.setStatus("ONHOLD");
         return submissionDto;

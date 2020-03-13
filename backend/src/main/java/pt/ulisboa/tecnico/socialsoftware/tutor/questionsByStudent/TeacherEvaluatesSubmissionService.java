@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import java.sql.SQLException;
 import java.util.Set;
@@ -23,7 +24,10 @@ public class TeacherEvaluatesSubmissionService {
     @Autowired
     private SubmissionRepository submissionRepository;
 
-    //PpA - Feature 2
+    @Autowired
+    private QuestionRepository questionRepository;
+
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
@@ -33,6 +37,9 @@ public class TeacherEvaluatesSubmissionService {
         submissionDto.setJustification(justification);
         submission.setJustification(justification);
         submission.setStatus(Submission.Status.APPROVED);
+        Question question = submission.getQuestion();
+        questionRepository.save(question);
+
     }
     @Retryable(
             value = { SQLException.class },
@@ -50,7 +57,8 @@ public class TeacherEvaluatesSubmissionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubmissionDto teacherEvaluatesQuestion(User user, int submissionId) {
-
+        //due to the lack of information provided, we decided that the approval/rejection
+        //of the question by the teacher comes down to whether the teacher belongs to the question's course or not
         isTeacher(user);
 
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));

@@ -87,7 +87,7 @@ class ListSubmissionsServiceSpockTest extends Specification {
 
         then: "the returned list has 1 submission"
         result.size() == 1
-        result.get(0).question == qued
+        result.get(0).question == question
         result.get(0).user == user
 
     }
