@@ -59,7 +59,7 @@ public class QuestionsByStudentService {
 
     private void isStudent(User user) {
         if (!user.getRole().toString().equals("STUDENT")) {
-            throw new TutorException(NOT_TEACHER_ERROR);
+            throw new TutorException(NOT_STUDENT_ERROR);
         }
     }
 

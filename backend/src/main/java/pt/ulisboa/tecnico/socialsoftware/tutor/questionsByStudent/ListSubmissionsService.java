@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.*;
+
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 
@@ -14,8 +17,15 @@ public class ListSubmissionsService {
     @Autowired
     private SubmissionRepository submissionRepository;
 
-    //PpA - Feature 3
-    public List<SubmissionDto> findQuestionsSubmittedByStudent(int userID) {
-        return submissionRepository.findSubmissionByStudent(userID).stream().map(SubmissionDto::new).collect(Collectors.toList());
+
+    public List<SubmissionDto> findQuestionsSubmittedByStudent(User user) {
+        isStudent(user);
+        return submissionRepository.findSubmissionByStudent(user.getId()).stream().map(SubmissionDto::new).collect(Collectors.toList());
+    }
+
+    private void isStudent(User user) {
+        if (!user.getRole().toString().equals("STUDENT")) {
+            throw new TutorException(NOT_STUDENT_ERROR);
+        }
     }
 }
