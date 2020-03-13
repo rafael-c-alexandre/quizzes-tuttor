@@ -13,10 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
 @DataJpaTest
 class ListTournamentTest extends Specification{
 
