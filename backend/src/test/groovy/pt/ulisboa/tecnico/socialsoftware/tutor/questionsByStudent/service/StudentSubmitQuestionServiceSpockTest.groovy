@@ -12,9 +12,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
+import spock.lang.Unroll
 import spock.lang.Specification
 
 
@@ -62,6 +65,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
         userRepository.save(user)
+        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -73,7 +77,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         QuestionDto questionDto = new QuestionDto(question)
 
         when:
-        questionByStudentService.studentSubmitQuestion(questionDto,user)
+        questionByStudentService.studentSubmitQuestion(questionDto,userDto)
 
         then:
         def exception = thrown(TutorException)
@@ -84,6 +88,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
+        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -96,7 +101,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
 
         when:
 
-        def result = questionByStudentService.studentSubmitQuestion(questionDto,user)
+        def result = questionByStudentService.studentSubmitQuestion(questionDto,userDto)
 
         then:
         result.status == "ONHOLD"
@@ -110,6 +115,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
+        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -120,13 +126,14 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
 
 
         when:
-        questionByStudentService.studentSubmitQuestion(questionDto, user)
+        questionByStudentService.studentSubmitQuestion(questionDto, userDto)
 
         then: "throw exception"
         def exception = thrown(TutorException)
         exception.errorMessage == ErrorMessage.QUESTION_NOT_FOUND
 
     }
+    
 
     @TestConfiguration
     static class ServiceImplTestContextConfiguration {

@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
 import spock.lang.Specification
 
 @DataJpaTest
@@ -57,9 +58,10 @@ class ListSubmissionsServiceSpockTest extends Specification {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
+        UserDto userDto = new UserDto(user)
 
         when:
-        def result = listSubmissionsService.findQuestionsSubmittedByStudent(user)
+        def result = listSubmissionsService.findQuestionsSubmittedByStudent(userDto)
 
         then: "the returned list is empty"
         result.isEmpty()
@@ -72,7 +74,7 @@ class ListSubmissionsServiceSpockTest extends Specification {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-
+        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(WRONG_COURSE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -87,7 +89,7 @@ class ListSubmissionsServiceSpockTest extends Specification {
 
 
         when:
-        def result = listSubmissionsService.findQuestionsSubmittedByStudent(user)
+        def result = listSubmissionsService.findQuestionsSubmittedByStudent(userDto)
 
         then: "the returned list has 1 submission"
         result.size() == 1
@@ -100,7 +102,7 @@ class ListSubmissionsServiceSpockTest extends Specification {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.ADMIN)
         userRepository.save(user)
-
+        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(WRONG_COURSE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -115,7 +117,7 @@ class ListSubmissionsServiceSpockTest extends Specification {
 
 
         when:
-        listSubmissionsService.findQuestionsSubmittedByStudent(user)
+        listSubmissionsService.findQuestionsSubmittedByStudent(userDto)
 
         then:
         def exception = thrown(TutorException)
