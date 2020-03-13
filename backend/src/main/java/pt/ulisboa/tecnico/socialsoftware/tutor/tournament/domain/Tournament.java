@@ -65,7 +65,7 @@ public class Tournament {
         this.creationDate = tournamentDto.getCreationDateDate();
         setAvailableDate(tournamentDto.getAvailableDateDate());
         setConclusionDate(tournamentDto.getConclusionDateDate());
-        this.tournamentCreator = tournamentDto.getTournametCreator();
+        this.tournamentCreator = tournamentDto.getTournamentCreator();
         setTitle(tournamentDto.getTitle());
         this.state = tournamentDto.getState();
 

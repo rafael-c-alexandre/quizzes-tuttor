@@ -68,7 +68,7 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
         tournamentDto.setTopics(topiclist)
 
         when:
@@ -98,7 +98,7 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -118,7 +118,7 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -138,7 +138,7 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -158,7 +158,7 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -178,7 +178,7 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -198,7 +198,7 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -220,7 +220,7 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
-        tournamentDto.setTournametCreator(USER)
+        tournamentDto.setTournamentCreator(USER)
 
         when:
         tournamentService.createTournament(tournamentDto)

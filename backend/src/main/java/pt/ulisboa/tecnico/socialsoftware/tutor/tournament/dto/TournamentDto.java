@@ -22,7 +22,7 @@ public class TournamentDto {
     private String conclusionDate = null;
     private Tournament.TournamentState state;
     private List<TopicDto> topics = new ArrayList<>();
-    private User tournametCreator;
+    private User tournamentCreator;
     private int numberOfSignedUsers;
     private int numberOfTopics;
 
@@ -94,12 +94,12 @@ public class TournamentDto {
         this.topics = topics;
     }
 
-    public User getTournametCreator() {
-        return tournametCreator;
+    public User getTournamentCreator() {
+        return tournamentCreator;
     }
 
-    public void setTournametCreator(User tournametCreator) {
-        this.tournametCreator = tournametCreator;
+    public void setTournamentCreator(User tournametCreator) {
+        this.tournamentCreator = tournametCreator;
     }
 
     public int getNumberOfSignedUsers() {
