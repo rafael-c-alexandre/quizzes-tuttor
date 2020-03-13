@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
@@ -19,8 +20,10 @@ import spock.lang.Specification
 class CancelTournamentTest extends Specification{
 
     public static final String TOURNAMENT_TITLE = "Tournament"
+    public static final String CREATION_DATE = "2020-09-22 12:12"
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
+    public static final Integer ID = 2
     public static final Tournament.TournamentState STATE = Tournament.TournamentState.OPEN
     public static final User USER = new User("Pedro","Minorca",2, User.Role.STUDENT)
     public static final User USER2 = new User("Afonso","afonsovdm",3, User.Role.STUDENT)
@@ -45,13 +48,9 @@ class CancelTournamentTest extends Specification{
     }
 
     def "cancel existing tournament by creator"(){
-        def tournamentDto = new TournamentDto()
-        tournamentDto.setState(STATE)
-        tournamentDto.setId(1)
-        tournamentDto.setTitle(TOURNAMENT_TITLE)
-        tournamentDto.setAvailableDate(AVAILABLE_DATE)
-        tournamentDto.setConclusionDate(CONCLUSION_DATE)
-        tournamentDto.setTournamentCreator(USER)
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
+                1, STATE, USER, null)
 
         def tournament = new Tournament(tournamentDto)
         tournamentRepository.save(tournament)
@@ -77,13 +76,9 @@ class CancelTournamentTest extends Specification{
 
     def "cancel tournament with invalid user"(){
 
-        def tournamentDto = new TournamentDto()
-        tournamentDto.setState(STATE)
-        tournamentDto.setId(1)
-        tournamentDto.setTitle(TOURNAMENT_TITLE)
-        tournamentDto.setAvailableDate(AVAILABLE_DATE)
-        tournamentDto.setConclusionDate(CONCLUSION_DATE)
-        tournamentDto.setTournamentCreator(USER)
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
+                ID, STATE, USER, null)
 
 
         def tournament = new Tournament(tournamentDto)
@@ -99,17 +94,13 @@ class CancelTournamentTest extends Specification{
         exception.getErrorMessage() == ErrorMessage.USER_NOT_FOUND
 
     }
-    
+
 
     def "cancel non open tournament"(){
 
-        def tournamentDto = new TournamentDto()
-        tournamentDto.setState(Tournament.TournamentState.CLOSED)
-        tournamentDto.setId(1)
-        tournamentDto.setTitle(TOURNAMENT_TITLE)
-        tournamentDto.setAvailableDate(AVAILABLE_DATE)
-        tournamentDto.setConclusionDate(CONCLUSION_DATE)
-        tournamentDto.setTournamentCreator(USER)
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
+                ID, Tournament.TournamentState.CLOSED, USER, null)
 
         def tournament = new Tournament(tournamentDto)
         tournamentRepository.save(tournament)
@@ -122,6 +113,23 @@ class CancelTournamentTest extends Specification{
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_ALREADY_CLOSED
 
     }
+
+    private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate,
+                                    Integer id, Tournament.TournamentState state, User creator, List<TopicDto> topicList){
+
+        TournamentDto tournamentDto = new TournamentDto()
+        tournamentDto.setTitle(title)
+        tournamentDto.setAvailableDate(availableDate)
+        tournamentDto.setConclusionDate(conclusionDate)
+        tournamentDto.setCreationDate(creationDate)
+        tournamentDto.setId(id)
+        tournamentDto.setState(state)
+        tournamentDto.setTournamentCreator(creator)
+        tournamentDto.setTopics(topicList)
+
+        return tournamentDto;
+    }
+
 
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {
