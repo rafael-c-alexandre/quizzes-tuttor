@@ -30,7 +30,7 @@ public class Question {
         DISABLED, REMOVED, AVAILABLE
     }
 
-    @Idg
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
