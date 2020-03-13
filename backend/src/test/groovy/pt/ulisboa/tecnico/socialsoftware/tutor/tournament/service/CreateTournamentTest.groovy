@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
@@ -53,13 +52,13 @@ class CreateTournamentTest extends Specification{
         topic.setId(1)
         topicRepository.save(topic)
 
-
         def topicDto = new TopicDto()
         topicDto.setId(topic.getId())
 
         def topiclist = new ArrayList<TopicDto>()
         topiclist.add(topicDto)
 
+<<<<<<< HEAD
 
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
@@ -70,6 +69,11 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setState(STATE)
         tournamentDto.setTournamentCreator(USER)
         tournamentDto.setTopics(topiclist)
+=======
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
+                ID, STATE, USER, topiclist)
+>>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -91,6 +95,7 @@ class CreateTournamentTest extends Specification{
 
     def "empty tournament title"(){
         given: "a tournamentDto"
+<<<<<<< HEAD
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(null)
         tournamentDto.setAvailableDate(AVAILABLE_DATE)
@@ -100,9 +105,13 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setState(STATE)
         tournamentDto.setTournamentCreator(USER)
 
+=======
+        def tournamentDto = getTournamentDto(null,
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
+                ID, STATE, USER, null)
+>>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
         when:
         tournamentService.createTournament(tournamentDto)
-
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_TITLE_IS_EMPTY
@@ -111,6 +120,7 @@ class CreateTournamentTest extends Specification{
 
     def "available date before present date"(){
         given: "a tournamentDto"
+<<<<<<< HEAD
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate("2003-09-22 12:12")
@@ -119,6 +129,11 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
         tournamentDto.setTournamentCreator(USER)
+=======
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
+                "2003-09-22 12:12", CONCLUSION_DATE, CREATION_DATE,
+                ID, STATE, USER, null)
+>>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -131,6 +146,7 @@ class CreateTournamentTest extends Specification{
 
     def "conclusion date before present date"(){
         given: "a tournamentDto"
+<<<<<<< HEAD
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate("2003-09-22 12:12")
@@ -140,6 +156,11 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setState(STATE)
         tournamentDto.setTournamentCreator(USER)
 
+=======
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
+                "2003-09-22 12:12", CONCLUSION_DATE, CREATION_DATE,
+                ID, STATE, USER, null)
+>>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
         when:
         tournamentService.createTournament(tournamentDto)
 
@@ -151,6 +172,7 @@ class CreateTournamentTest extends Specification{
 
     def "conclusion date before available date"(){
         given: "a tournamentDto"
+<<<<<<< HEAD
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate(CONCLUSION_DATE)
@@ -159,6 +181,10 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
         tournamentDto.setTournamentCreator(USER)
+=======
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, CONCLUSION_DATE, AVAILABLE_DATE, CREATION_DATE,
+                ID, STATE, USER, null)
+>>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -171,6 +197,7 @@ class CreateTournamentTest extends Specification{
 
     def "create tournament with no topics"(){
         given: "a tournamentDto"
+<<<<<<< HEAD
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate(AVAILABLE_DATE)
@@ -179,6 +206,10 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
         tournamentDto.setTournamentCreator(USER)
+=======
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
+                ID, STATE, USER, null)
+>>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -191,6 +222,7 @@ class CreateTournamentTest extends Specification{
     def "empty available date"(){
 
         given: "a tournamentDto"
+<<<<<<< HEAD
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate(null)
@@ -199,6 +231,10 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
         tournamentDto.setTournamentCreator(USER)
+=======
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, null, CONCLUSION_DATE, CREATION_DATE,
+                ID, STATE, USER, null)
+>>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -213,6 +249,7 @@ class CreateTournamentTest extends Specification{
     def "empty conclusion date"(){
 
         given: "a tournamentDto"
+<<<<<<< HEAD
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate(AVAILABLE_DATE)
@@ -221,6 +258,10 @@ class CreateTournamentTest extends Specification{
         tournamentDto.setId(ID)
         tournamentDto.setState(STATE)
         tournamentDto.setTournamentCreator(USER)
+=======
+        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, AVAILABLE_DATE, null, CREATION_DATE,
+                ID, STATE, USER, null)
+>>>>>>> 76d5e3f3a2e822f498f3a40a94a43d21fe43926f
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -229,6 +270,23 @@ class CreateTournamentTest extends Specification{
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.TOURNAMENT_EMPTY_DATE
 
+    }
+
+
+    private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate,
+                            Integer id, TournamentState state, User creator, List<TopicDto> topicList){
+
+        TournamentDto tournamentDto = new TournamentDto()
+        tournamentDto.setTitle(title)
+        tournamentDto.setAvailableDate(availableDate)
+        tournamentDto.setConclusionDate(conclusionDate)
+        tournamentDto.setCreationDate(creationDate)
+        tournamentDto.setId(id)
+        tournamentDto.setState(state)
+        tournamentDto.setTournamentCreator(creator)
+        tournamentDto.setTopics(topicList)
+
+        return tournamentDto;
     }
 
     @TestConfiguration
