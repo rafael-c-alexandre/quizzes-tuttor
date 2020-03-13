@@ -47,11 +47,19 @@ public class TeacherEvaluatesSubmissionService {
         isTeacher(user);
         //avalia uma submissao consoante
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+        isSubmitionOnHold(submission);
+        System.out.println(submission.getStatus());
         Question question = submission.getQuestion();
         Course course = question.getCourse();
         Set cexec = user.getCourseExecutions();
         SubmissionDto submissionDto = new SubmissionDto(submission);
         return makeDecision(course, cexec, submissionDto);
+    }
+
+    private void isSubmitionOnHold(Submission submission) {
+        if(!submission.getStatus().toString().equals("ONHOLD")){
+            throw new TutorException(SUBMITION_ALREADY_EVALUATED);
+        }
     }
 
     private SubmissionDto makeDecision(Course course, Iterable<CourseExecution> cexec, SubmissionDto submissionDto) {

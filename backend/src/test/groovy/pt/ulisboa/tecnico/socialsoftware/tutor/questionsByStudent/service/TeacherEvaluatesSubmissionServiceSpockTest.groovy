@@ -163,6 +163,37 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         and: "submission approved"
     }
 
+    def "the professor approves the same submission twice"()  {
+        given: "a user"
+        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
+        userRepository.save(user)
+        and: "a course"
+        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
+        courseRepository.save(course)
+        and: "a course execution"
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+        Set<CourseExecution> set = new HashSet<CourseExecution>()
+        set.add(courseExecution)
+        user.setCourseExecutions(set)
+        and: "a question"
+        def question = new Question()
+        question.setKey(QUESTION_KEY)
+        question.setCourse(course)
+        questionRepository.save(question);
+        and: "a submission"
+        def submission = new Submission(question, user.getId())
+        submissionRepository.save(submission)
+
+        when:
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user, submission.getId())
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user, submission.getId())
+
+        then:
+        thrown(TutorException)
+    }
+
+
     @TestConfiguration
     static class ServiceImplTestContextConfiguration {
 
