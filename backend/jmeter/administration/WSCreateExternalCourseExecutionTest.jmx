@@ -97,7 +97,7 @@
 	&quot;courseType&quot;: &quot;EXTERNAL&quot;,&#xd;
 	&quot;name&quot;: &quot;Demo Course&quot;,&#xd;
 	&quot;courseExecutionType&quot;: &quot;EXTERNAL&quot;,&#xd;
-	&quot;acronym&quot;: &quot;LC99&quot;,&#xd;
+	&quot;acronym&quot;: &quot;LC120&quot;,&#xd;
 	&quot;academicTerm&quot;: &quot;first term&quot;&#xd;
 }&#xd;
 </stringProp>
@@ -149,7 +149,7 @@
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert course execution acronym" enabled="true">
               <stringProp name="JSON_PATH">$.acronym</stringProp>
-              <stringProp name="EXPECTED_VALUE">LC99</stringProp>
+              <stringProp name="EXPECTED_VALUE">LC120</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>

@@ -1,9 +1,10 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent;
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto;
 
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.Submission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 
 
 
@@ -12,10 +13,11 @@ import java.io.Serializable;
 
 public class SubmissionDto implements Serializable{
     private  Integer id;
-    private User user;
+    private Integer userId;
     private String status;
-    private Question question;
+    private Integer questionId;
     private String justification;
+    private Integer courseId;
 
     public SubmissionDto() {
 
@@ -23,10 +25,11 @@ public class SubmissionDto implements Serializable{
 
     public SubmissionDto(Submission submission) {
         this.id = submission.getId();
-        this.user = submission.getUser();
+        this.userId = submission.getUser().getId();
         this.status = submission.getStatus().name();
-        this.question = submission.getQuestion();
+        this.questionId = submission.getQuestion().getId();
         this.justification = submission.getJustification();
+        this.courseId = submission.getCourse().getId();
     }
 
     public Integer getId() {
@@ -37,12 +40,12 @@ public class SubmissionDto implements Serializable{
         this.id = id;
     }
 
-    public User getUser() {
-        return this.user;
+    public Integer getUserId() {
+        return this.userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Integer user) {
+        this.userId = user;
     }
 
     public String getStatus() {
@@ -53,12 +56,12 @@ public class SubmissionDto implements Serializable{
         this.status = status;
     }
 
-    public Question getQuestion() {
-        return question;
+    public Integer getQuestionId() {
+        return questionId;
     }
 
-    public void setQuestion(Question question) {
-        this.question = question;
+    public void setQuestion(Integer question) {
+        this.questionId = question;
     }
 
     public String getJustification() {
@@ -69,14 +72,23 @@ public class SubmissionDto implements Serializable{
         this.justification = justification;
     }
 
+    public Integer getCourse() {
+        return courseId;
+    }
+
+    public void setCourse(Integer course) {
+        this.courseId = course;
+    }
+
     @Override
     public String toString() {
         return "SubmissionDto{" +
                 "id=" + id +
-                ", user=" + user.getId() +
+                ", user=" + userId +
                 ", status='" + status + '\'' +
-                ", question=" + question +
+                ", question=" + questionId +
                 ", justification='" + justification + '\'' +
+                ", course=" + courseId +
                 '}';
     }
 }
