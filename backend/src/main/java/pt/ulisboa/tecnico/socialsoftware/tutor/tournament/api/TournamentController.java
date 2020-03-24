@@ -36,4 +36,11 @@ public class TournamentController {
         return tournamentService.listTournamentsByState("OPEN");
     }
 
+    //cancel tournament
+    @GetMapping("/tournaments/open")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public TournamentDto cancelTournament(@Valid @RequestBody TournamentDto tournamentDto){
+        return tournamentService.cancelTournament(tournamentDto);
+    }
+
 }
