@@ -42,6 +42,7 @@ public class Question {
 
     private String title;
 
+
     @Column(name = "number_of_answers", columnDefinition = "integer default 0")
     private Integer numberOfAnswers = 0;
 

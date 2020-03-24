@@ -13,7 +13,7 @@ import spock.lang.Unroll
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
-class GetCourseExecutionsServiceSpockTest extends Specification {
+class rGetCourseExecutionsServiceSpockTest extends Specification {
     static final String COURSE_ONE = "CourseOne"
     static final String ACRONYM_ONE = "C12"
     static final String ACADEMIC_TERM_ONE = "1º Semestre"
