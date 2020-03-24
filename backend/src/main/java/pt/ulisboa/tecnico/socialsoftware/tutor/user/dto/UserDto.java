@@ -12,6 +12,8 @@ public class UserDto implements Serializable {
     private User.Role role;
     private String creationDate;
 
+
+
     public UserDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();

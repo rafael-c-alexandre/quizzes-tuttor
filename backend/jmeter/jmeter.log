@@ -1,0 +1,150 @@
+2020-03-18 22:03:36,255 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2020-03-18 22:03:36,283 INFO o.a.j.JMeter: Loading user properties from: /usr/local/Cellar/jmeter/5.2.1/libexec/bin/user.properties
+2020-03-18 22:03:36,284 INFO o.a.j.JMeter: Loading system properties from: /usr/local/Cellar/jmeter/5.2.1/libexec/bin/system.properties
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: Copyright (c) 1998-2019 The Apache Software Foundation
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: Version 5.2.1
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: java.version=11.0.6
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: java.vm.name=OpenJDK 64-Bit Server VM
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: os.name=Mac OS X
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: os.arch=x86_64
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: os.version=10.14.6
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: file.encoding=UTF-8
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: java.awt.headless=null
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: Max memory     =1073741824
+2020-03-18 22:03:36,286 INFO o.a.j.JMeter: Available Processors =8
+2020-03-18 22:03:36,294 INFO o.a.j.JMeter: Default Locale=English (EN)
+2020-03-18 22:03:36,294 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2020-03-18 22:03:36,294 INFO o.a.j.JMeter: JMeterHome=/usr/local/Cellar/jmeter/5.2.1/libexec
+2020-03-18 22:03:36,294 INFO o.a.j.JMeter: user.dir  =/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter
+2020-03-18 22:03:36,295 INFO o.a.j.JMeter: PWD       =/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter
+2020-03-18 22:03:36,297 INFO o.a.j.JMeter: IP: 192.168.1.93 Name: MBP-de-Rafael.Home FullName: mbp-de-rafael.home
+2020-03-18 22:03:37,960 INFO o.a.j.g.a.LookAndFeelCommand: Installing Darcula LAF
+2020-03-18 22:03:37,967 INFO o.a.j.g.a.LookAndFeelCommand: Using look and feel: com.bulenkov.darcula.DarculaLaf [Darcula]
+2020-03-18 22:03:37,967 INFO o.a.j.JMeter: Setting LAF to: com.bulenkov.darcula.DarculaLaf
+2020-03-18 22:03:38,042 INFO o.a.j.JMeter: Loaded icon properties from org/apache/jmeter/images/icon.properties
+2020-03-18 22:03:38,955 INFO o.j.r.JARSourceHTTP: Requesting https://jmeter-plugins.org/repo/?installID=mac_os_x-1baa36ede2b0accb18019f5b194042f1-gui
+2020-03-18 22:03:40,767 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-03-18 22:03:40,767 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-03-18 22:03:40,768 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-03-18 22:03:40,768 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-03-18 22:03:40,768 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
+2020-03-18 22:03:40,768 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
+2020-03-18 22:03:40,793 INFO o.j.r.PluginManager: Plugins Status: [jpgc-plugins-manager=1.3, jmeter-core=5.2.1, jmeter-ftp=5.2.1, jmeter-http=5.2.1, jmeter-jdbc=5.2.1, jmeter-jms=5.2.1, jmeter-junit=5.2.1, jmeter-java=5.2.1, jmeter-ldap=5.2.1, jmeter-mail=5.2.1, jmeter-mongodb=5.2.1, jmeter-native=5.2.1, jmeter-tcp=5.2.1, jmeter-components=5.2.1]
+2020-03-18 22:03:41,059 INFO o.a.j.e.KeyToolUtils: keytool found at 'keytool'
+2020-03-18 22:03:41,060 INFO o.a.j.p.h.p.ProxyControl: HTTP(S) Test Script Recorder SSL Proxy will use keys that support embedded 3rd party resources in file /usr/local/Cellar/jmeter/5.2.1/libexec/bin/proxyserver.jks
+2020-03-18 22:03:41,191 INFO o.a.j.s.FileServer: Default base='/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter'
+2020-03-18 22:03:41,406 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
+2020-03-18 22:03:41,406 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to ISO-8859-1
+2020-03-18 22:03:41,407 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
+2020-03-18 22:03:41,407 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
+2020-03-18 22:03:41,423 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-18 22:03:47,989 INFO o.a.j.g.a.Load: Loading file: /Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration/sss
+2020-03-18 22:03:47,989 INFO o.a.j.s.FileServer: Set new base='/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration'
+2020-03-18 22:03:48,105 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
+2020-03-18 22:03:48,110 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
+2020-03-18 22:03:48,112 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
+2020-03-18 22:03:48,113 INFO o.a.j.s.SaveService: Loading file: /Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration/sss
+2020-03-18 22:03:48,114 WARN o.j.r.p.TestPlanAnalyzer: Failed read jmx file
+java.io.FileNotFoundException: /Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration/sss (No such file or directory)
+	at java.io.FileInputStream.open0(Native Method) ~[?:?]
+	at java.io.FileInputStream.open(FileInputStream.java:219) ~[?:?]
+	at java.io.FileInputStream.<init>(FileInputStream.java:157) ~[?:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.readBytesFromFile(TestPlanAnalyzer.java:64) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.getNodeListWithClassNames(TestPlanAnalyzer.java:103) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.analyze(TestPlanAnalyzer.java:33) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.analyzeTestPlan(PluginSuggester.java:51) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.findPluginsToInstall(PluginSuggester.java:44) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.checkAndSuggest(PluginSuggester.java:28) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.logging.LoggerAppender.append(LoggerAppender.java:33) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.apache.logging.log4j.core.config.AppenderControl.tryCallAppender(AppenderControl.java:156) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender0(AppenderControl.java:129) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppenderPreventRecursion(AppenderControl.java:120) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender(AppenderControl.java:84) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.LoggerConfig.callAppenders(LoggerConfig.java:543) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.LoggerConfig.processLogEvent(LoggerConfig.java:502) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:485) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:460) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.AwaitCompletionReliabilityStrategy.log(AwaitCompletionReliabilityStrategy.java:82) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.Logger.log(Logger.java:162) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.tryLogMessage(AbstractLogger.java:2190) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageTrackRecursion(AbstractLogger.java:2144) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageSafely(AbstractLogger.java:2127) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessage(AbstractLogger.java:2020) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.logIfEnabled(AbstractLogger.java:1891) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.slf4j.Log4jLogger.info(Log4jLogger.java:184) ~[log4j-slf4j-impl-2.12.1.jar:2.12.1]
+	at org.apache.jmeter.save.SaveService.loadTree(SaveService.java:428) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:130) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:102) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.Load.doActionAfterCheck(Load.java:89) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.AbstractActionWithNoRunningTest.doAction(AbstractActionWithNoRunningTest.java:45) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.ActionRouter.performAction(ActionRouter.java:88) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.ActionRouter.lambda$actionPerformed$0(ActionRouter.java:70) ~[ApacheJMeter_core.jar:5.2.1]
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:313) [?:?]
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:770) [?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:721) [?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:715) [?:?]
+	at java.security.AccessController.doPrivileged(Native Method) ~[?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85) [?:?]
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:740) [?:?]
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101) [?:?]
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:90) [?:?]
+2020-03-18 22:03:48,129 WARN o.j.r.p.TestPlanAnalyzer: Cannot parse file: /Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration/sss
+org.xml.sax.SAXParseException: Premature end of file.
+	at org.apache.xerces.parsers.DOMParser.parse(Unknown Source) ~[xercesImpl-2.12.0.jar:?]
+	at org.apache.xerces.jaxp.DocumentBuilderImpl.parse(Unknown Source) ~[xercesImpl-2.12.0.jar:?]
+	at javax.xml.parsers.DocumentBuilder.parse(DocumentBuilder.java:122) ~[?:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.getNodeListWithClassNames(TestPlanAnalyzer.java:104) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.TestPlanAnalyzer.analyze(TestPlanAnalyzer.java:33) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.analyzeTestPlan(PluginSuggester.java:51) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.findPluginsToInstall(PluginSuggester.java:44) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.plugins.PluginSuggester.checkAndSuggest(PluginSuggester.java:28) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.jmeterplugins.repository.logging.LoggerAppender.append(LoggerAppender.java:33) ~[jmeter-plugins-manager-1.3.jar:?]
+	at org.apache.logging.log4j.core.config.AppenderControl.tryCallAppender(AppenderControl.java:156) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender0(AppenderControl.java:129) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppenderPreventRecursion(AppenderControl.java:120) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.AppenderControl.callAppender(AppenderControl.java:84) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.LoggerConfig.callAppenders(LoggerConfig.java:543) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.LoggerConfig.processLogEvent(LoggerConfig.java:502) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:485) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.LoggerConfig.log(LoggerConfig.java:460) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.config.AwaitCompletionReliabilityStrategy.log(AwaitCompletionReliabilityStrategy.java:82) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.core.Logger.log(Logger.java:162) ~[log4j-core-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.tryLogMessage(AbstractLogger.java:2190) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageTrackRecursion(AbstractLogger.java:2144) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessageSafely(AbstractLogger.java:2127) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.logMessage(AbstractLogger.java:2020) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.log4j.spi.AbstractLogger.logIfEnabled(AbstractLogger.java:1891) ~[log4j-api-2.12.1.jar:2.12.1]
+	at org.apache.logging.slf4j.Log4jLogger.info(Log4jLogger.java:184) ~[log4j-slf4j-impl-2.12.1.jar:2.12.1]
+	at org.apache.jmeter.save.SaveService.loadTree(SaveService.java:428) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:130) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.Load.loadProjectFile(Load.java:102) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.Load.doActionAfterCheck(Load.java:89) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.AbstractActionWithNoRunningTest.doAction(AbstractActionWithNoRunningTest.java:45) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.ActionRouter.performAction(ActionRouter.java:88) ~[ApacheJMeter_core.jar:5.2.1]
+	at org.apache.jmeter.gui.action.ActionRouter.lambda$actionPerformed$0(ActionRouter.java:70) ~[ApacheJMeter_core.jar:5.2.1]
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:313) [?:?]
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:770) [?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:721) [?:?]
+	at java.awt.EventQueue$4.run(EventQueue.java:715) [?:?]
+	at java.security.AccessController.doPrivileged(Native Method) ~[?:?]
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:85) [?:?]
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:740) [?:?]
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124) [?:?]
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109) [?:?]
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101) [?:?]
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:90) [?:?]
+2020-03-18 22:03:48,130 WARN o.a.j.g.a.Load: Error reading file. java.io.FileNotFoundException: /Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration/sss (No such file or directory)
+2020-03-18 22:04:00,193 INFO o.a.j.s.FileServer: Set new base='/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration'
+2020-03-18 22:04:50,717 INFO o.a.j.g.a.Load: Loading file: /Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration/Test Plan.jmx
+2020-03-18 22:04:50,717 INFO o.a.j.s.FileServer: Set new base='/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration'
+2020-03-18 22:04:50,717 INFO o.a.j.s.SaveService: Loading file: /Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration/Test Plan.jmx
+2020-03-18 22:04:50,938 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-18 22:04:50,972 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-18 22:04:51,030 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-03-18 22:04:51,052 INFO o.a.j.s.FileServer: Set new base='/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/administration'

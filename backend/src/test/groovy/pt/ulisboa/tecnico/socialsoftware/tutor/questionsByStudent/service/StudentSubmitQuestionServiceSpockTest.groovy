@@ -12,12 +12,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.Submission
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.SubmissionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
-import spock.lang.Unroll
 import spock.lang.Specification
 
 
@@ -65,7 +64,6 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
         userRepository.save(user)
-        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -74,10 +72,17 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         question.setKey(QUESTION_ID)
         question.setCourse(course)
         questionRepository.save(question)
-        QuestionDto questionDto = new QuestionDto(question)
+
+        and: " a submissionDto"
+        def submissionDto = new SubmissionDto()
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourse(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setQuestion(question.getId())
+        submissionDto.setUser(user.getId())
 
         when:
-        questionByStudentService.studentSubmitQuestion(questionDto,userDto)
+        questionByStudentService.studentSubmitQuestion(submissionDto,user.getId())
 
         then:
         def exception = thrown(TutorException)
@@ -88,7 +93,6 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -97,17 +101,24 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         question.setKey(QUESTION_ID)
         question.setCourse(course)
         questionRepository.save(question)
-        QuestionDto questionDto = new QuestionDto(question)
+
+        def submissionDto = new SubmissionDto()
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourse(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setQuestion(question.getId())
+        submissionDto.setUser(user.getId())
+
 
         when:
 
-        def result = questionByStudentService.studentSubmitQuestion(questionDto,userDto)
+        def result = questionByStudentService.studentSubmitQuestion(submissionDto,user.getId())
 
         then:
         result.status == "ONHOLD"
         result.justification == ""
-        result.getUser().getId() == user.getId()
-        result.getQuestion() == question
+        result.getUserId() == user.getId()
+        result.getQuestionId() == question.getId()
 
     }
 
@@ -115,18 +126,23 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-        UserDto userDto = new UserDto(user)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "a questionDto"
         def question = new Question()
         question.setId(QUESTION_ID)
-        QuestionDto questionDto = new QuestionDto(question)
+
+        def submissionDto = new SubmissionDto()
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourse(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setQuestion(question.getId())
+        submissionDto.setUser(user.getId())
 
 
         when:
-        questionByStudentService.studentSubmitQuestion(questionDto, userDto)
+        questionByStudentService.studentSubmitQuestion(submissionDto, user.getId())
 
         then: "throw exception"
         def exception = thrown(TutorException)
