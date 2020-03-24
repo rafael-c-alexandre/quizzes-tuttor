@@ -6,6 +6,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 
 @RestController
 public class TournamentController {
+
     @Autowired
     private TournamentService tournamentService;
+
+    @GetMapping("/tournaments/open")
+    @PreAuthorize("hasRole('ROLE_STUDENT')" or "hasRole('ROLE_TEACHER')")
+    public List<CourseDto> listOpenTournaments() {
+        return tournamentService.listTournamentsByState("OPEN");
+    }
+
+
 }
