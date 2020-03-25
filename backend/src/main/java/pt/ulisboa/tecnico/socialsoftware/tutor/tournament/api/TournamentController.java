@@ -23,7 +23,6 @@ public class TournamentController {
     @PostMapping(value = "/tournaments/")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public TournamentDto createTournament(@RequestBody TournamentDto tournamentDto) {
-        tournamentDto.setState(Tournament.TournamentState.CLOSED);
         return this.tournamentService.createTournament(tournamentDto);
     }
 

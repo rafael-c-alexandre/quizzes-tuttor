@@ -2,10 +2,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 public enum ErrorMessage {
 
+    TOURNAMENT_INVALID_STATE("Tournament state is empty or invalid"),
+    TOURNAMENT_HAS_NO_CREATOR("Tournament has no creator"),
     TOURNAMENT_CANCELER_IS_NOT_CREATOR("Cant cancel a tournament you didnt create"),
     TOURNAMENT_ALREADY_CLOSED("Cant close an already closed tournament"),
     TOURNAMENT_ID_NOT_EXISTS("Invalid tournament id"),
-    TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
     TOURNAMENT_TITLE_IS_EMPTY("This tournament title is empty"),
     TOURNAMENT_INVALID_DATE("This tournament date is invalid"),
     TOURNAMENT_EMPTY_DATE("This tournament date is empty"),

@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,12 +22,11 @@ public class TournamentDto {
     private String availableDate = null;
     private String conclusionDate = null;
     private Tournament.TournamentState state;
-    private List<TopicDto> topics = new ArrayList<>();
-    private User tournamentCreator;
+    private List<Integer> topics = new ArrayList<>();
+    private Integer tournamentCreator;
     private int numberOfSignedUsers;
     private int numberOfTopics;
-
-    private Set<User> signedUsers = new HashSet<>();
+    private List<Integer> signedUsers = new ArrayList<>();
 
 
     @Transient
@@ -41,11 +41,14 @@ public class TournamentDto {
         this.availableDate = tournament.getAvailableDate().format(formatter);
         this.creationDate = tournament.getCreationDate().format(formatter);
         this.conclusionDate = tournament.getConclusionDate().format(formatter);
-        this.numberOfSignedUsers = tournament.getSignedUsers().size();
+        if(this.getSignedUsers() != null)
+            this.numberOfSignedUsers = tournament.getSignedUsers().size();
         this.state = tournament.getState();
         this.title = tournament.getTitle();
-        this.numberOfTopics = tournament.getTopics().size();
-        this.tournamentCreator = tournament.getTournamentCreator();
+        if(tournament.getTopics() != null)
+            this.numberOfTopics = tournament.getTopics().size();
+        if(tournament.getTournamentCreator() != null)
+            this.tournamentCreator = tournament.getTournamentCreator().getId();
 
     }
 
@@ -69,20 +72,11 @@ public class TournamentDto {
     public String getConclusionDate() {
         return conclusionDate;
     }
-    public List<TopicDto> getTopics() {
-        return topics;
-    }
-    public User getTournamentCreator() {
-        return tournamentCreator;
-    }
     public int getNumberOfSignedUsers() {
         return numberOfSignedUsers;
     }
     public int getNumberOfTopics() {
         return numberOfTopics;
-    }
-    public Set<User> getSignedUsers() {
-        return this.signedUsers;
     }
     public LocalDateTime getCreationDateDate() {
         if (getCreationDate() == null || getCreationDate().isEmpty()) {
@@ -105,6 +99,10 @@ public class TournamentDto {
     }
 
     //Setters
+
+
+
+
     public void setState(Tournament.TournamentState state) {
         this.state = state;
     }
@@ -123,9 +121,6 @@ public class TournamentDto {
     public void setConclusionDate(String conclusionDate) {
         this.conclusionDate = conclusionDate;
     }
-    public void setTournamentCreator(User tournamentCreator) {
-        this.tournamentCreator = tournamentCreator;
-    }
     public void setNumberOfSignedUsers(int numberOfSignedUsers) {
         this.numberOfSignedUsers = numberOfSignedUsers;
     }
@@ -134,7 +129,31 @@ public class TournamentDto {
     }
 
 
-    public void addUser(User user) {
-        this.signedUsers.add(user);
+    public void addUser(int id) {
+        this.signedUsers.add(id);
+    }
+
+    public List<Integer> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<Integer> topics) {
+        this.topics = topics;
+    }
+
+    public Integer getTournamentCreator() {
+        return tournamentCreator;
+    }
+
+    public void setTournamentCreator(Integer tournamentCreator) {
+        this.tournamentCreator = tournamentCreator;
+    }
+
+    public List<Integer> getSignedUsers() {
+        return signedUsers;
+    }
+
+    public void setSignedUsers(List<Integer> signedUsers) {
+        this.signedUsers = signedUsers;
     }
 }

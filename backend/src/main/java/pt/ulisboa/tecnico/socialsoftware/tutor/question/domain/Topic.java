@@ -22,7 +22,7 @@ public class Topic {
     private String name;
 
 
-    @ManyToMany(mappedBy = "topics")
+    @ManyToMany
     private Set<Tournament> tournaments = new HashSet<>();
 
     @ManyToMany

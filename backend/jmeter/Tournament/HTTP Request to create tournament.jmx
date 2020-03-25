@@ -112,13 +112,13 @@
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
 	&quot;title&quot;: &quot;Title&quot;,&#xd;
-	&quot;state&quot;: &quot;CLOSED&quot;,&#xd;
+	&quot;state&quot;: &quot;CREATED&quot;,&#xd;
 	&quot;creationDate&quot;: &quot;2020-09-22 12:12&quot;,&#xd;
 	&quot;availableDate&quot;: &quot;2020-10-22 12:12&quot;,&#xd;
 	&quot;conclusionDate&quot;: &quot;2020-11-22 12:12&quot;,&#xd;
-	&quot;signedUsers&quot;:[{&quot;id&quot;:2}],&#xd;
-	&quot;topics&quot;:[{&quot;id&quot;: 82}],&#xd;
-	&quot;tournamentCreator&quot;: {&quot;id&quot;:1}&#xd;
+	&quot;signedUsers&quot;:[705,657,659,701],&#xd;
+	&quot;topics&quot;:[91],&#xd;
+	&quot;tournamentCreator&quot;: 700&#xd;
 }&#xd;
 </stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
@@ -151,7 +151,7 @@
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament state" enabled="true">
               <stringProp name="JSON_PATH">$.state</stringProp>
-              <stringProp name="EXPECTED_VALUE">CLOSED</stringProp>
+              <stringProp name="EXPECTED_VALUE">CREATED</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -178,7 +178,7 @@
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament numberOfSignedUsers" enabled="true">
               <stringProp name="JSON_PATH">$.numberOfSignedUsers</stringProp>
-              <stringProp name="EXPECTED_VALUE">2</stringProp>
+              <stringProp name="EXPECTED_VALUE">5</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -195,8 +195,8 @@
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament creator" enabled="true">
-              <stringProp name="JSON_PATH">$.tournamentCreator.id</stringProp>
-              <stringProp name="EXPECTED_VALUE">1</stringProp>
+              <stringProp name="JSON_PATH">$.tournamentCreator</stringProp>
+              <stringProp name="EXPECTED_VALUE">700</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>

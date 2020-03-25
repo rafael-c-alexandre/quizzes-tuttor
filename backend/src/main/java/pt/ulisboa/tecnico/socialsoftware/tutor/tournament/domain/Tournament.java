@@ -20,7 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class Tournament {
 
     public enum TournamentState {
-        OPEN, CLOSED
+        OPEN, CLOSED, CREATED
     }
 
     @Id
@@ -43,15 +43,15 @@ public class Tournament {
     @Enumerated(EnumType.STRING)
     private Tournament.TournamentState state;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<User> signedUsers = new HashSet<>();
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Topic> topics = new HashSet<>();
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User tournamentCreator;
 
@@ -65,10 +65,8 @@ public class Tournament {
         this.creationDate = tournamentDto.getCreationDateDate();
         setAvailableDate(tournamentDto.getAvailableDateDate());
         setConclusionDate(tournamentDto.getConclusionDateDate());
-        this.tournamentCreator = tournamentDto.getTournamentCreator();
         setTitle(tournamentDto.getTitle());
         this.state = tournamentDto.getState();
-        this.signedUsers = tournamentDto.getSignedUsers();
     }
 
     //Getters
