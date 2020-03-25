@@ -21,7 +21,7 @@
         <boolProp name="recycle">true</boolProp>
         <stringProp name="shareMode">shareMode.all</stringProp>
         <boolProp name="stopThread">false</boolProp>
-        <stringProp name="variableNames">userId, status,questionId, justification,course_id</stringProp>
+        <stringProp name="variableNames">userId, status,questionId, justification,courseId</stringProp>
       </CSVDataSet>
       <hashTree/>
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -115,7 +115,8 @@
 	&quot;status&quot;: &quot;${status}&quot;,&#xd;
 	&quot;questionId&quot;: ${questionId},&#xd;
 	&quot;justification&quot;: &quot;${justification}&quot;,&#xd;
-	&quot;course&quot;: &quot;${course_id}&quot;&#xd;
+	&quot;courseId&quot;: &quot;${courseId}&quot;&#xd;
+	&#xd;
 	&#xd;
 }&#xd;
 </stringProp>
@@ -138,18 +139,18 @@
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert user Id" enabled="true">
-              <stringProp name="JSON_PATH">$.userId</stringProp>
-              <stringProp name="EXPECTED_VALUE">676</stringProp>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Asser submission status" enabled="true">
+              <stringProp name="JSON_PATH">$.status</stringProp>
+              <stringProp name="EXPECTED_VALUE">${status}</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Asser submission status" enabled="true">
-              <stringProp name="JSON_PATH">$.status</stringProp>
-              <stringProp name="EXPECTED_VALUE">ONHOLD</stringProp>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert user Id" enabled="true">
+              <stringProp name="JSON_PATH">$.userId</stringProp>
+              <stringProp name="EXPECTED_VALUE">676</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -175,7 +176,7 @@
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert course id" enabled="true">
-              <stringProp name="JSON_PATH">$.course</stringProp>
+              <stringProp name="JSON_PATH">$.courseId</stringProp>
               <stringProp name="EXPECTED_VALUE">2</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -295,7 +296,7 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM submissions WHERE user_id = 676 AND status = &apos;ONHOLD&apos; AND question_id = 1315 AND justification = &apos;&apos; AND course_id = 2 ;
+          <stringProp name="query">DELETE FROM submissions WHERE user_id = 676 AND status = &apos;ONHOLD&apos; AND question_id = 1327 AND question_id = 1327 AND justification = &apos;&apos; AND course_id = 2 ;
 </stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
@@ -343,6 +344,10 @@
           </objProp>
           <stringProp name="filename"></stringProp>
         </ResultCollector>
+        <hashTree/>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <collectionProp name="HeaderManager.headers"/>
+        </HeaderManager>
         <hashTree/>
       </hashTree>
     </hashTree>

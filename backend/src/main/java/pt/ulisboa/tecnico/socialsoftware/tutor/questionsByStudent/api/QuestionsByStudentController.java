@@ -54,4 +54,11 @@ public class QuestionsByStudentController {
         return this.questionsByStudentService.studentSubmitQuestion(submissionDto,submissionDto.getUserId());
     }
 
+    @PutMapping("/courses/{courseId}/submissions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public SubmissionDto evaluateTest(Principal principal, @Valid @RequestBody SubmissionDto submissionDto, @PathVariable int courseId) {
+        User user = (User)((Authentication) principal).getPrincipal();
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+        return this.questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId());
+    }
 }

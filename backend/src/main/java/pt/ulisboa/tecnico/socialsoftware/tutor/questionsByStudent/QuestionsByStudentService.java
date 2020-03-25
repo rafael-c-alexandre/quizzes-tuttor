@@ -105,14 +105,13 @@ public class QuestionsByStudentService {
         //due to the lack of information provided, we decided that the approval/rejection
         //of the question by the teacher comes down to whether the teacher belongs to the question's course or not
         isTeacher(userId);
-        User student = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
+        User teacher = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
         isSubmitionOnHold(submission);
-        System.out.println(submission.getStatus());
         Question question = submission.getQuestion();
         Course course = question.getCourse();
 
-        Set cexec = student.getCourseExecutions();
+        Set cexec = teacher.getCourseExecutions();
         SubmissionDto submissionDto = new SubmissionDto(submission);
         return makeDecision(course, cexec, submissionDto, submission);
     }
@@ -142,8 +141,8 @@ public class QuestionsByStudentService {
     }
 
     private void isTeacher(Integer userId) {
-        User student = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
-        if (!student.getRole().toString().equals("TEACHER")) {
+        User teacher = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
+        if (!teacher.getRole().toString().equals("TEACHER")) {
             throw new TutorException(NOT_TEACHER_ERROR);
         }
     }
