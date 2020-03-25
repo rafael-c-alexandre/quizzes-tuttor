@@ -15,13 +15,13 @@
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data to create submission" enabled="true">
         <stringProp name="delimiter">,</stringProp>
         <stringProp name="fileEncoding"></stringProp>
-        <stringProp name="filename">/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/questionbystudent/SubmissionData.csv</stringProp>
+        <stringProp name="filename">SubmissionData.csv</stringProp>
         <boolProp name="ignoreFirstLine">false</boolProp>
         <boolProp name="quotedData">false</boolProp>
         <boolProp name="recycle">true</boolProp>
         <stringProp name="shareMode">shareMode.all</stringProp>
         <boolProp name="stopThread">false</boolProp>
-        <stringProp name="variableNames">userId, status,questionId, justification,courseId</stringProp>
+        <stringProp name="variableNames">userId, status,questionId, justification,course_id</stringProp>
       </CSVDataSet>
       <hashTree/>
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
@@ -115,7 +115,7 @@
 	&quot;status&quot;: &quot;${status}&quot;,&#xd;
 	&quot;questionId&quot;: ${questionId},&#xd;
 	&quot;justification&quot;: &quot;${justification}&quot;,&#xd;
-	&quot;course&quot;: &quot;${courseId}&quot;&#xd;
+	&quot;course&quot;: &quot;${course_id}&quot;&#xd;
 	&#xd;
 }&#xd;
 </stringProp>
@@ -295,7 +295,7 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM submissions WHERE user_id = 676 AND status = &apos;ONHOLD&apos; AND question_id = 1327 AND question_id = 1327 AND justification = &apos;&apos; AND course_id = 2 ;
+          <stringProp name="query">DELETE FROM submissions WHERE user_id = 676 AND status = &apos;ONHOLD&apos; AND question_id = 1315 AND justification = &apos;&apos; AND course_id = 2 ;
 </stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
@@ -343,10 +343,6 @@
           </objProp>
           <stringProp name="filename"></stringProp>
         </ResultCollector>
-        <hashTree/>
-        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
-          <collectionProp name="HeaderManager.headers"/>
-        </HeaderManager>
         <hashTree/>
       </hashTree>
     </hashTree>

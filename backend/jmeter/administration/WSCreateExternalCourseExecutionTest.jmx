@@ -94,12 +94,14 @@
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
+	&#xd;
+	&#xd;
 	&quot;courseType&quot;: &quot;EXTERNAL&quot;,&#xd;
 	&quot;name&quot;: &quot;Demo Course&quot;,&#xd;
 	&quot;courseExecutionType&quot;: &quot;EXTERNAL&quot;,&#xd;
-
+&#xd;
 	&quot;acronym&quot;: &quot;EC99&quot;,&#xd;
-
+&#xd;
 	&quot;academicTerm&quot;: &quot;first term&quot;&#xd;
 }&#xd;
 </stringProp>
@@ -151,9 +153,7 @@
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert course execution acronym" enabled="true">
               <stringProp name="JSON_PATH">$.acronym</stringProp>
-
-              <stringProp name="EXPECTED_VALUE">LC120</stringProp>
-
+              <stringProp name="EXPECTED_VALUE">EC99</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -270,13 +270,13 @@
           <stringProp name="driver">org.postgresql.Driver</stringProp>
           <stringProp name="initQuery"></stringProp>
           <boolProp name="keepAlive">true</boolProp>
-          <stringProp name="password"></stringProp>
+          <stringProp name="password">alexande99</stringProp>
           <stringProp name="poolMax">0</stringProp>
           <boolProp name="preinit">false</boolProp>
           <stringProp name="timeout">10000</stringProp>
           <stringProp name="transactionIsolation">DEFAULT</stringProp>
           <stringProp name="trimInterval">60000</stringProp>
-          <stringProp name="username">ars</stringProp>
+          <stringProp name="username">rafael99</stringProp>
         </JDBCDataSource>
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">

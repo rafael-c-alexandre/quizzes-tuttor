@@ -100,7 +100,7 @@
             <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data to create Question submissions" enabled="true">
               <stringProp name="delimiter">,</stringProp>
               <stringProp name="fileEncoding"></stringProp>
-              <stringProp name="filename">/Users/rafael/Documents/IST/ES/project/es20al_21-project/backend/jmeter/questionbystudent/SubmissionData.csv</stringProp>
+              <stringProp name="filename">SubmissionData.csv</stringProp>
               <boolProp name="ignoreFirstLine">false</boolProp>
               <boolProp name="quotedData">false</boolProp>
               <boolProp name="recycle">true</boolProp>

@@ -1,9 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.QuestionController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto;
@@ -13,6 +18,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
 
+import java.security.Principal;
+import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
 
 
@@ -26,6 +35,14 @@ public class QuestionsByStudentController {
 
     @Autowired
     private QuestionsByStudentService questionsByStudentService;
+
+
+
+    @GetMapping("/users/{userId}/submissions")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<SubmissionDto> getStudentSubmissions(@PathVariable Integer userId ) {
+        return questionsByStudentService.findQuestionsSubmittedByStudent(userId);
+    }
 
 
 
