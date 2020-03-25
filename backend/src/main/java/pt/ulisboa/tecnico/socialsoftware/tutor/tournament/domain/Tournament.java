@@ -68,6 +68,7 @@ public class Tournament {
         this.tournamentCreator = tournamentDto.getTournamentCreator();
         setTitle(tournamentDto.getTitle());
         this.state = tournamentDto.getState();
+        this.signedUsers = tournamentDto.getSignedUsers();
     }
 
     //Getters

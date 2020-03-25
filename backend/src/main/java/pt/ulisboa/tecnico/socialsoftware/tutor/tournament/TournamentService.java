@@ -116,8 +116,15 @@ public class TournamentService {
              tournament.setCreationDate(LocalDateTime.parse(tournamentDto.getCreationDate(), formatter));
          }
 
+        if (tournament.getTournamentCreator() != null){
+            if (!tournament.getSignedUsers().contains(tournament.getTournamentCreator())){
+                tournament.addUser(tournament.getTournamentCreator());
+            }
+        }
+
         tournamentRepository.save(tournament);
-        return new TournamentDto(tournament);
+
+        return  new TournamentDto(tournament);
     }
 
     private void getTopics(TournamentDto tournamentDto, Tournament tournament) {
