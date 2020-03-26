@@ -183,7 +183,7 @@ for (Object row : resultSet ) {
     result.append(System.getProperty(&quot;line.separator&quot;))
 }
 
-org.apache.commons.io.FileUtils.writeStringToFile(new File(&quot;~/tournamentId.csv&quot;), result.toString(), &quot;UTF-8&quot;)
+org.apache.commons.io.FileUtils.writeStringToFile(new File(&quot;tournamentId.csv&quot;), result.toString(), &quot;UTF-8&quot;)
 </stringProp>
             <stringProp name="scriptLanguage">groovy</stringProp>
           </JSR223Assertion>
@@ -327,7 +327,7 @@ org.apache.commons.io.FileUtils.writeStringToFile(new File(&quot;~/tournamentId.
             <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data to create tournament" enabled="true">
               <stringProp name="delimiter">,</stringProp>
               <stringProp name="fileEncoding"></stringProp>
-              <stringProp name="filename">~/tournamentId.csv</stringProp>
+              <stringProp name="filename">tournamentId.csv</stringProp>
               <boolProp name="ignoreFirstLine">true</boolProp>
               <boolProp name="quotedData">false</boolProp>
               <boolProp name="recycle">true</boolProp>

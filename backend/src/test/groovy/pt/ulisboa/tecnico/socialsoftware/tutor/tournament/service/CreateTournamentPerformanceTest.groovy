@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
@@ -21,17 +22,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 
 @DataJpaTest
 class CreateTournamentPerformanceTest extends Specification {
-    static final String NAME = "Pedro"
-    static final String USERNAME = "Skr"
-    static final Integer KEY = 10
 
     static final String TOURNAMENT_TITLE = "Tournament"
     static final String CREATION_DATE = "2020-09-22 12:12"
     static final String AVAILABLE_DATE = "2020-09-23 12:12"
     static final String CONCLUSION_DATE = "2020-09-24 12:12"
     static final Integer ID = 2
-    static final Tournament.TournamentState STATE = Tournament.TournamentState.OPEN
-    static final User USER = new User("Pedro","Minorca",2, User.Role.STUDENT)
+    static final Tournament.TournamentState STATE = Tournament.TournamentState.CREATED
+    static final Integer USER = 1
+    static final Integer TOPIC = 1
 
     @Autowired
     TournamentService tournamentService
@@ -46,19 +45,19 @@ class CreateTournamentPerformanceTest extends Specification {
     UserRepository userRepository
 
     def "performance testing to create 1000 tournaments"() {
+        def topic = new Topic()
+        topicRepository.save(topic)
+        def user = new User()
+        user.setKey(1)
+        userRepository.save(user)
 
         given: "500 tournaments created"
         ArrayList<TournamentDto> tournamentDtoList = new ArrayList<TournamentDto>()
         1.upto(500, {
-            def topic = new Topic()
-            topic.setId(1 + it.intValue())
-            topicRepository.save(topic)
 
-            def topicDto = new TopicDto()
-            topicDto.setId(topic.getId())
 
-            def topiclist = new ArrayList<TopicDto>()
-            topiclist.add(topicDto)
+            def topiclist = new ArrayList<Integer>()
+            topiclist.add(1)
 
             def tournamentDto = new TournamentDto()
             tournamentDto.setId(ID)
@@ -76,7 +75,7 @@ class CreateTournamentPerformanceTest extends Specification {
         when:
         1.upto(500,{
             println(tournamentDtoList.get(it.intValue()-1))
-            tournamentService.createTournament(tournamentDtoList.get(it.intValue()-1),USER.getId())})
+            tournamentService.createTournament(tournamentDtoList.get(it.intValue()-1))})
 
             then:
             true
