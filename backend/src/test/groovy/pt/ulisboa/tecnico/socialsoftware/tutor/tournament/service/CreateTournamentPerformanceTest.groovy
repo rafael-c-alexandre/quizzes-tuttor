@@ -74,8 +74,6 @@ class CreateTournamentPerformanceTest extends Specification {
             true
         }
 
-
-
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {
 
@@ -83,6 +81,5 @@ class CreateTournamentPerformanceTest extends Specification {
         TournamentService tournamentService() {
             return new TournamentService()
         }
-
     }
 }
