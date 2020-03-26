@@ -38,10 +38,13 @@ public class TournamentDto {
     public TournamentDto(Tournament tournament) {
 
         this.id = tournament.getId();
-        this.availableDate = tournament.getAvailableDate().format(formatter);
-        this.creationDate = tournament.getCreationDate().format(formatter);
-        this.conclusionDate = tournament.getConclusionDate().format(formatter);
-        if(this.getSignedUsers() != null)
+        if(tournament.getAvailableDate() != null)
+            this.availableDate = tournament.getAvailableDate().format(formatter);
+        if(tournament.getCreationDate() != null)
+            this.creationDate = tournament.getCreationDate().format(formatter);
+        if(tournament.getConclusionDate() != null)
+            this.conclusionDate = tournament.getConclusionDate().format(formatter);
+        if(tournament.getSignedUsers() != null)
             this.numberOfSignedUsers = tournament.getSignedUsers().size();
         this.state = tournament.getState();
         this.title = tournament.getTitle();

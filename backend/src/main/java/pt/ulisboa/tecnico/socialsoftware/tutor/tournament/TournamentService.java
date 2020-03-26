@@ -197,12 +197,13 @@ public class TournamentService {
 
         if(user.getRole() == User.Role.STUDENT) {
             if (tournament.getState() == Tournament.TournamentState.CREATED) {
-                if(!(tournament.getSignedUsers().contains(userId))){
-                    tournament.addUser(user);
+                for(User u : tournament.getSignedUsers()){
+                    if(u.getId() == userId) {
+                        throw new TutorException(USER_IS_ALREADY_ENROLLED);
+                    }
                 }
-                else{
-                    throw new TutorException(USER_IS_ALREADY_ENROLLED);
-                }
+                tournament.addUser(user);
+
             } else {
                 throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
             }
