@@ -30,7 +30,6 @@ class CreateTournamentPerformanceTest extends Specification {
     static final Integer ID = 2
     static final Tournament.TournamentState STATE = Tournament.TournamentState.CREATED
     static final Integer USER = 1
-    static final Integer TOPIC = 1
 
     @Autowired
     TournamentService tournamentService
@@ -44,7 +43,7 @@ class CreateTournamentPerformanceTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def "performance testing to create 1000 tournaments"() {
+    def "performance testing to create 500 tournaments"() {
         def topic = new Topic()
         topicRepository.save(topic)
         def user = new User()
