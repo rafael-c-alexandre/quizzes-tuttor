@@ -67,7 +67,7 @@ class CancelTournamentPerformanceTest extends Specification {
         1.upto(500, {
             println(tournamentDtoList.get(it.intValue() - 1))
             tournamentService.createTournament(tournamentDtoList.get(it.intValue() - 1))
-            tournamentService.cancelTournament(tournamentDtoList.get(it.intValue() - 1).getId(), tournamentDtoList.get(it.intValue() - 1).getTournamentCreator())
+            tournamentService.cancelTournament(it.intValue(), tournamentDtoList.get(it.intValue() - 1).getTournamentCreator())
         })
 
         then:
