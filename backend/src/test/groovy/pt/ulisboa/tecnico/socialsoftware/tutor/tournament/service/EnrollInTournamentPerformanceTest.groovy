@@ -20,7 +20,7 @@ class EnrollInTournamentPerformanceTest extends Specification {
 
     static final String NAME = "Name"
     static final String USERNAME = "Username"
-    static final String KEY = 1
+    static final Integer KEY = 0
     static final User.Role ROLE = User.Role.STUDENT
 
 
@@ -46,29 +46,29 @@ class EnrollInTournamentPerformanceTest extends Specification {
         topiclist.add(1)
 
         def tournament = new Tournament()
+        tournament.setState(Tournament.TournamentState.CREATED)
         tournamentRepository.save(tournament)
 
 
         and: "500 users"
 
-        ArrayList<UserDto> userDtoList = new ArrayList<UserDto>()
+        ArrayList<User> userList = new ArrayList<User>()
         1.upto(500, {
 
             def user = new User()
-            user.setName(NAME)
-            user.setUsername(USERNAME)
-            user.setKey(KEY+it.intValue())
+            user.setKey(KEY + it.intValue())
+            user.setId(KEY + it.intValue())
             user.setRole(ROLE)
-            userDtoList.add(user)
+            userList.add(user)
+            userRepository.save(user)
 
 
         })
 
         when:
         1.upto(500,{
-            println(userDtoList.get(it.intValue()-1))
-            tournamentService.createTournament()
-            tournamentService.enrollInTournament(1,userDtoList.get(it.intValue()-1).getId())})
+            println(userList.get(it.intValue()-1))
+            tournamentService.enrollInTournament(1,userList.get(it.intValue()-1).getId())})
 
             then:
             true
