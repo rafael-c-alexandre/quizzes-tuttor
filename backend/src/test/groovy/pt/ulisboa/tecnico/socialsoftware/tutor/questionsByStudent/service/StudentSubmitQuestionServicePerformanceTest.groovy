@@ -50,18 +50,19 @@ class StudentSubmitQuestionServicePerformanceTest extends Specification{
         userRepository.save(user)
 
 
-        and: "a 500  question submissionsDto"
+        and: "a 500  question submissionDto"
         ArrayList<SubmissionDto> submissionDtoList = new ArrayList<SubmissionDto>()
         1.upto(500, {
-            def question = new Question()
+            def questionDto = new QuestionDto()
+            def question = new Question(course, questionDto, Question.Status.PENDING)
             question.setCourse(course)
             question.setKey(KEY + it.intValue())
             questionRepository.save(question)
             def submissionDto = new SubmissionDto()
             submissionDto.setStatus("ONHOLD")
-            submissionDto.setCourse(course.getId())
+            submissionDto.setCourseId(course.getId())
             submissionDto.setJustification("")
-            submissionDto.setQuestion(question.getId())
+            submissionDto.setQuestionId(question.getId())
             submissionDto.setUser(user.getId())
             submissionDtoList.add(submissionDto)
 

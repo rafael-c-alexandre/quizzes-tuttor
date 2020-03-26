@@ -6,15 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.QuestionController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
+
 
 import javax.validation.Valid;
 
@@ -22,7 +20,7 @@ import java.security.Principal;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
+
 
 
 @RestController
@@ -40,7 +38,7 @@ public class QuestionsByStudentController {
 
     @GetMapping("/users/{userId}/submissions")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<SubmissionDto> getStudentSubmissions(@PathVariable Integer userId ) {
+    public List<SubmissionDto> getStudentSubmissions(@PathVariable int userId ) {
         return questionsByStudentService.findQuestionsSubmittedByStudent(userId);
     }
 
@@ -48,17 +46,20 @@ public class QuestionsByStudentController {
 
     @PostMapping("/courses/{courseId}/submissions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public SubmissionDto createSubmission(@PathVariable int courseId, @Valid @RequestBody SubmissionDto submissionDto) {
+    public SubmissionDto createSubmission( @PathVariable int courseId, @Valid @RequestBody SubmissionDto submissionDto) {
         submissionDto.setStatus(Submission.Status.ONHOLD.name());
-
         return this.questionsByStudentService.studentSubmitQuestion(submissionDto,submissionDto.getUserId());
     }
 
     @PutMapping("/courses/{courseId}/submissions")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public SubmissionDto evaluateTest(Principal principal, @Valid @RequestBody SubmissionDto submissionDto, @PathVariable int courseId) {
+    public SubmissionDto evaluateQuestion(Principal principal, @Valid @RequestBody SubmissionDto submissionDto, @PathVariable int courseId) {
+
         User user = (User)((Authentication) principal).getPrincipal();
+
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
-        return this.questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId());
+
+        return this.questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId(), submissionDto.getTeacherDecision());
+
     }
 }

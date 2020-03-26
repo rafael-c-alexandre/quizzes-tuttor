@@ -52,22 +52,26 @@ public class QuestionsByStudentService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto studentSubmitQuestion(SubmissionDto submissionDto, Integer userId) {
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public SubmissionDto studentSubmitQuestion(SubmissionDto submissionDto, int userId) {
 
         isStudent(userId);
         Question question = questionRepository.findById(submissionDto.getQuestionId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND,submissionDto.getQuestionId()));
         User student = userRepository.findById(submissionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND,submissionDto.getUserId()));
 
-
-
         Submission submission = new Submission(question, student);
-        submissionRepository.save(submission);
         student.addSubmission(submission);
         question.getCourse().addSubmission(submission);
-        return submissionDto;
+        submissionRepository.save(submission);
+        SubmissionDto submissionResult = new SubmissionDto(submission);
+
+        return submissionResult;
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<SubmissionDto> findQuestionsSubmittedByStudent(Integer userId) {
         isStudent(userId);
         return submissionRepository.findSubmissionByStudent(userId).stream().map(SubmissionDto::new).collect(Collectors.toList());
@@ -82,8 +86,7 @@ public class QuestionsByStudentService {
         submissionDto.setJustification(justification);
         submission.setJustification(justification);
         submission.setStatus(Submission.Status.APPROVED);
-        Question question = submission.getQuestion();
-        questionRepository.save(question);
+        submission.getQuestion().setStatus(Question.Status.DISABLED); //becomes disabled before teacher makes it available to the people
 
     }
     @Retryable(
@@ -95,50 +98,53 @@ public class QuestionsByStudentService {
         submissionDto.setJustification(justification);
         submission.setJustification(justification);
         submission.setStatus(Submission.Status.REJECTED);
+        submission.getQuestion().setStatus(Question.Status.REMOVED);
     }
 
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto teacherEvaluatesQuestion(int userId, int submissionId) {
-        //due to the lack of information provided, we decided that the approval/rejection
-        //of the question by the teacher comes down to whether the teacher belongs to the question's course or not
-        isTeacher(userId);
-        User teacher = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
-        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
-        isSubmitionOnHold(submission);
-        Question question = submission.getQuestion();
-        Course course = question.getCourse();
+    public SubmissionDto makeDecision( boolean isApproved, SubmissionDto submissionDto, Submission submission) {
+        if (isApproved) {
+            makeSubmissionApproved(submissionDto, "Question well structured and correct", submission);
+            return submissionDto;
+        }
 
-        Set cexec = teacher.getCourseExecutions();
+        else {
+            makeSubmissionRejected(submissionDto, "Question is not correct", submission);
+            return submissionDto; }
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+
+    public SubmissionDto teacherEvaluatesQuestion(int userId, int submissionId, boolean isApproved) {
+
+        isTeacher(userId);
+
+        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+
+        isSubmitionOnHold(submission);
+
+
         SubmissionDto submissionDto = new SubmissionDto(submission);
-        return makeDecision(course, cexec, submissionDto, submission);
+        submissionDto.setId(submission.getId());
+        submissionDto.setTeacherDecision(isApproved);
+        submission.setTeacherDecision(isApproved);
+
+        return makeDecision( isApproved, submissionDto, submission);
     }
 
     private void isSubmitionOnHold(Submission submission) {
         if(!submission.getStatus().toString().equals("ONHOLD")){
-            throw new TutorException(SUBMITION_ALREADY_EVALUATED);
+            throw new TutorException(SUBMITION_ALREADY_EVALUATED, submission.getId());
         }
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto makeDecision(Course course, Iterable<CourseExecution> cexec, SubmissionDto submissionDto, Submission submission) {
-        for (CourseExecution f : cexec) {
 
-            if (f.getCourse().equals(course)) {
-                makeSubmissionApproved(submissionDto, "Question well structered and correct", submission);
-
-                return submissionDto;
-            }
-
-        }
-        makeSubmissionRejected(submissionDto, "Teacher is not assigned to this course", submission);
-        return submissionDto;
-    }
 
     private void isTeacher(Integer userId) {
         User teacher = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));

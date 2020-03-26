@@ -5,36 +5,37 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.SubmissionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.*
 import spock.lang.Specification
 
 @DataJpaTest
-class TeacherEvaluatesQuestionServicePerformanceTest extends Specification{
+class ListSubmissionServicePerformanceTest extends Specification {
     static final String COURSE = "CourseOne"
-    static final String NAME = "Francisco"
-    static final String USERNAME = "Cecilio"
+    static final Integer QUESTION_KEY = 12
+    static final Integer STUDENT_ID = 676
+    static final String NAME = "Rafael"
+    static final String USERNAME = "Rafa"
     static final Integer KEY = 10
-    static final String ACRONYM =14
-    static final String ACADEMIC_TERM =14
 
     @Autowired
     QuestionsByStudentService questionsByStudentService
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
     CourseExecutionRepository courseExecutionRepository
 
     @Autowired
-    CourseRepository courseRepository
+    UserRepository userRepository
 
     @Autowired
     SubmissionRepository submissionRepository
@@ -42,35 +43,27 @@ class TeacherEvaluatesQuestionServicePerformanceTest extends Specification{
     @Autowired
     QuestionRepository questionRepository
 
-    @Autowired
-    UserRepository userRepository
-
-    def "performance testing to create 500 question submissions"() {
-        given: "a course"
+    def "performance testing to get 1000 lists of student submissions"() {
+        given: "a user"
+        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
+        userRepository.save(user)
+        and: "a course"
         def course = new Course(COURSE, Course.Type.TECNICO)
         courseRepository.save(course)
-        and: "a user"
-        def user = new User(NAME, USERNAME,KEY, User.Role.TEACHER)
-        userRepository.save(user)
-
-
-        and: "a 500 submissions array"
-        ArrayList<Submission> submissionList = new ArrayList<Submission>()
-        1.upto(500, {
-            def question = new Question()
+        
+        and: "a 1000 question submissions"
+        1.upto(1000, {
+            and: "a question"
+            def questionDto = new QuestionDto()
+            def question = new Question(course, questionDto, Question.Status.PENDING)
+            question.setKey(QUESTION_KEY+it.intValue())
             question.setCourse(course)
-            question.setKey(KEY + it.intValue())
             questionRepository.save(question)
-            def submission = new Submission(question, user)
-            submissionRepository.save(submission)
-            submissionList.add(submission)
-
+            submissionRepository.save(new Submission(question, user))
         })
 
         when:
-
-        1.upto(500, {
-            questionsByStudentService.teacherEvaluatesQuestion(user.getId(), submissionList.get(it.intValue()-1).getId(),true)})
+        1.upto(1000, { questionsByStudentService.findQuestionsSubmittedByStudent(user.getId())})
 
         then:
         true
@@ -80,7 +73,7 @@ class TeacherEvaluatesQuestionServicePerformanceTest extends Specification{
     static class ServiceImplTestContextConfiguration {
 
         @Bean
-         QuestionsByStudentService questionsByStudentService(){
+        QuestionsByStudentService questionsByStudentService() {
             return new QuestionsByStudentService()
         }
 
