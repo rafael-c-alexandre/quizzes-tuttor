@@ -2,9 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto;
 
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+
 
 
 
@@ -18,6 +16,7 @@ public class SubmissionDto implements Serializable{
     private Integer questionId;
     private String justification;
     private Integer courseId;
+    private boolean teacherDecision;
 
     public SubmissionDto() {
 
@@ -30,6 +29,7 @@ public class SubmissionDto implements Serializable{
         this.questionId = submission.getQuestion().getId();
         this.justification = submission.getJustification();
         this.courseId = submission.getCourse().getId();
+        this.teacherDecision = submission.getTeacherDecision();
     }
 
     public Integer getId() {
@@ -44,8 +44,8 @@ public class SubmissionDto implements Serializable{
         return this.userId;
     }
 
-    public void setUser(Integer user) {
-        this.userId = user;
+    public void setUser(Integer userId) {
+        this.userId = userId;
     }
 
     public String getStatus() {
@@ -60,7 +60,7 @@ public class SubmissionDto implements Serializable{
         return questionId;
     }
 
-    public void setQuestion(Integer question) {
+    public void setQuestionId(int question) {
         this.questionId = question;
     }
 
@@ -72,23 +72,32 @@ public class SubmissionDto implements Serializable{
         this.justification = justification;
     }
 
-    public Integer getCourse() {
+    public int getCourseId() {
         return courseId;
     }
 
-    public void setCourse(Integer course) {
-        this.courseId = course;
+    public void setCourseId(Integer courseId) {
+        this.courseId = courseId;
+    }
+
+    public boolean getTeacherDecision() {
+        return teacherDecision;
+    }
+
+    public void setTeacherDecision(boolean teacherDecision) {
+        this.teacherDecision = teacherDecision;
     }
 
     @Override
     public String toString() {
         return "SubmissionDto{" +
                 "id=" + id +
-                ", user=" + userId +
+                ", userId=" + userId +
                 ", status='" + status + '\'' +
-                ", question=" + questionId +
+                ", questionId=" + questionId +
                 ", justification='" + justification + '\'' +
-                ", course=" + courseId +
+                ", courseId=" + courseId +
+                ", teacherDecision=" + teacherDecision +
                 '}';
     }
 }

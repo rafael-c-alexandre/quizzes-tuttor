@@ -68,7 +68,8 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "a questionDto"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_ID)
         question.setCourse(course)
         questionRepository.save(question)
@@ -76,9 +77,9 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         and: " a submissionDto"
         def submissionDto = new SubmissionDto()
         submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourse(COURSE_ID)
+        submissionDto.setCourseId(COURSE_ID)
         submissionDto.setJustification("")
-        submissionDto.setQuestion(question.getId())
+        submissionDto.setQuestionId(question.getId())
         submissionDto.setUser(user.getId())
 
         when:
@@ -96,17 +97,18 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
-        and: "a questionDto"
-        def question = new Question()
+        and: "a question"
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_ID)
         question.setCourse(course)
         questionRepository.save(question)
 
         def submissionDto = new SubmissionDto()
         submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourse(COURSE_ID)
+        submissionDto.setCourseId(COURSE_ID)
         submissionDto.setJustification("")
-        submissionDto.setQuestion(question.getId())
+        submissionDto.setQuestionId(question.getId())
         submissionDto.setUser(user.getId())
 
 
@@ -130,14 +132,15 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "a questionDto"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setId(QUESTION_ID)
 
         def submissionDto = new SubmissionDto()
         submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourse(COURSE_ID)
+        submissionDto.setCourseId(COURSE_ID)
         submissionDto.setJustification("")
-        submissionDto.setQuestion(question.getId())
+        submissionDto.setQuestionId(question.getId())
         submissionDto.setUser(user.getId())
 
 
