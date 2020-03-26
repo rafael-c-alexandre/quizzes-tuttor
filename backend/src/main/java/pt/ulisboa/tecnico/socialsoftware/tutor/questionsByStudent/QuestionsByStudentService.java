@@ -101,7 +101,7 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto teacherEvaluatesQuestion(Integer userId, int submissionId) {
+    public SubmissionDto teacherEvaluatesQuestion(int userId, int submissionId) {
         //due to the lack of information provided, we decided that the approval/rejection
         //of the question by the teacher comes down to whether the teacher belongs to the question's course or not
         isTeacher(userId);

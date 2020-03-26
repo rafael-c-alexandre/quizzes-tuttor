@@ -5,9 +5,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission
@@ -17,17 +18,20 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import java.lang.reflect.Array
-
 @DataJpaTest
-class StudentSubmitQuestionServicePerformanceTest extends Specification{
+class TeacherEvaluatesQuestionServicePerformanceTest extends Specification{
     static final String COURSE = "CourseOne"
-    static final String NAME = "Rafael"
-    static final String USERNAME = "Rafa"
+    static final String NAME = "Francisco"
+    static final String USERNAME = "Cecilio"
     static final Integer KEY = 10
+    static final String ACRONYM =14
+    static final String ACADEMIC_TERM =14
 
     @Autowired
     QuestionsByStudentService questionsByStudentService
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     CourseRepository courseRepository
@@ -50,27 +54,23 @@ class StudentSubmitQuestionServicePerformanceTest extends Specification{
         userRepository.save(user)
 
 
-        and: "a 500  question submissionsDto"
-        ArrayList<SubmissionDto> submissionDtoList = new ArrayList<SubmissionDto>()
+        and: "a 500 submissions array"
+        ArrayList<Submission> submissionList = new ArrayList<Submission>()
         1.upto(500, {
             def question = new Question()
             question.setCourse(course)
             question.setKey(KEY + it.intValue())
             questionRepository.save(question)
-            def submissionDto = new SubmissionDto()
-            submissionDto.setStatus("ONHOLD")
-            submissionDto.setCourse(course.getId())
-            submissionDto.setJustification("")
-            submissionDto.setQuestion(question.getId())
-            submissionDto.setUser(user.getId())
-            submissionDtoList.add(submissionDto)
+            def submission = new Submission(question, user)
+            submissionRepository.save(submission)
+            submissionList.add(submission)
 
         })
 
         when:
 
         1.upto(500, {
-            questionsByStudentService.studentSubmitQuestion(submissionDtoList.get(it.intValue()-1),user.getId())})
+            questionsByStudentService.teacherEvaluatesQuestion(user.getId(), submissionList.get(it.intValue()-1).getId())})
 
         then:
         true
