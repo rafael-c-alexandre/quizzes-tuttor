@@ -209,11 +209,8 @@
 	&quot;userId&quot;: ${userId},&#xd;
 	&quot;status&quot;: &quot;${status}&quot;,&#xd;
 	&quot;questionId&quot;: ${__property(questionId)},&#xd;
-	&quot;justification&quot;: &quot;${justification}&quot;,&#xd;
-	&quot;courseId&quot;: ${courseId}&#xd;
-	&#xd;
-	&#xd;
-}&#xd;
+	&quot;justification&quot;: &quot;${justification}&quot;&#xd;
+	&#xd;}&#xd;
 </stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
