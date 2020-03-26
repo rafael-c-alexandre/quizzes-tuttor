@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
@@ -79,7 +80,8 @@ class ListSubmissionsServiceSpockTest extends Specification {
         def course = new Course(WRONG_COURSE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "a question"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         questionRepository.save(question);
@@ -107,7 +109,8 @@ class ListSubmissionsServiceSpockTest extends Specification {
         def course = new Course(WRONG_COURSE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "a question"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         questionRepository.save(question);

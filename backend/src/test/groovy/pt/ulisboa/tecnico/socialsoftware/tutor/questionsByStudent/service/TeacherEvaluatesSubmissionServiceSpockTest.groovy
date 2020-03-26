@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
@@ -76,7 +77,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
 
         when:
 
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId())
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
 
         then:
         def exception = thrown(TutorException)
@@ -91,7 +92,8 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         and: "a question"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         and: "a submission"
@@ -100,7 +102,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
 
         when:
 
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId())
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
 
         then:
         def exception = thrown(TutorException)
@@ -122,7 +124,8 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         set.add(courseExecution)
         user.setCourseExecutions(set)
         and: "a question"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         questionRepository.save(question)
@@ -131,7 +134,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionRepository.save(submission)
 
         when:
-        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId())
+        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
 
         then: "the returned data are correct"
         result.getStatus().toString() == "APPROVED"
@@ -156,7 +159,8 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         set.add(courseExecution)
         user.setCourseExecutions(set)
         and: "a question"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_ID)
         question.setCourse(course)
         questionRepository.save(question)
@@ -165,7 +169,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionRepository.save(submission)
 
         when:
-        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId())
+        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), false)
 
         then: "the returned data are correct"
         result.getStatus().toString() == "REJECTED"
@@ -188,7 +192,8 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         set.add(courseExecution)
         user.setCourseExecutions(set)
         and: "a question"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         questionRepository.save(question);
@@ -197,8 +202,8 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionRepository.save(submission)
 
         when:
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId())
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId())
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
 
         then:
         thrown(TutorException)

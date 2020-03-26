@@ -34,6 +34,8 @@ public class Submission {
 
     private String justification;
 
+    private boolean teacherDecision;
+
     @Enumerated(EnumType.STRING)
     private Status status = Status.ONHOLD;
 
@@ -46,6 +48,8 @@ public class Submission {
         this.user = user;
         this.justification = "";
         this.course = question.getCourse();
+        this.question.setStatus(Question.Status.PENDING);
+        this.teacherDecision = false;
     }
 
     public Integer getId() {
@@ -94,5 +98,13 @@ public class Submission {
 
     public void setCourse(Course course) {
         this.course = course;
+    }
+
+    public boolean getTeacherDecision() {
+        return teacherDecision;
+    }
+
+    public void setTeacherDecision(boolean teacherDecision) {
+        this.teacherDecision = teacherDecision;
     }
 }
