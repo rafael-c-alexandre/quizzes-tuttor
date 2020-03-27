@@ -51,4 +51,13 @@ public class TournamentController {
         return tournamentService.enrollInTournament(tournamentId,userId);
     }
 
+    //openTournament in tournament
+    @PutMapping("/tournaments/open/{tournamentId}/{userId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public TournamentDto openTournament(@PathVariable Integer tournamentId,@PathVariable Integer userId){
+        logger.debug("cancelTournament tournamentId: {}: ", tournamentId);
+        logger.debug("cancelTournament creatorId: {}: ", userId);
+        return tournamentService.openTournament(tournamentId,userId);
+    }
+
 }
