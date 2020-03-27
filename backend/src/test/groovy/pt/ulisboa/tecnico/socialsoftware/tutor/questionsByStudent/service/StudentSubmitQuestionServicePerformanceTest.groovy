@@ -50,9 +50,9 @@ class StudentSubmitQuestionServicePerformanceTest extends Specification{
         userRepository.save(user)
 
 
-        and: "a 500  question submissionDto"
+        and: "a 2000  question submissionDto"
         ArrayList<SubmissionDto> submissionDtoList = new ArrayList<SubmissionDto>()
-        1.upto(500, {
+        1.upto(2000, {
             def questionDto = new QuestionDto()
             def question = new Question(course, questionDto, Question.Status.PENDING)
             question.setCourse(course)
@@ -70,7 +70,7 @@ class StudentSubmitQuestionServicePerformanceTest extends Specification{
 
         when:
 
-        1.upto(500, {
+        1.upto(2000, {
             questionsByStudentService.studentSubmitQuestion(submissionDtoList.get(it.intValue()-1),user.getId())})
 
         then:
