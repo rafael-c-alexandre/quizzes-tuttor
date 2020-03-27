@@ -55,6 +55,8 @@ public class Tournament {
     @JoinColumn(name = "user_id")
     private User tournamentCreator;
 
+    // JFF: It would make sense to link a tournament to a course execution
+
     public Tournament() {}
 
     public  Tournament(TournamentDto tournamentDto){

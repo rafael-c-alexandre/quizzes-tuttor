@@ -48,13 +48,14 @@ public class QuestionsByStudentService {
 
         isStudent(user);
         Question question = questionRepository.findById(questionDto.getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND,questionDto.getId()));
+        // JFF: If the question doesn't exist, shouldn't this service create it?
         User student = userRepository.findByUsername(user.getUsername());
 
         Submission submission = new Submission(question, student);
         SubmissionDto submissionDto = new SubmissionDto(submission);
         submissionRepository.save(submission);
 
-        submissionDto.setStatus("ONHOLD");
+        submissionDto.setStatus("ONHOLD"); // JFF: This can improve substantially; see QuestioService
         return submissionDto;
     }
 

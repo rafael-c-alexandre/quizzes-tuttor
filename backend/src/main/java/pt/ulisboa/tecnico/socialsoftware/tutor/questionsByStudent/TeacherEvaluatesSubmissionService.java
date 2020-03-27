@@ -38,7 +38,7 @@ public class TeacherEvaluatesSubmissionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void makeSubmissionApproved(SubmissionDto submissionDto, String justification, Submission submission){
-        submissionDto.setStatus("APPROVED");
+        submissionDto.setStatus("APPROVED"); // JFF: This could improve
         submissionDto.setJustification(justification);
         submission.setJustification(justification);
         submission.setStatus(Submission.Status.APPROVED);
@@ -68,7 +68,7 @@ public class TeacherEvaluatesSubmissionService {
         User student = userRepository.findByUsername(user.getUsername());
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
         isSubmitionOnHold(submission);
-        System.out.println(submission.getStatus());
+        System.out.println(submission.getStatus()); //JFF: println should not be here
         Question question = submission.getQuestion();
         Course course = question.getCourse();
 
