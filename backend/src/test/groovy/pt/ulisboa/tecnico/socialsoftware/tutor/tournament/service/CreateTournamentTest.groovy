@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 import java.time.format.DateTimeFormatter
@@ -24,8 +25,8 @@ class CreateTournamentTest extends Specification{
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
     public static final Integer ID = 2
-    public static final TournamentState STATE = TournamentState.OPEN
-    public static final User USER = new User("Pedro","Minorca",2, User.Role.STUDENT)
+    public static final TournamentState STATE = TournamentState.CREATED
+    public static final Integer USER = 1
 
 
     @Autowired
@@ -37,31 +38,34 @@ class CreateTournamentTest extends Specification{
     @Autowired
     TopicRepository topicRepository
 
+    @Autowired
+    UserRepository userRepository
+
     def formatter
 
     def setup(){
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        USER.setId(1)
 
     }
 
     def "successfully create a tournament"(){
         given: "a tournamentDto"
 
+        def user = new User()
+        user.setKey(1)
+        userRepository.save(user)
+
+
         def topic = new Topic()
-        topic.setId(1)
         topicRepository.save(topic)
 
-        def topicDto = new TopicDto()
-        topicDto.setId(topic.getId())
-
-        def topiclist = new ArrayList<TopicDto>()
-        topiclist.add(topicDto)
+        def topicList = new ArrayList<Integer>()
+        topicList.add(1)
 
 
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
-                ID, STATE, USER, topiclist)
+                ID, STATE, USER, topicList)
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -74,7 +78,7 @@ class CreateTournamentTest extends Specification{
         result.getAvailableDate().format(formatter) == AVAILABLE_DATE
         result.getConclusionDate().format(formatter) == CONCLUSION_DATE
         result.getState() == STATE
-        result.getTournamentCreator().getId() == USER.getId()
+        result.getTournamentCreator().getId() == USER
         result.getTitle() == TOURNAMENT_TITLE
         result.getTopics().size() == 1
 
@@ -145,7 +149,7 @@ class CreateTournamentTest extends Specification{
         given: "a tournamentDto"
 
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE, AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
-                ID, STATE, USER, null)
+                ID, STATE, USER, new ArrayList<Integer>())
 
         when:
         tournamentService.createTournament(tournamentDto)
@@ -190,7 +194,7 @@ class CreateTournamentTest extends Specification{
 
 
     private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate,
-                            Integer id, TournamentState state, User creator, List<TopicDto> topicList){
+                            Integer id, TournamentState state, Integer creator, List<Integer> topicList){
 
         TournamentDto tournamentDto = new TournamentDto()
         tournamentDto.setTitle(title)
