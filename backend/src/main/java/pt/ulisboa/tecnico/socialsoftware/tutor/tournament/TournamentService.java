@@ -8,14 +8,12 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.EntityManager;
 import java.sql.SQLException;
@@ -90,6 +88,57 @@ public class TournamentService {
 
         return new TournamentDto(tournament);
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto openTournament(Integer tournamentId,Integer creatorId){
+        Tournament tournament = tournamentRepository.findTournamentById(tournamentId);
+
+        Optional<User> user = userRepository.findById(creatorId);
+
+        if(!user.isPresent()){
+            throw new TutorException(USER_NOT_FOUND,creatorId);
+        }
+
+        if(!tournament.getTournamentCreator().equals(user.get())){
+            throw new TutorException(TOURNAMENT_CANCELER_IS_NOT_CREATOR);
+        }
+
+        if(tournament == null){
+            throw new TutorException(TOURNAMENT_ID_NOT_EXISTS);
+        }
+
+        //Not yet possible to open
+        //Disabled for testing
+        /*
+        if(tournament.getAvailableDate().isAfter(LocalDateTime.now())){
+            throw new TutorException(TOURNAMENT_AVAILABLE_DATE_NOT_READY);
+        }
+        */
+
+        //Tournament closed date passed
+        if(tournament.getConclusionDate().isBefore(LocalDateTime.now())){
+            throw new TutorException(TOURNAMENT_CONCLUSION_DATE_PASSED);
+        }
+
+        //Tournament Already Open
+        if(tournament.getState() == Tournament.TournamentState.OPEN){
+            throw new TutorException(TOURNAMENT_ALREADY_OPEN);
+        }
+
+        //Tournament is closed
+        if(tournament.getState() == Tournament.TournamentState.CLOSED){
+            throw new TutorException(TOURNAMENT_ALREADY_CLOSED);
+        }
+
+        tournament.setState(Tournament.TournamentState.OPEN);
+
+        return new TournamentDto(tournament);
+    }
+
+
 
     @Retryable(
             value = { SQLException.class },
