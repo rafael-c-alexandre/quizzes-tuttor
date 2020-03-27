@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission
@@ -45,7 +46,7 @@ class TeacherEvaluatesQuestionServicePerformanceTest extends Specification{
     @Autowired
     UserRepository userRepository
 
-    def "performance testing to create 500 question submissions"() {
+    def "performance testing to create 2000 question submissions"() {
         given: "a course"
         def course = new Course(COURSE, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -54,10 +55,11 @@ class TeacherEvaluatesQuestionServicePerformanceTest extends Specification{
         userRepository.save(user)
 
 
-        and: "a 500 submissions array"
+        and: "a 2000 submissions array"
         ArrayList<Submission> submissionList = new ArrayList<Submission>()
-        1.upto(500, {
-            def question = new Question()
+        1.upto(2000, {
+            def questionDto = new QuestionDto()
+            def question = new Question(course, questionDto, Question.Status.PENDING)
             question.setCourse(course)
             question.setKey(KEY + it.intValue())
             questionRepository.save(question)
@@ -69,7 +71,7 @@ class TeacherEvaluatesQuestionServicePerformanceTest extends Specification{
 
         when:
 
-        1.upto(500, {
+        1.upto(2000, {
             questionsByStudentService.teacherEvaluatesQuestion(user.getId(), submissionList.get(it.intValue()-1).getId(),true)})
 
         then:
