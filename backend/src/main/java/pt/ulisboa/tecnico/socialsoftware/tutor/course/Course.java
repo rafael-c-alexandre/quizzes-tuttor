@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
+
 
 import javax.persistence.*;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +36,9 @@ public class Course {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
     private Set<Question> questions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
+    private Set<Submission> submissions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
     private Set<Topic> topics = new HashSet<>();
@@ -97,6 +102,8 @@ public class Course {
         questions.add(question);
     }
 
+    public void addSubmission(Submission submission) { submissions.add(submission); }
+
     public void addTopic(Topic topic) {
         topics.add(topic);
     }
@@ -107,5 +114,9 @@ public class Course {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public Set<Submission> getSubmissions() {
+        return submissions;
     }
 }

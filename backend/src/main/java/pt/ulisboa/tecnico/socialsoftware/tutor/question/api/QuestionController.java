@@ -58,7 +58,7 @@ public class QuestionController {
     }
 
     @PostMapping("/courses/{courseId}/questions")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
     public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
         question.setStatus(Question.Status.AVAILABLE.name());
         return this.questionService.createQuestion(courseId, question);

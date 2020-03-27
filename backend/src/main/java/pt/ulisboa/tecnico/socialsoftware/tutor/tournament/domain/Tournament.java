@@ -20,7 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class Tournament {
 
     public enum TournamentState {
-        OPEN, CLOSED
+        OPEN, CLOSED, CREATED
     }
 
     @Id
@@ -43,15 +43,15 @@ public class Tournament {
     @Enumerated(EnumType.STRING)
     private Tournament.TournamentState state;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<User> signedUsers = new HashSet<>();
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Topic> topics = new HashSet<>();
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User tournamentCreator;
 
@@ -65,92 +65,76 @@ public class Tournament {
         this.creationDate = tournamentDto.getCreationDateDate();
         setAvailableDate(tournamentDto.getAvailableDateDate());
         setConclusionDate(tournamentDto.getConclusionDateDate());
-        this.tournamentCreator = tournamentDto.getTournamentCreator();
         setTitle(tournamentDto.getTitle());
         this.state = tournamentDto.getState();
-
     }
 
-    public void setTitle(String title) {
-        checkTitle(title);
-        this.title = title;
-    }
-
+    //Getters
     public LocalDateTime getAvailableDate() {
         return availableDate;
     }
-
     public LocalDateTime getConclusionDate() {
         return conclusionDate;
     }
-
     public String getTitle() {
         return title;
     }
-
-    public void setConclusionDate(LocalDateTime conclusionDate) {
-        checkConclusionDate(conclusionDate);
-        this.conclusionDate = conclusionDate;
-    }
-
-    public void setAvailableDate(LocalDateTime availableDate) {
-        checkAvailableDate(availableDate);
-        this.availableDate = availableDate;
-    }
-
     public Integer getId() {
         return id;
     }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
-
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
-    }
-
     public TournamentState getState() {
         return state;
     }
-
-    public void setState(TournamentState state) {
-        this.state = state;
-    }
-
     public Set<User> getSignedUsers() {
         return signedUsers;
     }
-
-
-    public void setSignedUsers(Set<User> signedUsers) {
-        this.signedUsers = signedUsers;
-    }
-
-
-
     public Set<Topic> getTopics() {
         return topics;
     }
-
-    public void setTopics(Set<Topic> topics) {
-        this.topics = topics;
-    }
-
     public User getTournamentCreator() {
         return tournamentCreator;
     }
 
+    //Setters
+    public void setTitle(String title) {
+        checkTitle(title);
+        this.title = title;
+    }
+    public void setAvailableDate(LocalDateTime availableDate) {
+        checkAvailableDate(availableDate);
+        this.availableDate = availableDate;
+    }
+    public void setConclusionDate(LocalDateTime conclusionDate) {
+        checkConclusionDate(conclusionDate);
+        this.conclusionDate = conclusionDate;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+    public void setSignedUsers(Set<User> signedUsers) {
+        this.signedUsers = signedUsers;
+    }
+    public void setState(TournamentState state) {
+        this.state = state;
+    }
+    public void setTopics(Set<Topic> topics) {
+        this.topics = topics;
+    }
     public void setTournamentCreator(User tournamentCreator) {
         this.tournamentCreator = tournamentCreator;
     }
 
-    public void addTopic(Topic topic){this.topics.add(topic);}
 
+
+
+
+    public void addTopic(Topic topic){this.topics.add(topic);}
     public void addUser(User user){
         this.signedUsers.add(user);
     }
@@ -160,7 +144,6 @@ public class Tournament {
             throw new TutorException(TOURNAMENT_ALREADY_CLOSED);
         }
     }
-
 
 
     @Override
@@ -189,7 +172,6 @@ public class Tournament {
         }
     }
 
-
     private void checkTitle(String title) {
         if (title == null || title.trim().length() == 0) {
             throw new TutorException(TOURNAMENT_TITLE_IS_EMPTY);
@@ -208,11 +190,5 @@ public class Tournament {
             throw new TutorException(TOURNAMENT_INVALID_DATE);
         }
     }
-
-
-
-
-
-
 
 }

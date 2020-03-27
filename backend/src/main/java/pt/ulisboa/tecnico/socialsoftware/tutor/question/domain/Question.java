@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class Question implements DomainEntity {
     @SuppressWarnings("unused")
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE
+        DISABLED, REMOVED, AVAILABLE, PENDING
     }
 
     @Id
@@ -101,6 +102,31 @@ public class Question implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestion(this);
+    }
+
+    public Question(Course course, QuestionDto questionDto, Status status) {
+        //checkConsistentQuestion(questionDto);
+        this.title = questionDto.getTitle();
+        this.key = questionDto.getKey();
+        this.content = questionDto.getContent();
+        this.status = status;
+
+        this.course = course;
+        course.addQuestion(this);
+
+        if (questionDto.getImage() != null) {
+            Image img = new Image(questionDto.getImage());
+            setImage(img);
+            img.setQuestion(this);
+        }
+
+        int index = 0;
+        for (OptionDto optionDto : questionDto.getOptions()) {
+            optionDto.setSequence(index++);
+            Option option = new Option(optionDto);
+            this.options.add(option);
+            option.setQuestion(this);
+        }
     }
 
     public Integer getId() {

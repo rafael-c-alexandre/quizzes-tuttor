@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
@@ -61,13 +62,16 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user",fetch = FetchType.LAZY, orphanRemoval=true)
+    private Set<Submission> submissions = new HashSet<>();
+
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Tournament> createdTournaments = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<Tournament> signedTournaments = new HashSet<>();
 
     public User() {
@@ -135,6 +139,11 @@ public class User implements UserDetails, DomainEntity {
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
     }
+
+    public void setSubmissions(Set<Submission> submissions) {
+        this.submissions = submissions;
+    }
+
 
     public Role getRole() {
         return role;
@@ -361,6 +370,13 @@ public class User implements UserDetails, DomainEntity {
     public void addQuizAnswer(QuizAnswer quizAnswer) {
         this.quizAnswers.add(quizAnswer);
     }
+
+    public void addSubmission(Submission submission) { submissions.add(submission); }
+
+    public Set<Submission> getSubmissions() {
+        return submissions;
+    }
+
 
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
