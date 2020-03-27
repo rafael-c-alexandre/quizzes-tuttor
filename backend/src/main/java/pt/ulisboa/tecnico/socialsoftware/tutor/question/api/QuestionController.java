@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,16 +12,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 public class QuestionController {
@@ -43,6 +41,16 @@ public class QuestionController {
         return this.questionService.findQuestions(courseId);
     }
 
+    @GetMapping(value = "/courses/{courseId}/questions/export")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public void exportQuestions(HttpServletResponse response,@PathVariable int courseId) throws IOException {
+        response.setHeader("Content-Disposition", "attachment; filename=file.zip");
+        response.setContentType("application/zip");
+        response.getOutputStream().write(this.questionService.exportCourseQuestions(courseId).toByteArray());
+
+        response.flushBuffer();
+    }
+
     @GetMapping("/courses/{courseId}/questions/available")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionDto> getAvailableQuestions(@PathVariable int courseId){
@@ -50,12 +58,8 @@ public class QuestionController {
     }
 
     @PostMapping("/courses/{courseId}/questions")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
     public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
-        logger.debug("createQuestion title: {}, content: {}, options: {}: ",
-                question.getTitle(), question.getContent(),
-                question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
-                        .collect(Collectors.joining("\n")));
         question.setStatus(Question.Status.AVAILABLE.name());
         return this.questionService.createQuestion(courseId, question);
     }
@@ -121,13 +125,10 @@ public class QuestionController {
     @PutMapping("/questions/{questionId}/topics")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public ResponseEntity updateQuestionTopics(@PathVariable Integer questionId, @RequestBody TopicDto[] topics) {
-        logger.debug("updateQuestionTopics  questionId: {}: , topics: {}", questionId, Arrays.toString(topics));
-
         questionService.updateQuestionTopics(questionId, topics);
 
         return ResponseEntity.ok().build();
     }
-
 
     private Path getTargetLocation(String url) {
         String fileLocation = figuresDir + url;

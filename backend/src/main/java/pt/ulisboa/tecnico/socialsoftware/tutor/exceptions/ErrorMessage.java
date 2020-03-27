@@ -1,11 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 public enum ErrorMessage {
-
-    TOURNAMENT_CANCELER_IS_NOT_CREATOR("Cant cancel a tournament you didnt create"),
-    TOURNAMENT_ALREADY_CLOSED("Cant close an already closed tournament"),
+    TOURNAMENT_AVAILABLE_DATE_NOT_READY("Tournament available didnt come yet"),
+    TOURNAMENT_CONCLUSION_DATE_PASSED("Tournament conclusion date already passed"),
+    TOURNAMENT_ALREADY_OPEN("Cant Open an already open tournament"),
+    TOURNAMENT_INVALID_STATE("Tournament state is empty or invalid"),
+    TOURNAMENT_HAS_NO_CREATOR("Tournament has no creator"),
+    TOURNAMENT_CANCELER_IS_NOT_CREATOR("Cant cancel/update a tournament you didnt create"),
+    TOURNAMENT_ALREADY_CLOSED("Cant close/open an already closed tournament"),
     TOURNAMENT_ID_NOT_EXISTS("Invalid tournament id"),
-    TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
     TOURNAMENT_TITLE_IS_EMPTY("This tournament title is empty"),
     TOURNAMENT_INVALID_DATE("This tournament date is invalid"),
     TOURNAMENT_EMPTY_DATE("This tournament date is empty"),
@@ -29,11 +32,12 @@ public enum ErrorMessage {
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
     SUBMITION_ALREADY_EVALUATED("Submission with id %d was previously evaluated"),
 
-    COURSE_NOT_FOUND("Course not found with id %s"),
+    COURSE_NOT_FOUND("Course not found with name %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
     COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
+    CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %s not found"),
 
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
@@ -57,12 +61,14 @@ public enum ErrorMessage {
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
 
+    NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
-    QUESTION_MISSING_DATA("Missing information for quiz"), // TODO check me
+    QUESTION_MISSING_DATA("Missing information for quiz"),
     QUESTION_MULTIPLE_CORRECT_OPTIONS("Questions can only have 1 correct option"),
     QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS("Can not change correct option of answered question"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
     QUIZ_ALREADY_COMPLETED("Quiz already completed"),
+    QUIZ_ALREADY_STARTED("Quiz was already started"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     FENIX_ERROR("Fenix Error"),
     AUTHENTICATION_ERROR("Authentication Error"),
@@ -72,7 +78,8 @@ public enum ErrorMessage {
 
 
 
-    ACCESS_DENIED("You do not have permission to view this resource");
+    ACCESS_DENIED("You do not have permission to view this resource"),
+    CANNOT_OPEN_FILE("Cannot open file");
 
     public final String label;
 

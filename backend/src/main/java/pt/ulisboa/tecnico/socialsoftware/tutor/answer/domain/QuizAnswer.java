@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -11,10 +13,13 @@ import java.util.*;
 
 @Entity
 @Table(name = "quiz_answers")
-public class QuizAnswer {
+public class QuizAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
     @Column(name = "answer_date")
     private LocalDateTime answerDate;
@@ -24,15 +29,15 @@ public class QuizAnswer {
     @Column(columnDefinition = "boolean default false")
     private boolean usedInStatistics;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<QuestionAnswer> questionAnswers = new ArrayList<>();
 
     public QuizAnswer() {
@@ -56,6 +61,86 @@ public class QuizAnswer {
         }
     }
 
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitQuizAnswer(this);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public LocalDateTime getAnswerDate() {
+        return answerDate;
+    }
+
+    public void setAnswerDate(LocalDateTime answerDate) {
+        this.answerDate = answerDate;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public boolean isUsedInStatistics() {
+        return usedInStatistics;
+    }
+
+    public void setUsedInStatistics(boolean usedInStatistics) {
+        this.usedInStatistics = usedInStatistics;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+    }
+
+    public void setQuestionAnswers(List<QuestionAnswer> questionAnswers) {
+        this.questionAnswers = questionAnswers;
+    }
+
+    public List<QuestionAnswer> getQuestionAnswers() {
+        if (questionAnswers == null) {
+            questionAnswers = new ArrayList<>();
+        }
+        return questionAnswers;
+    }
+
+    public void addQuestionAnswer(QuestionAnswer questionAnswer) {
+        if (questionAnswers == null) {
+            questionAnswers = new ArrayList<>();
+        }
+        questionAnswers.add(questionAnswer);
+    }
+
+
     public void remove() {
         user.getQuizAnswers().remove(this);
         user = null;
@@ -63,7 +148,7 @@ public class QuizAnswer {
         quiz.getQuizAnswers().remove(this);
         quiz = null;
 
-        for (QuestionAnswer questionAnswer: getQuestionAnswers()) {
+        for (QuestionAnswer questionAnswer : getQuestionAnswers()) {
             questionAnswer.remove();
         }
 
@@ -71,7 +156,7 @@ public class QuizAnswer {
     }
 
     public boolean canResultsBePublic(CourseExecution courseExecution) {
-        return getCompleted() &&
+        return isCompleted() &&
                 getQuiz().getCourseExecution() == courseExecution &&
                 !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getQuiz().getConclusionDate().isAfter(LocalDateTime.now()));
     }
@@ -94,72 +179,5 @@ public class QuizAnswer {
             this.usedInStatistics = true;
         }
     }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-    
-    public LocalDateTime getAnswerDate() {
-        return answerDate;
-    }
-
-    public void setAnswerDate(LocalDateTime answerDate) {
-        this.answerDate = answerDate;
-    }
-
-    public boolean getCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public boolean isUsedInStatistics() {
-        return usedInStatistics;
-    }
-
-    public void setUsedInStatistics(boolean usedInStatistics) {
-        this.usedInStatistics = usedInStatistics;
-    }
-
-    public Quiz getQuiz() {
-        return quiz;
-    }
-
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<QuestionAnswer> getQuestionAnswers() {
-        if (questionAnswers == null) {
-            questionAnswers = new ArrayList<>();
-        }
-        return questionAnswers;
-    }
-
-    public void addQuestionAnswer(QuestionAnswer questionAnswer) {
-        if (questionAnswers == null) {
-            questionAnswers = new ArrayList<>();
-        }
-        questionAnswers.add(questionAnswer);
-    }
-
 
 }

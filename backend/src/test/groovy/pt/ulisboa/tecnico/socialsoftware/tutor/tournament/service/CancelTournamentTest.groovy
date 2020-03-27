@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -24,9 +25,8 @@ class CancelTournamentTest extends Specification{
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
     public static final Integer ID = 2
-    public static final Tournament.TournamentState STATE = Tournament.TournamentState.OPEN
-    public static final User USER = new User("Pedro","Minorca",2, User.Role.STUDENT)
-    public static final User USER2 = new User("Afonso","afonsovdm",3, User.Role.STUDENT)
+    public static final Tournament.TournamentState STATE = Tournament.TournamentState.CREATED
+    public static final Integer USER = 1
 
 
     @Autowired
@@ -42,21 +42,26 @@ class CancelTournamentTest extends Specification{
     UserRepository userRepository
 
     def setup(){
-        USER.setId(1)
-        USER2.setId(2)
 
     }
 
     def "cancel existing tournament by creator"(){
+        def topicList = new ArrayList<Integer>();
+        topicList.add(1)
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
-                1, STATE, USER, null)
+                1, STATE, USER, topicList)
 
-        def tournament = new Tournament(tournamentDto)
-        tournamentRepository.save(tournament)
+        def user = new User()
+        user.setKey(1)
+        userRepository.save(user)
+        def topic = new Topic()
+        topicRepository.save(topic)
+
+        tournamentService.createTournament(tournamentDto)
 
         when:
-        tournamentService.cancelTournament(tournament.getId(),USER.getId())
+        tournamentService.cancelTournament(1,USER)
 
         then:
         tournamentRepository.findById(1).isEmpty() == true
@@ -106,7 +111,7 @@ class CancelTournamentTest extends Specification{
         tournamentRepository.save(tournament)
 
         when:
-        tournamentService.cancelTournament(tournamentRepository.findAll().get(0).getId(),USER.getId())
+        tournamentService.cancelTournament(tournamentRepository.findAll().get(0).getId(),USER)
 
         then:
         def exception = thrown(TutorException)
@@ -115,7 +120,7 @@ class CancelTournamentTest extends Specification{
     }
 
     private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate,
-                                    Integer id, Tournament.TournamentState state, User creator, List<TopicDto> topicList){
+                                    Integer id, Tournament.TournamentState state, Integer creator, List<Integer> topicList){
 
         TournamentDto tournamentDto = new TournamentDto()
         tournamentDto.setTitle(title)
