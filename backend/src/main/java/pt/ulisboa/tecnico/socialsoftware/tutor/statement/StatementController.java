@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,8 +20,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AU
 
 @RestController
 public class StatementController {
-    private static Logger logger = LoggerFactory.getLogger(StatementController.class);
-
     @Autowired
     private StatementService statementService;
 
@@ -63,16 +59,16 @@ public class StatementController {
         return statementService.getSolvedQuizzes(user.getUsername(), executionId);
     }
 
-    @GetMapping("/quizzes/{quizId}/evaluation")
+    @GetMapping("/quizzes/{quizId}/byqrcode")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public StatementQuizDto getEvaluationQuiz(Principal principal, @PathVariable int quizId) {
+    public StatementQuizDto getQuizByQRCode(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.getEvaluationQuiz(user.getUsername(), quizId);
+        return statementService.getQuizByQRCode(user.getUsername(), quizId);
     }
 
     @PostMapping("/quizzes/{quizId}/submit")
@@ -85,6 +81,18 @@ public class StatementController {
         }
 
         statementService.submitAnswer(user.getUsername(), quizId, answer);
+    }
+
+    @GetMapping("/quizzes/{quizId}/start")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public void startQuiz(Principal principal, @PathVariable int quizId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        statementService.startQuiz(user.getUsername(), quizId);
     }
 
     @GetMapping("/quizzes/{quizId}/conclude")

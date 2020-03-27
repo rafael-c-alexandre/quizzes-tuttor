@@ -25,8 +25,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -59,10 +57,6 @@ public class AnswerService {
     @Autowired
     private AnswersXmlImport xmlImporter;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
@@ -73,7 +67,7 @@ public class AnswerService {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-        entityManager.persist(quizAnswer);
+        quizAnswerRepository.save(quizAnswer);
 
         return new QuizAnswerDto(quizAnswer);
     }
@@ -90,12 +84,12 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (!quizAnswer.getCompleted()) {
+        if (!quizAnswer.isCompleted()) {
             quizAnswer.setAnswerDate(LocalDateTime.now());
             quizAnswer.setCompleted(true);
         }
 
-        // When student submits before conclusionDate
+        // In class quiz When student submits before conclusionDate
         if (quizAnswer.getQuiz().getConclusionDate() != null &&
             quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
             LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate())) {
@@ -136,7 +130,7 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (!quizAnswer.getCompleted()) {
+        if (!quizAnswer.isCompleted()) {
 
             Option option;
             if (answer.getOptionId() != null) {
@@ -162,10 +156,6 @@ public class AnswerService {
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
         return quizQuestion.getQuestion().getOptions().stream().map(Option::getId).noneMatch(value -> value.equals(option.getId()));
-    }
-
-    private boolean isNotAssignedQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion) {
-        return !quizQuestion.getQuiz().getId().equals(quizAnswer.getQuiz().getId());
     }
 
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {
