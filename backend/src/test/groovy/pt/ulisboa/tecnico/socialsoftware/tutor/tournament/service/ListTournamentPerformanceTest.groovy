@@ -4,19 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
-
 @DataJpaTest
-class ListTournamentTest extends Specification{
+class ListTournamentPerformanceTest extends Specification{
 
     public static final String TOURNAMENT_TITLE = "Tournament"
     public static final String CREATION_DATE = "2020-09-22 12:12"
@@ -53,35 +49,13 @@ class ListTournamentTest extends Specification{
     }
 
 
-    def "successfully list all open tournament"(){
+    def "successfully list 100 times all open tournament"(){
 
-        given: "a list of open tournaments"
-        def result = tournamentService.listTournamentsByState("OPEN")
-
-        expect:
-        result.size() == 3
-        for (TournamentDto t : result) {
-            t.getState() == Tournament.TournamentState.OPEN
-        }
-    }
-
-
-    def "missing open tournament"() {
-
-        given: "a list of all tournaments"
-
-        def allTournaments = tournamentService.listTournaments()
-
-        def openTournaments = tournamentService.listTournamentsByState('OPEN')
+        given: "a list of 3 open tournaments, 100 times"
+        1.upto(100, {tournamentService.listTournamentsByState("OPEN")});
 
         expect:
-        allTournaments.size() != 0
-        openTournaments.size() != 0
-        for (TournamentDto t : allTournaments) {
-            if(t.getState() == Tournament.TournamentState.OPEN){
-                openTournaments.contains(t)
-            }
-        }
+        true
     }
 
     @TestConfiguration
