@@ -10,11 +10,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.ListSubmissionsService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.Submission
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.SubmissionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto
@@ -30,7 +31,7 @@ class ListSubmissionsServiceSpockTest extends Specification {
     static final int KEY = 10
 
     @Autowired
-    ListSubmissionsService listSubmissionsService
+    QuestionsByStudentService listSubmissionsService
 
     @Autowired
     CourseRepository courseRepository;
@@ -58,10 +59,10 @@ class ListSubmissionsServiceSpockTest extends Specification {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-        UserDto userDto = new UserDto(user)
+
 
         when:
-        def result = listSubmissionsService.findQuestionsSubmittedByStudent(userDto)
+        def result = listSubmissionsService.findQuestionsSubmittedByStudent(user.getId())
 
         then: "the returned list is empty"
         result.isEmpty()
@@ -74,12 +75,13 @@ class ListSubmissionsServiceSpockTest extends Specification {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-        UserDto userDto = new UserDto(user)
+
         and: "a course"
         def course = new Course(WRONG_COURSE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "a question"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         questionRepository.save(question);
@@ -89,12 +91,12 @@ class ListSubmissionsServiceSpockTest extends Specification {
 
 
         when:
-        def result = listSubmissionsService.findQuestionsSubmittedByStudent(userDto)
+        def result = listSubmissionsService.findQuestionsSubmittedByStudent(user.getId())
 
         then: "the returned list has 1 submission"
         result.size() == 1
-        result.get(0).question == question
-        result.get(0).user == user
+        result.get(0).questionId == question.getId()
+        result.get(0).userId == user.getId()
 
     }
 
@@ -102,12 +104,13 @@ class ListSubmissionsServiceSpockTest extends Specification {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.ADMIN)
         userRepository.save(user)
-        UserDto userDto = new UserDto(user)
+
         and: "a course"
         def course = new Course(WRONG_COURSE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "a question"
-        def question = new Question()
+        def questionDto = new QuestionDto()
+        def question = new Question(course, questionDto, Question.Status.PENDING)
         question.setKey(QUESTION_KEY)
         question.setCourse(course)
         questionRepository.save(question);
@@ -117,7 +120,7 @@ class ListSubmissionsServiceSpockTest extends Specification {
 
 
         when:
-        listSubmissionsService.findQuestionsSubmittedByStudent(userDto)
+        listSubmissionsService.findQuestionsSubmittedByStudent(user.getId())
 
         then:
         def exception = thrown(TutorException)
@@ -130,8 +133,8 @@ class ListSubmissionsServiceSpockTest extends Specification {
     static class ServiceImplTestContextConfiguration {
 
         @Bean
-        ListSubmissionsService listSubmissionsService() {
-            return new ListSubmissionsService()
+        QuestionsByStudentService listSubmissionsService() {
+            return new QuestionsByStudentService()
         }
 
     }

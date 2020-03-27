@@ -1,7 +1,8 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent;
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 
 import javax.persistence.*;
 
@@ -19,14 +20,21 @@ public class Submission {
     private Integer id;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "question_id")
     private Question question;
 
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
+
     private String justification;
+
+    private boolean teacherDecision;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.ONHOLD;
@@ -39,6 +47,9 @@ public class Submission {
         this.question = question;
         this.user = user;
         this.justification = "";
+        this.course = question.getCourse();
+        this.question.setStatus(Question.Status.PENDING);
+        this.teacherDecision = false;
     }
 
     public Integer getId() {
@@ -79,5 +90,21 @@ public class Submission {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public boolean getTeacherDecision() {
+        return teacherDecision;
+    }
+
+    public void setTeacherDecision(boolean teacherDecision) {
+        this.teacherDecision = teacherDecision;
     }
 }

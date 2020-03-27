@@ -3,10 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -27,7 +27,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class Question {
     @SuppressWarnings("unused")
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE
+        DISABLED, REMOVED, AVAILABLE, PENDING
     }
 
     @Id
@@ -99,6 +99,33 @@ public class Question {
             option.setQuestion(this);
         }
     }
+
+    public Question(Course course, QuestionDto questionDto, Status status) {
+        //checkConsistentQuestion(questionDto);
+        this.title = questionDto.getTitle();
+        this.key = questionDto.getKey();
+        this.content = questionDto.getContent();
+        this.status = status;
+
+        this.course = course;
+        course.addQuestion(this);
+
+        if (questionDto.getImage() != null) {
+            Image img = new Image(questionDto.getImage());
+            setImage(img);
+            img.setQuestion(this);
+        }
+
+        int index = 0;
+        for (OptionDto optionDto : questionDto.getOptions()) {
+            optionDto.setSequence(index++);
+            Option option = new Option(optionDto);
+            this.options.add(option);
+            option.setQuestion(this);
+        }
+    }
+
+
 
     public Integer getId() {
         return id;
@@ -246,19 +273,6 @@ public class Question {
 
 
     public Integer getDifficulty() {
-        // required because the import is done directly in the database
-        if (numberOfAnswers == null || numberOfAnswers == 0) {
-            numberOfAnswers = getQuizQuestions().stream()
-                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
-                    .filter(questionAnswer -> questionAnswer.getQuizAnswer().getCompleted())
-                    .map(e -> 1).reduce(0, Integer::sum);
-            numberOfCorrect = getQuizQuestions().stream()
-                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
-                    .filter(questionAnswer -> questionAnswer.getQuizAnswer().getCompleted())
-                    .filter(questionAnswer -> questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect())
-                    .map(e -> 1).reduce(0, Integer::sum);
-        }
-
         if (numberOfAnswers == 0) {
             return null;
         }
@@ -280,9 +294,6 @@ public class Question {
             option.setContent(optionDto.getContent());
             option.setCorrect(optionDto.getCorrect());
         });
-
-        // TODO: not yet implemented
-        //new Image(questionDto.getImage());
     }
 
     private void checkConsistentQuestion(QuestionDto questionDto) {
