@@ -14,13 +14,6 @@ import spock.lang.Specification
 @DataJpaTest
 class ListTournamentPerformanceTest extends Specification{
 
-    public static final String TOURNAMENT_TITLE = "Tournament"
-    public static final String CREATION_DATE = "2020-09-22 12:12"
-    public static final String AVAILABLE_DATE = "2020-09-23 12:12"
-    public static final String CONCLUSION_DATE = "2020-09-24 12:12"
-    public static final Integer ID = 2
-    public static final Tournament.TournamentState STATE = Tournament.TournamentState.OPEN
-    public static final Integer USER = 1
 
     @Autowired
     TournamentService tournamentService
