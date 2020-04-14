@@ -138,6 +138,24 @@
                 <v-list-item-title>List</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+
+            <v-list-item to="/student/tournaments/closed">
+              <v-list-item-action>
+                <v-icon>assignment</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Closed</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item to="/student/tournaments/signable">
+              <v-list-item-action>
+                <v-icon>assignment</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Sign</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 

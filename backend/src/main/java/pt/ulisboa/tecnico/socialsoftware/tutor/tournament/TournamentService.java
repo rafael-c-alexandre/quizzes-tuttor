@@ -72,6 +72,26 @@ public class TournamentService {
                 .collect(Collectors.toList());
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listSignableTournaments(){
+        return tournamentRepository.findSignableTournaments().stream()
+                .map(tournament -> new TournamentDto(tournament))
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> listClosedTournaments(){
+        return tournamentRepository.findClosedTournaments().stream()
+                .map(tournament -> new TournamentDto(tournament))
+                .collect(Collectors.toList());
+    }
+
 
     @Retryable(
             value = { SQLException.class },
@@ -109,19 +129,17 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TournamentDto createTournament(TournamentDto tournamentDto){
+    public TournamentDto createTournament(TournamentDto tournamentDto,Integer creatorId){
          Integer maxId;
          Random rand = new Random();
+         User user;
          List<Topic> topics = topicRepository.findAll();
          List<Question> questions = questionRepository.findAll();
 
 
-         //TOURNAMENT HAS NO CREATOR
-        if(tournamentDto.getTournamentCreator() == null){
-            throw new TutorException(TOURNAMENT_HAS_NO_CREATOR);
-        }
-        User user = userRepository.findByUsername(tournamentDto.getTournamentCreator().getUsername());
-        if(user == null)
+        if(userRepository.findById(creatorId).isPresent())
+            user = userRepository.findById(creatorId).get();
+        else
             throw new TutorException(USER_NOT_FOUND,tournamentDto.getTournamentCreator().getUsername());
 
         Tournament tournament = new Tournament(tournamentDto);

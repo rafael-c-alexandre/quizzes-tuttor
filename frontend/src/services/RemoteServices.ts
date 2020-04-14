@@ -554,6 +554,32 @@ export default class RemoteServices {
       });
   }
 
+  static async listSignableTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/signable')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async listClosedTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/closed')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async listTournaments(): Promise<Tournament[]> {
     return httpClient
       .get('/tournaments/')

@@ -4,15 +4,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
+
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 @RestController
 public class TournamentController {
@@ -25,9 +32,13 @@ public class TournamentController {
     //createTournament
     @PostMapping(value = "/tournaments/")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TournamentDto createTournament(@RequestBody TournamentDto tournamentDto) {
+    public TournamentDto createTournament(Principal principal, @RequestBody TournamentDto tournamentDto) {
         formatDates(tournamentDto);
-        return this.tournamentService.createTournament(tournamentDto);
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        return this.tournamentService.createTournament(tournamentDto,user.getId());
     }
 
     //listTournament
@@ -35,6 +46,20 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
     public List<TournamentDto> listOpenTournaments() {
         return tournamentService.listOpenTournaments();
+    }
+
+    //listTournament
+    @GetMapping("/tournaments/closed")
+    @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
+    public List<TournamentDto> listClosedTournaments() {
+        return tournamentService.listClosedTournaments();
+    }
+
+    //listTournament
+    @GetMapping("/tournaments/signable")
+    @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
+    public List<TournamentDto> listSignableTournaments() {
+        return tournamentService.listSignableTournaments();
     }
 
     //listTournament
@@ -54,12 +79,13 @@ public class TournamentController {
     }
 
     //enroll in tournament
-    @PutMapping("/tournaments/{tournamentId}/{userId}")
+    @PutMapping("/tournaments/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TournamentDto enrollInTournament(@PathVariable Integer tournamentId,@PathVariable Integer userId){
-        logger.debug("cancelTournament tournamentId: {}: ", tournamentId);
-        logger.debug("cancelTournament creatorId: {}: ", userId);
-        return tournamentService.enrollInTournament(tournamentId,userId);
+    public TournamentDto enrollInTournament(Principal principal, @PathVariable Integer tournamentId){
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+        return tournamentService.enrollInTournament(tournamentId,user.getId());
     }
 
     private void formatDates(TournamentDto tournament) {

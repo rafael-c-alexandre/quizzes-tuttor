@@ -29,6 +29,8 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
 import OpenTournamentsView from '@/views/student/tournaments/OpenTournamentsView.vue';
 import AllTournamentsView from '@/views/student/tournaments/AllTournamentsView.vue';
+import ClosedTournamentsView from '@/views/student/tournaments/ClosedTournamentsView.vue';
+import SignableTournamentsView from '@/views/student/tournaments/SignableTournamentsView.vue';
 
 Vue.use(Router);
 
@@ -155,6 +157,24 @@ let router = new Router({
               component: AllTournamentsView,
               meta: {
                 title: process.env.VUE_APP_NAME + ' - Open Tournaments',
+                requiredAuth: 'Student'
+              }
+            },
+            {
+              path: 'closed',
+              name: 'all-tournaments',
+              component: ClosedTournamentsView,
+              meta: {
+                title: process.env.VUE_APP_NAME + ' - Closed Tournaments',
+                requiredAuth: 'Student'
+              }
+            },
+            {
+              path: 'signable',
+              name: 'all-tournaments',
+              component: SignableTournamentsView,
+              meta: {
+                title: process.env.VUE_APP_NAME + ' - Signable Tournaments',
                 requiredAuth: 'Student'
               }
             }
