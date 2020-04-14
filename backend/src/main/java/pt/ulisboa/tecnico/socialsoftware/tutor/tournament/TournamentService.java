@@ -72,6 +72,7 @@ public class TournamentService {
                 .collect(Collectors.toList());
     }
 
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))

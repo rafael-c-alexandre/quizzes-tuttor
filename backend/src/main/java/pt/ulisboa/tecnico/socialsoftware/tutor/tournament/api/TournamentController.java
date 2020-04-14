@@ -37,6 +37,13 @@ public class TournamentController {
         return tournamentService.listOpenTournaments();
     }
 
+    //listTournament
+    @GetMapping("/tournaments/")
+    @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
+    public List<TournamentDto> listTournaments() {
+        return tournamentService.listTournaments();
+    }
+
     //cancel tournament
     @DeleteMapping("/tournaments/{tournamentId}/{creatorId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
