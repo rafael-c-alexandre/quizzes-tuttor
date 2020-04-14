@@ -9,13 +9,7 @@
         Close
       </v-btn>
 
-      <v-btn
-        color="primary"
-        dark
-        v-if="canCreate"
-        @click="create"
-        to="/student/tournaments/open"
-      >
+      <v-btn color="primary" dark v-if="canCreate" @click="create">
         Create
       </v-btn>
     </v-card-title>
@@ -138,6 +132,7 @@ export default class CreateTournamentsView extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$router.push({ name: 'all-tournaments' });
   }
 
   close() {

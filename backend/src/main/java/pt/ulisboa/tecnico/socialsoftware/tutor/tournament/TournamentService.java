@@ -116,7 +116,6 @@ public class TournamentService {
          List<Question> questions = questionRepository.findAll();
 
 
-
          //TOURNAMENT HAS NO CREATOR
         if(tournamentDto.getTournamentCreator() == null){
             throw new TutorException(TOURNAMENT_HAS_NO_CREATOR);
@@ -165,7 +164,6 @@ public class TournamentService {
             }
         }
 
-        System.out.println(new TournamentDto(tournament));
         tournamentRepository.save(tournament);
 
         maxId = tournamentRepository.getMaxTournamentId();
