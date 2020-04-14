@@ -375,20 +375,6 @@ public class User implements UserDetails {
         this.courseExecutions.add(course);
     }
 
-    public void enrollInTournament(Tournament tournament){
-        if(this.role == Role.STUDENT) {
-            if (tournament.getState() == Tournament.TournamentState.OPEN) {
-                signedTournaments.add(tournament);
-                tournament.addUser(this);
-            } else {
-                throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
-            }
-        }
-        else
-            throw new TutorException(USER_IS_NOT_STUDENT);
-    }
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<>();

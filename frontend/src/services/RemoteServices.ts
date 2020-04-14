@@ -14,6 +14,7 @@ import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import Tournament from '@/models/management/Tournament';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -516,6 +517,66 @@ export default class RemoteServices {
   static async deleteCourse(courseExecutionId: number | undefined) {
     return httpClient
       .delete('/admin/courses/executions/' + courseExecutionId)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createTournament(tournament: Tournament): Promise<Tournament> {
+    return httpClient
+      .post('/tournaments/',tournament)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async cancelTournament(tournamentId: number, creatorId: number) {
+    return httpClient
+      .delete('/tournaments/' + tournamentId + '/' + creatorId)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async listOpenTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/open')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async enrollInTournament(
+    tournamentId: number,
+    userId: number
+  ): Promise<Tournament> {
+    return httpClient
+      .put('/tournament/' + tournamentId + '/' + userId)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async openTournament(
+    tournamentId: number,
+    userId: number
+  ): Promise<Tournament> {
+    return httpClient
+      .put('/tournament/open/' + tournamentId + '/' + userId)
+      .then(response => {
+        return new Tournament(response.data);
+      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
