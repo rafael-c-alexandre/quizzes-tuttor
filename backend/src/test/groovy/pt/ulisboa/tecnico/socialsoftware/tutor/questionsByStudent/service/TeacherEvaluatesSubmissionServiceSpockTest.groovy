@@ -7,11 +7,13 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
@@ -20,6 +22,7 @@ import spock.lang.Specification
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NOT_TEACHER_ERROR
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.SUBMISSION_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.SUBMITION_ALREADY_EVALUATED
 
 @DataJpaTest
 class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
@@ -27,12 +30,16 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
     static final String WRONG_COURSE = "WrongCourse"
     static final int QUESTION_ID =10
     static final int QUESTION_KEY =14
-    static final int SUBMISSION_ID =14
-
+    static final int COURSE_ID = 14
+    static final String QUESTION_TITLE = "QUESTION_ONE";
+    static final String QUESTION_CONTENT = "CONTENT_ONE";
+    public static final String OPTION_CONTENT = "optionId content"
     static final String ACRONYM =14
     static final String ACADEMIC_TERM =14
     static final String NAME = "Rito"
     static final String USERNAME = "Silva"
+    static final String NAME2 = "Ritos"
+    static final String USERNAME2 = "Silvas"
     static final int KEY = 10
 
     @Autowired
@@ -66,18 +73,28 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         userRepository.save(user)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        and: "a question"
-        def question = new Question()
-        question.setKey(QUESTION_KEY)
-        question.setCourse(course)
-        and: "a submission"
-        def submission = new Submission(question, user)
-        submission.setId(SUBMISSION_ID)
-        submissionRepository.save(submission)
+        courseRepository.save(course)
+        and: " a submissionDto"
+        def submissionDto = new SubmissionDto()
+        submissionDto.setId(1)
+        submissionDto.setKey(1)
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourseId(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setTitle(QUESTION_TITLE)
+        submissionDto.setContent(QUESTION_CONTENT)
+        and: 'a optionId'
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        submissionDto.setOptions(options)
+        submissionDto.setUser(user.getId())
+        submissionDto.setCourseId(course.getId())
 
         when:
-
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion( user.getId(), submissionDto.getId(), true)
 
         then:
         def exception = thrown(TutorException)
@@ -88,21 +105,31 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
         userRepository.save(user)
-
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        and: "a question"
-        def questionDto = new QuestionDto()
-        def question = new Question(course, questionDto, Question.Status.PENDING)
-        question.setKey(QUESTION_KEY)
-        question.setCourse(course)
-        and: "a submission"
-        def submission = new Submission(question, user)
-        submission.setId(SUBMISSION_ID)
+        courseRepository.save(course)
+        and: " a submissionDto"
+        def submissionDto = new SubmissionDto()
+        submissionDto.setId(1)
+        submissionDto.setKey(1)
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourseId(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setTitle(QUESTION_TITLE)
+        submissionDto.setContent(QUESTION_CONTENT)
+        and: 'a optionId'
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        submissionDto.setOptions(options)
+        submissionDto.setUser(user.getId())
+        submissionDto.setCourseId(course.getId())
 
         when:
 
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submissionDto.getId(), true)
 
         then:
         def exception = thrown(TutorException)
@@ -110,103 +137,116 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
     }
 
     def "the professor and submission exist and approves submission, question goes to repository"()  {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
+        given: "users"
+        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-
+        def user2 = new User(NAME2, USERNAME2, KEY+1, User.Role.TEACHER)
+        userRepository.save(user2)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
-        and: "a course execution"
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-        Set<CourseExecution> set = new HashSet<CourseExecution>()
-        set.add(courseExecution)
-        user.setCourseExecutions(set)
-        and: "a question"
-        def questionDto = new QuestionDto()
-        def question = new Question(course, questionDto, Question.Status.PENDING)
-        question.setKey(QUESTION_KEY)
-        question.setCourse(course)
-        questionRepository.save(question)
-        and: "a submission"
-        def submission = new Submission(question, user)
-        submissionRepository.save(submission)
+        and: " a submissionDto"
+        def submissionDto = new SubmissionDto()
+        submissionDto.setId(1)
+        submissionDto.setKey(1)
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourseId(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setTitle(QUESTION_TITLE)
+        submissionDto.setContent(QUESTION_CONTENT)
+        and: 'a optionId'
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        submissionDto.setOptions(options)
+        submissionDto.setUser(user.getId())
+        submissionDto.setCourseId(course.getId())
+        and : "a submission"
+        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId())
 
         when:
-        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
+        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true)
 
         then: "the returned data are correct"
         result.getStatus().toString() == "APPROVED"
-        result.getQuestionId() ==  question.getId()
         and: "submission approved"
     }
 
     def "the professor and submission exist and rejects submission"()  {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
+        given: "users"
+        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
+        def user2 = new User(NAME2, USERNAME2, KEY+1, User.Role.TEACHER)
+        userRepository.save(user2)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
-        and: "a wrong course"
-        def wrongCourse = new Course(WRONG_COURSE, Course.Type.TECNICO)
-        courseRepository.save(wrongCourse)
-        and: "a course execution"
-        def courseExecution = new CourseExecution(wrongCourse, COURSE_ONE, COURSE_ONE, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-        Set<CourseExecution> set = new HashSet<CourseExecution>()
-        set.add(courseExecution)
-        user.setCourseExecutions(set)
-        and: "a question"
-        def questionDto = new QuestionDto()
-        def question = new Question(course, questionDto, Question.Status.PENDING)
-        question.setKey(QUESTION_ID)
-        question.setCourse(course)
-        questionRepository.save(question)
-        and: "a submission"
-        def submission = new Submission(question, user)
-        submissionRepository.save(submission)
+        and: " a submissionDto"
+        def submissionDto = new SubmissionDto()
+        submissionDto.setId(1)
+        submissionDto.setKey(1)
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourseId(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setTitle(QUESTION_TITLE)
+        submissionDto.setContent(QUESTION_CONTENT)
+        and: 'a optionId'
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        submissionDto.setOptions(options)
+        submissionDto.setUser(user.getId())
+        submissionDto.setCourseId(course.getId())
+        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId())
 
         when:
-        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), false)
+        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), false)
 
         then: "the returned data are correct"
         result.getStatus().toString() == "REJECTED"
-        result.getQuestionId() ==  question.getId()
         and: "submission rejected"
     }
 
     def "the professor approves the same submission twice"()  {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
+        given: "users"
+        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-
+        def user2 = new User(NAME2, USERNAME2, KEY+1, User.Role.TEACHER)
+        userRepository.save(user2)
         and: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
-        and: "a course execution"
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-        Set<CourseExecution> set = new HashSet<CourseExecution>()
-        set.add(courseExecution)
-        user.setCourseExecutions(set)
-        and: "a question"
-        def questionDto = new QuestionDto()
-        def question = new Question(course, questionDto, Question.Status.PENDING)
-        question.setKey(QUESTION_KEY)
-        question.setCourse(course)
-        questionRepository.save(question);
-        and: "a submission"
-        def submission = new Submission(question, user)
-        submissionRepository.save(submission)
+        and: " a submissionDto"
+        def submissionDto = new SubmissionDto()
+        submissionDto.setId(1)
+        submissionDto.setKey(1)
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourseId(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setTitle(QUESTION_TITLE)
+        submissionDto.setContent(QUESTION_CONTENT)
+        and: 'a optionId'
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        submissionDto.setOptions(options)
+        submissionDto.setUser(user.getId())
+        submissionDto.setCourseId(course.getId())
+        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId())
 
         when:
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submission.getId(), true)
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true)
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true)
 
         then:
-        thrown(TutorException)
+        def exception = thrown(TutorException)
+        exception.errorMessage == SUBMITION_ALREADY_EVALUATED
     }
 
 

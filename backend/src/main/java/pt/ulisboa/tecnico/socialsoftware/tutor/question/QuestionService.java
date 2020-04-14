@@ -97,7 +97,6 @@ public class QuestionService {
                     questionRepository.getMaxQuestionNumber() : 0;
             questionDto.setKey(maxQuestionNumber + 1);
         }
-
         Question question = new Question(course, questionDto);
         question.setCreationDate(LocalDateTime.now());
         questionRepository.save(question);

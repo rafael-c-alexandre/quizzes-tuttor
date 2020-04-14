@@ -14,6 +14,9 @@ import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import User from '@/models/user/User';
+import store from '@/store';
+import Submission from '@/models/management/Submission';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -105,6 +108,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getQuestion(): Promise<Question[]> {
+    return httpClient
+      .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getAvailableQuestions(): Promise<Question[]> {
     return httpClient
       .get(
@@ -114,6 +130,17 @@ export default class RemoteServices {
         return response.data.map((question: any) => {
           return new Question(question);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuestionById(questionId: number): Promise<Question> {
+    return httpClient
+      .get('/questions/' + questionId)
+      .then(response => {
+        return new Question(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -521,6 +548,39 @@ export default class RemoteServices {
       });
   }
 
+  static async getStudentSubmissions(): Promise<Submission[]> {
+    return httpClient
+      .get('/submissions/')
+      .then(response => {
+        return response.data.map((submission: any) => {
+          return new Submission(submission);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createSubmission(
+    submission: Submission
+  ): Promise<Submission> {
+    return httpClient
+      .post(
+        '/courses/' + Store.getters.getCurrentCourse.courseId + '/submissions',
+        submission)
+      .then(response => {
+        return new Submission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static updateSubmissionTopics(submissionId: number, topics: Topic[]) {
+    console.log(`/submissions/${submissionId}/topics`)
+    return httpClient.put(`/submissions/${submissionId}/topics`, topics);
+  }
+
   static async exportAll() {
     return httpClient
       .get('/admin/export', {
@@ -537,6 +597,23 @@ export default class RemoteServices {
         );
         document.body.appendChild(link);
         link.click();
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static uploadSubmissionImage(file: File, submissionId: number): Promise<string> {
+    let formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .put(`/submissions/${submissionId}/image`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        return response.data as string;
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

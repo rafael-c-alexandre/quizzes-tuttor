@@ -107,6 +107,25 @@
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
+              Questions
+              <v-icon>question_answer</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/student/question">
+              <v-list-item-action>
+                <v-icon>fas fa-tasks</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
               Quizzes
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
