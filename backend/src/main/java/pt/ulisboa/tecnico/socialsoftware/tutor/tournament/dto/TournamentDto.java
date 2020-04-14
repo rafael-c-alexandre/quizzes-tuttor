@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.time.LocalDateTime;
@@ -22,12 +23,12 @@ public class TournamentDto {
     private String creationDate = null;
     private String availableDate = null;
     private String conclusionDate = null;
-    private UserDto tournamentCreator;
+    private AuthUserDto tournamentCreator;
     private int numberOfSignedUsers;
     private int numberOfTopics;
     private int numberOfQuestions;
     private List<QuestionDto> questions = new ArrayList<>();
-    private List<UserDto> signedUsers = new ArrayList<>();
+    private List<AuthUserDto> signedUsers = new ArrayList<>();
     private List<TopicDto> topics = new ArrayList<>();
 
 
@@ -69,7 +70,7 @@ public class TournamentDto {
             this.numberOfSignedUsers = tournament.getSignedUsers().size();
             this.signedUsers = tournament.getSignedUsers().stream()
                     .map(user -> {
-                        UserDto userDto = new UserDto(user);
+                        AuthUserDto userDto = new AuthUserDto(user);
                         return userDto;
                     })
                     .collect(Collectors.toList());
@@ -94,7 +95,7 @@ public class TournamentDto {
                     .collect(Collectors.toList());
         }
         if(tournament.getTournamentCreator() != null)
-            this.tournamentCreator = new UserDto(tournament.getTournamentCreator());
+            this.tournamentCreator = new AuthUserDto(tournament.getTournamentCreator());
 
 
 
@@ -172,7 +173,7 @@ public class TournamentDto {
     }
 
 
-    public void addUser(UserDto user) {
+    public void addUser(AuthUserDto user) {
         this.signedUsers.add(user);
     }
 
@@ -184,19 +185,19 @@ public class TournamentDto {
         this.topics = topics;
     }
 
-    public UserDto getTournamentCreator() {
+    public AuthUserDto getTournamentCreator() {
         return tournamentCreator;
     }
 
-    public void setTournamentCreator(UserDto tournamentCreator) {
+    public void setTournamentCreator(AuthUserDto tournamentCreator) {
         this.tournamentCreator = tournamentCreator;
     }
 
-    public List<UserDto> getSignedUsers() {
+    public List<AuthUserDto> getSignedUsers() {
         return signedUsers;
     }
 
-    public void setSignedUsers(List<UserDto> signedUsers) {
+    public void setSignedUsers(List<AuthUserDto> signedUsers) {
         this.signedUsers = signedUsers;
     }
 

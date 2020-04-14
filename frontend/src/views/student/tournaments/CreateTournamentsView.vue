@@ -9,7 +9,13 @@
         Close
       </v-btn>
 
-      <v-btn color="primary" dark v-if="canCreate" @click="create">
+      <v-btn
+        color="primary"
+        dark
+        v-if="canCreate"
+        @click="create"
+        to="/student/tournaments/open"
+      >
         Create
       </v-btn>
     </v-card-title>
@@ -126,9 +132,9 @@ export default class CreateTournamentsView extends Vue {
   }
 
   async create() {
+    this.tournament.tournamentCreator = this.$store.getters.getUser;
     try {
-      this.tournament.tournamentCreator = this.$store.getters.getUser;
-      this.resp = await RemoteServices.createTournament(this.tournament);
+      await RemoteServices.createTournament(this.tournament);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

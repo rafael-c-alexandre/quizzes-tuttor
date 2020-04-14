@@ -34,7 +34,7 @@ public class TournamentController {
     @GetMapping("/tournaments/open")
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
     public List<TournamentDto> listOpenTournaments() {
-        return tournamentService.listTournamentsByState("OPEN");
+        return tournamentService.listOpenTournaments();
     }
 
     //cancel tournament

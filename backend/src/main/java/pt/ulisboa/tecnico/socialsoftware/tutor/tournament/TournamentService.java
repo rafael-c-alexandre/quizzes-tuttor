@@ -66,8 +66,8 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listTournamentsByState(String state){
-        return tournamentRepository.findTournamentsByState(state).stream()
+    public List<TournamentDto> listOpenTournaments(){
+        return tournamentRepository.findOpenTournaments().stream()
                 .map(tournament -> new TournamentDto(tournament))
                 .collect(Collectors.toList());
     }
@@ -164,7 +164,7 @@ public class TournamentService {
             }
         }
 
-        System.out.println(tournament);
+        System.out.println(new TournamentDto(tournament));
         tournamentRepository.save(tournament);
 
         maxId = tournamentRepository.getMaxTournamentId();

@@ -17,8 +17,8 @@ public interface TournamentRepository extends JpaRepository<Tournament, Integer>
     @Query(value = "SELECT * FROM tournaments t", nativeQuery = true)
     List<Tournament> findTournaments();
 
-    @Query(value = "SELECT * FROM tournaments t WHERE t.state = :state",nativeQuery = true)
-    List<Tournament> findTournamentsByState(String state);
+    @Query(value = "select * from tournaments where available_date < now() and conclusion_date > now()",nativeQuery = true)
+    List<Tournament> findOpenTournaments();
 
     @Query(value = "SELECT * FROM tournaments t WHERE t.id = :id",nativeQuery = true)
     Tournament findTournamentById(Integer id);

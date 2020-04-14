@@ -14,6 +14,10 @@ public class AuthUserDto implements Serializable {
     private User.Role role;
     private Map<String, List<CourseDto>> courses;
 
+
+    public AuthUserDto(){
+
+    }
     public AuthUserDto(User user) {
         this.name = user.getName();
         this.username = user.getUsername();

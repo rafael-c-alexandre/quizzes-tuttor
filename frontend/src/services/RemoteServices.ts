@@ -524,7 +524,7 @@ export default class RemoteServices {
 
   static async createTournament(tournament: Tournament): Promise<Tournament> {
     return httpClient
-      .post('/tournaments/',tournament)
+      .post('/tournaments/', tournament)
       .then(response => {
         return new Tournament(response.data);
       })
