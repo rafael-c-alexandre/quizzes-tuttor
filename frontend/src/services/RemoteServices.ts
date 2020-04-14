@@ -554,6 +554,19 @@ export default class RemoteServices {
       });
   }
 
+  static async listTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async enrollInTournament(
     tournamentId: number,
     userId: number
