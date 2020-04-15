@@ -44,8 +44,9 @@ public class TournamentController {
     //listTournament
     @GetMapping("/tournaments/open")
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
-    public List<TournamentDto> listOpenTournaments() {
-        return tournamentService.listOpenTournaments();
+    public List<TournamentDto> listOpenTournaments(Principal principal) {
+        User user = (User)((Authentication) principal).getPrincipal();
+        return tournamentService.listOpenTournaments(user.getId());
     }
 
     //listTournament
@@ -58,8 +59,9 @@ public class TournamentController {
     //listTournament
     @GetMapping("/tournaments/signable")
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
-    public List<TournamentDto> listSignableTournaments() {
-        return tournamentService.listSignableTournaments();
+    public List<TournamentDto> listSignableTournaments(Principal principal) {
+        User user = (User)((Authentication) principal).getPrincipal();
+        return tournamentService.listSignableTournaments(user.getId());
     }
 
     //listTournament

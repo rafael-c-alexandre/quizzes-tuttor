@@ -66,9 +66,10 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listOpenTournaments(){
+    public List<TournamentDto> listOpenTournaments(Integer userId){
         return tournamentRepository.findOpenTournaments().stream()
                 .map(tournament -> new TournamentDto(tournament))
+                .filter(tournament -> tournament.getSignedUsers().contains(userId))
                 .collect(Collectors.toList());
     }
 
@@ -76,9 +77,10 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listSignableTournaments(){
+    public List<TournamentDto> listSignableTournaments(Integer userId){
         return tournamentRepository.findSignableTournaments().stream()
                 .map(tournament -> new TournamentDto(tournament))
+                .filter(tournament -> !tournament.getSignedUsers().contains(userId))
                 .collect(Collectors.toList());
     }
 

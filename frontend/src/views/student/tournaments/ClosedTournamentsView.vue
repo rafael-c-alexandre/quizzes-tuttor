@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2>Open Tournaments</h2>
+    <h2>Closed Tournaments</h2>
     <ul>
       <li class="list-header">
         <div class="col">Title</div>

@@ -28,7 +28,7 @@ public class TournamentDto {
     private int numberOfTopics;
     private int numberOfQuestions;
     private List<QuestionDto> questions = new ArrayList<>();
-    private List<AuthUserDto> signedUsers = new ArrayList<>();
+    private List<Integer> signedUsers = new ArrayList<>();
     private List<TopicDto> topics = new ArrayList<>();
 
 
@@ -70,8 +70,8 @@ public class TournamentDto {
             this.numberOfSignedUsers = tournament.getSignedUsers().size();
             this.signedUsers = tournament.getSignedUsers().stream()
                     .map(user -> {
-                        AuthUserDto userDto = new AuthUserDto(user);
-                        return userDto;
+                        int id = user.getId();
+                        return id;
                     })
                     .collect(Collectors.toList());
         }
@@ -173,7 +173,7 @@ public class TournamentDto {
     }
 
 
-    public void addUser(AuthUserDto user) {
+    public void addUser(Integer user) {
         this.signedUsers.add(user);
     }
 
@@ -193,11 +193,11 @@ public class TournamentDto {
         this.tournamentCreator = tournamentCreator;
     }
 
-    public List<AuthUserDto> getSignedUsers() {
+    public List<Integer> getSignedUsers() {
         return signedUsers;
     }
 
-    public void setSignedUsers(List<AuthUserDto> signedUsers) {
+    public void setSignedUsers(List<Integer> signedUsers) {
         this.signedUsers = signedUsers;
     }
 

@@ -15,7 +15,7 @@ export default class Tournament {
 
   questions: Question[] = [];
   topics: Topic[] = [];
-  signedUsers: User[] = [];
+  signedUsers: number[] = [];
 
   constructor(jsonObj?: Tournament) {
     if (jsonObj) {
@@ -28,6 +28,7 @@ export default class Tournament {
       this.numberOfSignedUsers = jsonObj.numberOfSignedUsers;
       this.numberOfTopics = jsonObj.numberOfTopics;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
+      this.signedUsers = jsonObj.signedUsers;
 
       if (jsonObj.questions) {
         this.questions = jsonObj.questions.map(
@@ -36,11 +37,6 @@ export default class Tournament {
       }
       if (jsonObj.topics) {
         this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
-      }
-      if (jsonObj.signedUsers) {
-        this.signedUsers = jsonObj.signedUsers.map(
-          (user: User) => new User(user)
-        );
       }
     }
   }
