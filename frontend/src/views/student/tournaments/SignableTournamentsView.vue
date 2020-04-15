@@ -4,7 +4,7 @@
     <ul>
       <li class="list-header">
         <div class="col">Title</div>
-        <div class="col">Available since</div>
+        <div class="col">Available from</div>
         <div class="col">Available until</div>
         <div class="col last-col"></div>
       </li>
@@ -22,9 +22,9 @@
         <div class="col">
           {{ tournament.conclusionDate }}
         </div>
-        <div class="col last-col">
-          <i class="fas fa-chevron-circle-right"></i>
-        </div>
+        <v-btn color="primary" @click="signTournament(tournament.id)">
+          Sign
+        </v-btn>
       </li>
     </ul>
   </div>
@@ -48,6 +48,16 @@ export default class SignableTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async signTournament(tournamentId: number) {
+    try {
+      if (confirm('Are you sure you want to sign to this tournament?')) {
+        await RemoteServices.enrollInTournament(tournamentId);
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 }
 </script>

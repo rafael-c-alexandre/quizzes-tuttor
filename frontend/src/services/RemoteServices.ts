@@ -593,12 +593,9 @@ export default class RemoteServices {
       });
   }
 
-  static async enrollInTournament(
-    tournamentId: number,
-    userId: number
-  ): Promise<Tournament> {
+  static async enrollInTournament(tournamentId: number): Promise<Tournament> {
     return httpClient
-      .put('/tournament/' + tournamentId + '/' + userId)
+      .put('/tournament/' + tournamentId)
       .then(response => {
         return new Tournament(response.data);
       })

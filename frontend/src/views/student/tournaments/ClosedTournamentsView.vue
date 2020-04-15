@@ -4,8 +4,7 @@
     <ul>
       <li class="list-header">
         <div class="col">Title</div>
-        <div class="col">Available since</div>
-        <div class="col">Available until</div>
+        <div class="col">Closed since</div>
         <div class="col last-col"></div>
       </li>
       <li
@@ -15,9 +14,6 @@
       >
         <div class="col">
           {{ tournament.title }}
-        </div>
-        <div class="col">
-          {{ tournament.availableDate }}
         </div>
         <div class="col">
           {{ tournament.conclusionDate }}

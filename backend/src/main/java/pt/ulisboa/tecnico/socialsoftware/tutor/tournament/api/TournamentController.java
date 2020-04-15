@@ -72,12 +72,12 @@ public class TournamentController {
     }
 
     //cancel tournament
-    @DeleteMapping("/tournaments/{tournamentId}/{creatorId}")
+    @DeleteMapping("/tournaments/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public TournamentDto cancelTournament(@PathVariable Integer tournamentId,@PathVariable Integer creatorId){
+    public TournamentDto cancelTournament(Principal principal,@PathVariable Integer tournamentId){
         logger.debug("cancelTournament tournamentId: {}: ", tournamentId);
-        logger.debug("cancelTournament creatorId: {}: ", creatorId);
-        return tournamentService.cancelTournament(tournamentId,creatorId);
+        User user = (User)((Authentication) principal).getPrincipal();
+        return tournamentService.cancelTournament(tournamentId,user.getId());
     }
 
     //enroll in tournament

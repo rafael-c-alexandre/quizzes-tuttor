@@ -162,7 +162,7 @@ let router = new Router({
             },
             {
               path: 'closed',
-              name: 'all-tournaments',
+              name: 'closed-tournaments',
               component: ClosedTournamentsView,
               meta: {
                 title: process.env.VUE_APP_NAME + ' - Closed Tournaments',
@@ -171,7 +171,7 @@ let router = new Router({
             },
             {
               path: 'signable',
-              name: 'all-tournaments',
+              name: 'signable-tournaments',
               component: SignableTournamentsView,
               meta: {
                 title: process.env.VUE_APP_NAME + ' - Signable Tournaments',
