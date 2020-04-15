@@ -18,40 +18,23 @@
             label="Search"
             class="mx-2"
           />
-
-          <v-spacer />
-          <v-btn color="primary" dark @click="newSubmission"
-            >New Question</v-btn
-          >
         </v-card-title>
       </template>
-
       <template v-slot:item.content="{ item }">
         <p
-          v-html="convertMarkDownNoFigure(item.content, null)"
-          @click="showSubmissionDialog(item)"
-      /></template>
+                v-html="convertMarkDownNoFigure(item.content, null)"
+                @click="showSubmissionDialog(item)"
+        /></template>
       <template v-slot:item.status="{ item }">
         <v-chip v-if="item.status" :color="getStatusColor(item.status)" dark>{{
           item.status
         }}</v-chip>
       </template>
-
       <template v-slot:item.topics="{ item }">
         <edit-submission-topics
-          :submission="item"
-          :topics="topics"
-          v-on:submission-changed-topics="onSubmissionChangedTopics"
-        />
-      </template>
-
-      <template v-slot:item.image="{ item }">
-        <v-file-input
-          show-size
-          dense
-          small-chips
-          @change="handleFileUpload($event, item)"
-          accept="image/*"
+                :submission="item"
+                :topics="topics"
+                v-on:submission-changed-topics="onSubmissionChangedTopics"
         />
       </template>
       <template v-slot:item.action="{ item }">
@@ -67,19 +50,31 @@
           </template>
           <span>Show Submission</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="evaluateSubmission(item)"
+              >check_circle</v-icon
+            >
+          </template>
+          <span>Evaluate Submission</span>
+        </v-tooltip>
       </template>
     </v-data-table>
-    <edit-submission-dialog
-      v-if="currentSubmission"
-      v-model="editSubmissionDialog"
-      :submission="currentSubmission"
-      v-on:save-submission="onSaveSubmission"
-    />
     <show-submission-dialog
       v-if="currentSubmission"
       :dialog="submissionDialog"
       :submission="currentSubmission"
       v-on:close-show-submission-dialog="onCloseShowSubmissionDialog"
+    />
+    <evaluate-submission-dialog
+      v-if="currentSubmission"
+      v-model="evaluateSubmissionDialog"
+      :submission="currentSubmission"
+      v-on:save-submission="onSaveSubmission"
     />
   </v-card>
 </template>
@@ -92,25 +87,24 @@ import Submission from '@/models/management/Submission';
 import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
 import Image from '@/models/management/Image';
-
-import EditSubmissionTopics from '@/views/student/questions/EditSubmissionTopics.vue';
 import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
-import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog.vue';
+import EvaluateSubmissionDialog from '@/views/teacher/StudentQuestions/EvaluateSubmissionDialog.vue';
+import EditSubmissionTopics from '@/views/student/questions/EditSubmissionTopics.vue';
 
 @Component({
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
-    'edit-submission-dialog': EditSubmissionDialog,
+    'evaluate-submission-dialog': EvaluateSubmissionDialog,
     'edit-submission-topics': EditSubmissionTopics
   }
 })
-export default class QuestionSubmissionView extends Vue {
+export default class StudentQuestionsView extends Vue {
   submissions: Submission[] = [];
   topics: Topic[] = [];
   currentSubmission: Submission | null = null;
   search: string = '';
   submissionDialog: boolean = false;
-  editSubmissionDialog: boolean = false;
+  evaluateSubmissionDialog: boolean = false;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -152,7 +146,7 @@ export default class QuestionSubmissionView extends Vue {
     try {
       [this.topics, this.submissions] = await Promise.all([
         RemoteServices.getTopics(),
-        RemoteServices.getStudentSubmissions()
+        RemoteServices.getAllSubmissions()
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -202,7 +196,6 @@ export default class QuestionSubmissionView extends Vue {
   onCloseShowSubmissionDialog() {
     this.submissionDialog = false;
   }
-
   showSubmissionDialog(submission: Submission) {
     this.currentSubmission = submission;
     this.submissionDialog = true;
@@ -214,15 +207,15 @@ export default class QuestionSubmissionView extends Vue {
     else return 'green';
   }
 
-  newSubmission() {
-    this.currentSubmission = new Submission();
-    this.editSubmissionDialog = true;
+  evaluateSubmission(submission: Submission) {
+    this.currentSubmission = submission;
+    this.evaluateSubmissionDialog = true;
   }
 
   async onSaveSubmission(submission: Submission) {
     this.submissions = this.submissions.filter(q => q.id !== submission.id);
     this.submissions.unshift(submission);
-    this.editSubmissionDialog = false;
+    this.evaluateSubmissionDialog = false;
     this.currentSubmission = null;
   }
 }

@@ -96,6 +96,14 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<SubmissionDto> findCourseSubmissions(Integer courseId) {
+        return submissionRepository.findSubmissionsByCourse(courseId).stream().map(SubmissionDto::new).collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void makeSubmissionApproved(SubmissionDto submissionDto, String justification, Submission submission){
         submissionDto.setStatus("APPROVED");
         submissionDto.setJustification(justification);
@@ -120,14 +128,14 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto makeDecision( boolean isApproved, SubmissionDto submissionDto, Submission submission) {
+    public SubmissionDto makeDecision( boolean isApproved, SubmissionDto submissionDto, Submission submission, String justification) {
         if (isApproved) {
-            makeSubmissionApproved(submissionDto, "Question well structured and correct", submission);
+            makeSubmissionApproved(submissionDto, justification, submission);
             return submissionDto;
         }
 
         else {
-            makeSubmissionRejected(submissionDto, "Question is not correct", submission);
+            makeSubmissionRejected(submissionDto, justification, submission);
             return submissionDto; }
     }
 
@@ -135,7 +143,7 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto teacherEvaluatesQuestion(int userId, int submissionId, boolean isApproved) {
+    public SubmissionDto teacherEvaluatesQuestion(int userId, int submissionId, boolean isApproved, String justification) {
 
         isTeacher(userId);
 
@@ -148,7 +156,7 @@ public class QuestionsByStudentService {
         submissionDto.setTeacherDecision(isApproved);
         submission.setTeacherDecision(isApproved);
 
-        return makeDecision( isApproved, submissionDto, submission);
+        return makeDecision( isApproved, submissionDto, submission, justification);
     }
 
     @Retryable(

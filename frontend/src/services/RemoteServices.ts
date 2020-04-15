@@ -561,6 +561,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getAllSubmissions(): Promise<Submission[]> {
+    return httpClient
+      .get('/courses/' + Store.getters.getCurrentCourse.courseId + '/submissions/')
+      .then(response => {
+        return response.data.map((submission: any) => {
+          return new Submission(submission);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async createSubmission(
     submission: Submission
   ): Promise<Submission> {
@@ -577,9 +590,20 @@ export default class RemoteServices {
   }
 
   static updateSubmissionTopics(submissionId: number, topics: Topic[]) {
-    console.log(`/submissions/${submissionId}/topics`)
     return httpClient.put(`/submissions/${submissionId}/topics`, topics);
   }
+
+  static evaluateSubmission(submission: Submission) {
+    return httpClient.put('/courses/' + Store.getters.getCurrentCourse.courseId +'/submissions', submission)
+      .then(response => {
+        return new Submission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+
 
   static async exportAll() {
     return httpClient

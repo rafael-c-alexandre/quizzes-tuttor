@@ -1,6 +1,7 @@
 <template>
   <v-dialog
     v-model="dialog"
+    @input="closeSubmissionDialog"
     @keydown.esc="closeSubmissionDialog"
     max-width="75%"
   >

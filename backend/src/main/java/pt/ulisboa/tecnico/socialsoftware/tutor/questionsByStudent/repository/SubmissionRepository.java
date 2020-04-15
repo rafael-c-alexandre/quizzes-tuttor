@@ -16,5 +16,10 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
     @Query(value = "SELECT MAX(key) FROM submissions", nativeQuery = true)
     Integer getMaxSubmissionNumber();
 
+    @Query(value = "select * from submissions s where s.course_id = :courseID", nativeQuery = true)
+    List<Submission> findSubmissionsByCourse(int courseID);
+
+
 
 }
+

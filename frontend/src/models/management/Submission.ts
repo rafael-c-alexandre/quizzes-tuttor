@@ -8,7 +8,7 @@ export default class Submission {
   status: string = 'ONHOLD';
   justification: string = '';
   courseId!: number;
-  teacherDecision: boolean = false;
+  teacherDecision!: boolean | null;
   title: string = '';
   content: string = '';
   creationDate!: string | null;

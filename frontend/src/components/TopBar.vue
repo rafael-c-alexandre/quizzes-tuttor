@@ -93,6 +93,14 @@
                 <v-list-item-title>Students</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/management/studentQuestions">
+              <v-list-item-action>
+                <v-icon>fas fa-user-graduate</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Student Questions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/impexp">
               <v-list-item-action>
                 <v-icon>cloud</v-icon>

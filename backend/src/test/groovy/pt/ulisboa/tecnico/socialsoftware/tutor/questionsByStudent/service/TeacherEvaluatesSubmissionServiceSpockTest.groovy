@@ -94,7 +94,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionDto.setCourseId(course.getId())
 
         when:
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion( user.getId(), submissionDto.getId(), true)
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion( user.getId(), submissionDto.getId(), true, "like it")
 
         then:
         def exception = thrown(TutorException)
@@ -129,7 +129,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
 
         when:
 
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submissionDto.getId(), true)
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submissionDto.getId(), true,"like it")
 
         then:
         def exception = thrown(TutorException)
@@ -164,10 +164,10 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
         and : "a submission"
-        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId())
+        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId(),course.getId() )
 
         when:
-        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true)
+        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true, "like it")
 
         then: "the returned data are correct"
         result.getStatus().toString() == "APPROVED"
@@ -201,10 +201,10 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionDto.setOptions(options)
         submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
-        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId())
+        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId(), course.getId())
 
         when:
-        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), false)
+        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), false, "not like it")
 
         then: "the returned data are correct"
         result.getStatus().toString() == "REJECTED"
@@ -238,11 +238,11 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionDto.setOptions(options)
         submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
-        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId())
+        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId(), course.getId())
 
         when:
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true)
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true)
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true, "like it")
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true, "Like it")
 
         then:
         def exception = thrown(TutorException)
