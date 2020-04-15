@@ -22,8 +22,8 @@
         <div class="col">
           {{ tournament.conclusionDate }}
         </div>
-        <div class="col last-col">
-          <i class="fas fa-chevron-circle-right"></i>
+        <div class="col last-col" @click="cancel(tournament)">
+          <i class="fas fa-trash"></i>
         </div>
       </li>
     </ul>
@@ -46,6 +46,15 @@ export default class AllTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async cancel(tournament : Tournament){
+    try{
+      await RemoteServices.cancelTournament(tournament.id);
+    } catch (error){
+      await this.$store.dispatch('error',error);
+    }
+    await this.$router.push({name: 'cancel-tournament'});
   }
 }
 </script>

@@ -533,9 +533,9 @@ export default class RemoteServices {
       });
   }
 
-  static async cancelTournament(tournamentId: number, creatorId: number) {
+  static async cancelTournament(tournamentId: number) {
     return httpClient
-      .delete('/tournaments/' + tournamentId + '/' + creatorId)
+      .delete('/tournaments/' + tournamentId)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
