@@ -22,9 +22,11 @@
         <div class="col">
           {{ tournament.conclusionDate }}
         </div>
-        <v-btn color="primary" @click="signTournament(tournament.id)">
-          Sign
-        </v-btn>
+        <div class="col last-col">
+          <v-btn color="primary" @click="signTournament(tournament.id)">
+            Sign
+          </v-btn>
+        </div>
       </li>
     </ul>
   </div>
