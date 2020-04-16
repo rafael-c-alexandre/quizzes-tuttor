@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
@@ -27,6 +28,15 @@ public class Topic {
 
     @ManyToMany
     private Set<Question> questions = new HashSet<>();
+
+    @ManyToMany
+    private Set<Submission> submissions = new HashSet<>();
+
+    @ManyToOne
+    private Topic parentTopic;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentTopic", fetch=FetchType.EAGER)
+    private Set<Topic> childrenTopics = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<TopicConjunction> topicConjunctions = new ArrayList<>();
@@ -82,6 +92,15 @@ public class Topic {
 
     public void addQuestion(Question question) {
         this.questions.add(question);
+    }
+
+
+    public Set<Submission> getSubmissions() {
+        return submissions;
+    }
+
+    public void setSubmissions(Set<Submission> submissions) {
+        this.submissions = submissions;
     }
 
     @Override

@@ -93,12 +93,39 @@
                 <v-list-item-title>Students</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/management/studentQuestions">
+              <v-list-item-action>
+                <v-icon>fas fa-user-graduate</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Student Questions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/impexp">
               <v-list-item-action>
                 <v-icon>cloud</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>ImpExp</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Questions
+              <v-icon>question_answer</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/student/question">
+              <v-list-item-action>
+                <v-icon>fas fa-tasks</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -255,6 +282,14 @@
               <v-list-item-title>Students</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/studentQuestions">
+            <v-list-item-action>
+              <v-icon>school</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Students</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item to="/management/impexp">
             <v-list-item-action>
               <v-icon>cloud</v-icon>
@@ -274,6 +309,14 @@
           <template v-slot:activator>
             <v-list-item-title>Student</v-list-item-title>
           </template>
+
+          <v-list-item to="/student/question">
+            <v-list-item-action>
+              <v-icon>fas fa-tasks</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Manage
+            </v-list-item-content>
+          </v-list-item>
 
           <v-list-item
             to="/student/available"

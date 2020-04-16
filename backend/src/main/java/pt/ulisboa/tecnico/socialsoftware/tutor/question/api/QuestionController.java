@@ -58,7 +58,7 @@ public class QuestionController {
     }
 
     @PostMapping("/courses/{courseId}/questions")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_TEACHER')  and hasPermission(#courseId, 'COURSE.ACCESS')")
     public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
         question.setStatus(Question.Status.AVAILABLE.name());
         return this.questionService.createQuestion(courseId, question);
@@ -105,6 +105,8 @@ public class QuestionController {
     public String uploadImage(@PathVariable Integer questionId, @RequestParam("file") MultipartFile file) throws IOException {
         logger.debug("uploadImage  questionId: {}: , filename: {}", questionId, file.getContentType());
 
+
+
         QuestionDto questionDto = questionService.findQuestionById(questionId);
         String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
         if (url != null && Files.exists(getTargetLocation(url))) {
@@ -114,16 +116,18 @@ public class QuestionController {
         int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
         String type = file.getContentType().substring(lastIndex + 1);
 
+
         questionService.uploadImage(questionId, type);
 
         url = questionService.findQuestionById(questionId).getImage().getUrl();
+
         Files.copy(file.getInputStream(), getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
 
         return url;
     }
 
     @PutMapping("/questions/{questionId}/topics")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_TEACHER')  and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public ResponseEntity updateQuestionTopics(@PathVariable Integer questionId, @RequestBody TopicDto[] topics) {
         questionService.updateQuestionTopics(questionId, topics);
 

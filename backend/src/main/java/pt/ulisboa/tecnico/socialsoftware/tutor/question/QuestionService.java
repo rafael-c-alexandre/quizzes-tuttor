@@ -106,7 +106,6 @@ public class QuestionService {
         if (questionDto.getCreationDate() == null) {
             questionDto.setCreationDate(LocalDateTime.now().format(Course.formatter));
         }
-
         Question question = new Question(course, questionDto);
         questionRepository.save(question);
         return new QuestionDto(question);
