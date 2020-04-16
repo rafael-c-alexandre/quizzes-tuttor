@@ -20,12 +20,11 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="newSubmission"
+          <v-btn color="primary" dark @click="newSubmission" data-cy="createSubmissionButton"
             >New Question</v-btn
           >
         </v-card-title>
       </template>
-
       <template v-slot:item.content="{ item }">
         <p
           v-html="convertMarkDownNoFigure(item.content, null)"
@@ -62,6 +61,7 @@
               class="mr-2"
               v-on="on"
               @click="showSubmissionDialog(item)"
+              data-cy="showSubmission"
               >visibility</v-icon
             >
           </template>

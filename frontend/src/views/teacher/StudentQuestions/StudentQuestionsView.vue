@@ -57,7 +57,8 @@
               class="mr-2"
               v-on="on"
               @click="evaluateSubmission(item)"
-              >check_circle</v-icon
+              data-cy="evaluateSubmissionButton"
+              >fas fa-marker</v-icon
             >
           </template>
           <span>Evaluate Submission</span>

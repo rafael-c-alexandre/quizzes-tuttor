@@ -47,6 +47,7 @@
                     label="Select"
                     hint="Pick your decision here"
                     v-model="evaluateSubmission.status"
+                    data-cy="status"
                     persistent-hint
                     single-line
                   ></v-select>
@@ -60,6 +61,7 @@
                 v-model="evaluateSubmission.justification"
                 label="Justification"
                 placeholder="Explain your decision here"
+                data-cy="justification"
               ></v-textarea>
             </v-flex>
           </v-layout>
@@ -70,7 +72,7 @@
         <v-btn color="blue darken-1" @click="$emit('dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="saveSubmission">Mark</v-btn>
+        <v-btn color="blue darken-1" @click="saveSubmission" data-cy="saveEvaluationButton">Mark</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -93,6 +95,7 @@ export default class EvaluateSubmissionDialog extends Vue {
 
   created() {
     this.evaluateSubmission = new Submission(this.submission);
+    console.log(this.evaluateSubmission.justification)
   }
 
   async saveSubmission() {

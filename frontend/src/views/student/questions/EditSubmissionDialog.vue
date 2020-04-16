@@ -5,6 +5,7 @@
     @keydown.esc="$emit('dialog', false)"
     max-width="75%"
     max-height="80%"
+
   >
     <v-card>
       <v-card-title>
@@ -21,7 +22,7 @@
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
-              <v-text-field v-model="editSubmission.title" label="Title" />
+              <v-textarea v-model="editSubmission.title" label="Title" data-cy="Title" />
             </v-flex>
             <v-flex xs24 sm12 md12>
               <v-textarea
@@ -29,6 +30,7 @@
                 rows="10"
                 v-model="editSubmission.content"
                 label="Content"
+                data-cy="Content"
               ></v-textarea>
             </v-flex>
             <v-flex
@@ -37,6 +39,7 @@
               md12
               v-for="index in editSubmission.options.length"
               :key="index"
+              data-cy="options"
             >
               <v-switch
                 v-model="editSubmission.options[index - 1].correct"
@@ -56,10 +59,10 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="$emit('dialog', false)"
+        <v-btn color="blue darken-1" @click="$emit('dialog', false)" data-cy="cancelSubmissionButton"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="saveSubmission">Save</v-btn>
+        <v-btn color="blue darken-1" @click="saveSubmission" data-cy="saveSubmissionButton" >Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -115,5 +118,6 @@ export default class EditSubmissionDialog extends Vue {
       }
     }
   }
+
 }
 </script>
