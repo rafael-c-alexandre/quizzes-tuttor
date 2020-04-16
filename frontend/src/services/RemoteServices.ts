@@ -108,12 +108,17 @@ export default class RemoteServices {
       });
   }
 
-  static async getQuestion(): Promise<Question[]> {
+  static async exportCourseQuestions(): Promise<Blob> {
     return httpClient
-      .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questions/export`,
+        {
+          responseType: 'blob'
+        }
+      )
       .then(response => {
-        return response.data.map((question: any) => {
-          return new Question(question);
+        return new Blob([response.data], {
+          type: 'application/zip, application/octet-stream'
         });
       })
       .catch(async error => {
@@ -275,6 +280,21 @@ export default class RemoteServices {
       .get(`/quizzes/${quizId}/byqrcode`)
       .then(response => {
         return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async exportQuiz(quizId: number): Promise<Blob> {
+    return httpClient
+      .get(`/quizzes/${quizId}/export`, {
+        responseType: 'blob'
+      })
+      .then(response => {
+        return new Blob([response.data], {
+          type: 'application/zip, application/octet-stream'
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

@@ -23,7 +23,7 @@ public class Topic {
     private String name;
 
 
-    @ManyToMany(mappedBy = "topics")
+    @ManyToMany
     private Set<Tournament> tournaments = new HashSet<>();
 
     @ManyToMany
@@ -74,18 +74,6 @@ public class Topic {
         return questions;
     }
 
-    public Topic getParentTopic() {
-        return parentTopic;
-    }
-
-    public void setParentTopic(Topic parentTopic) {
-        this.parentTopic = parentTopic;
-    }
-
-    public Set<Topic> getChildrenTopics() {
-        return childrenTopics;
-    }
-
     public List<TopicConjunction> getTopicConjunctions() {
         return topicConjunctions;
     }
@@ -133,7 +121,6 @@ public class Topic {
         return "Topic{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", parentTopic=" + parentTopic +
                 '}';
     }
 
@@ -144,15 +131,7 @@ public class Topic {
         getQuestions().forEach(question -> question.getTopics().remove(this));
         getQuestions().clear();
 
-        if (this.parentTopic != null) {
-            parentTopic.getChildrenTopics().remove(this);
-            parentTopic.getChildrenTopics().addAll(this.getChildrenTopics());
-        }
-
-        this.childrenTopics.forEach(topic -> topic.parentTopic = this.parentTopic);
         this.topicConjunctions.forEach(topicConjunction -> topicConjunction.getTopics().remove(this));
 
-        this.parentTopic = null;
-        this.childrenTopics.clear();
     }
 }
