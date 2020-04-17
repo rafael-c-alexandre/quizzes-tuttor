@@ -1,17 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import org.springframework.data.annotation.Transient;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class TournamentDto {
@@ -21,18 +23,38 @@ public class TournamentDto {
     private String creationDate = null;
     private String availableDate = null;
     private String conclusionDate = null;
-    private Tournament.TournamentState state;
-    private List<Integer> topics = new ArrayList<>();
-    private Integer tournamentCreator;
+    private AuthUserDto tournamentCreator;
     private int numberOfSignedUsers;
     private int numberOfTopics;
+    private int numberOfQuestions;
+    private List<QuestionDto> questions = new ArrayList<>();
     private List<Integer> signedUsers = new ArrayList<>();
+    private List<TopicDto> topics = new ArrayList<>();
 
 
     @Transient
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public TournamentDto() {
+    }
+
+    @Override
+    public String toString() {
+        return "TournamentDto{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", availableDate='" + availableDate + '\'' +
+                ", conclusionDate='" + conclusionDate + '\'' +
+                ", tournamentCreator=" + tournamentCreator +
+                ", numberOfSignedUsers=" + numberOfSignedUsers +
+                ", numberOfTopics=" + numberOfTopics +
+                ", numberOfQuestions=" + numberOfQuestions +
+                ", questions=" + questions +
+                ", signedUsers=" + signedUsers +
+                ", topics=" + topics +
+                ", formatter=" + formatter +
+                '}';
     }
 
     public TournamentDto(Tournament tournament) {
@@ -44,22 +66,44 @@ public class TournamentDto {
             this.creationDate = tournament.getCreationDate().format(formatter);
         if(tournament.getConclusionDate() != null)
             this.conclusionDate = tournament.getConclusionDate().format(formatter);
-        if(tournament.getSignedUsers() != null)
+        if(tournament.getSignedUsers() != null) {
             this.numberOfSignedUsers = tournament.getSignedUsers().size();
-        this.state = tournament.getState();
+            this.signedUsers = tournament.getSignedUsers().stream()
+                    .map(user -> {
+                        int id = user.getId();
+                        return id;
+                    })
+                    .collect(Collectors.toList());
+        }
+        if(tournament.getQuestions() != null){
+            this.numberOfQuestions = tournament.getQuestions().size();
+            this.questions = tournament.getQuestions().stream()
+                    .map(question -> {
+                        QuestionDto questionDto = new QuestionDto(question);
+                        return questionDto;
+                    })
+                    .collect(Collectors.toList());
+        }
         this.title = tournament.getTitle();
-        if(tournament.getTopics() != null)
+        if(tournament.getTopics() != null) {
             this.numberOfTopics = tournament.getTopics().size();
+            this.topics = tournament.getTopics().stream()
+                    .map(topic -> {
+                        TopicDto topicDto = new TopicDto(topic);
+                        return topicDto;
+                    })
+                    .collect(Collectors.toList());
+        }
         if(tournament.getTournamentCreator() != null)
-            this.tournamentCreator = tournament.getTournamentCreator().getId();
+            this.tournamentCreator = new AuthUserDto(tournament.getTournamentCreator());
+
+
+
 
     }
 
     //Getters
 
-    public Tournament.TournamentState getState() {
-        return state;
-    }
     public Integer getId() {
         return id;
     }
@@ -106,9 +150,6 @@ public class TournamentDto {
 
 
 
-    public void setState(Tournament.TournamentState state) {
-        this.state = state;
-    }
     public void setId(Integer id) {
         this.id = id;
     }
@@ -132,23 +173,23 @@ public class TournamentDto {
     }
 
 
-    public void addUser(int id) {
-        this.signedUsers.add(id);
+    public void addUser(Integer user) {
+        this.signedUsers.add(user);
     }
 
-    public List<Integer> getTopics() {
+    public List<TopicDto> getTopics() {
         return topics;
     }
 
-    public void setTopics(List<Integer> topics) {
+    public void setTopics(List<TopicDto> topics) {
         this.topics = topics;
     }
 
-    public Integer getTournamentCreator() {
+    public AuthUserDto getTournamentCreator() {
         return tournamentCreator;
     }
 
-    public void setTournamentCreator(Integer tournamentCreator) {
+    public void setTournamentCreator(AuthUserDto tournamentCreator) {
         this.tournamentCreator = tournamentCreator;
     }
 
@@ -158,5 +199,17 @@ public class TournamentDto {
 
     public void setSignedUsers(List<Integer> signedUsers) {
         this.signedUsers = signedUsers;
+    }
+
+    public List<QuestionDto> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<QuestionDto> questions) {
+        this.questions = questions;
+    }
+
+    public int getNumberOfQuestions() {
+        return numberOfQuestions;
     }
 }

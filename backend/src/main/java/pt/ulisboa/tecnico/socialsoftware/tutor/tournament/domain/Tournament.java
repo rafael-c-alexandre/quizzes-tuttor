@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -19,9 +20,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         )
 public class Tournament {
 
-    public enum TournamentState {
-        OPEN, CLOSED, CREATED
-    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -29,7 +27,6 @@ public class Tournament {
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
-
 
     @Column(name = "available_date")
     private LocalDateTime availableDate;
@@ -40,15 +37,15 @@ public class Tournament {
     @Column(nullable = false)
     private String title = "Title";
 
-    @Enumerated(EnumType.STRING)
-    private Tournament.TournamentState state;
-
     @ManyToMany
     private Set<User> signedUsers = new HashSet<>();
 
 
     @ManyToMany
     private Set<Topic> topics = new HashSet<>();
+
+    @ManyToMany
+    private Set<Question> questions = new HashSet<>();
 
 
     @ManyToOne
@@ -66,7 +63,6 @@ public class Tournament {
         setAvailableDate(tournamentDto.getAvailableDateDate());
         setConclusionDate(tournamentDto.getConclusionDateDate());
         setTitle(tournamentDto.getTitle());
-        this.state = tournamentDto.getState();
     }
 
     //Getters
@@ -85,9 +81,6 @@ public class Tournament {
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
-    public TournamentState getState() {
-        return state;
-    }
     public Set<User> getSignedUsers() {
         return signedUsers;
     }
@@ -97,6 +90,7 @@ public class Tournament {
     public User getTournamentCreator() {
         return tournamentCreator;
     }
+    public Set<Question> getQuestions() { return questions; }
 
     //Setters
     public void setTitle(String title) {
@@ -120,9 +114,6 @@ public class Tournament {
     public void setSignedUsers(Set<User> signedUsers) {
         this.signedUsers = signedUsers;
     }
-    public void setState(TournamentState state) {
-        this.state = state;
-    }
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;
     }
@@ -134,17 +125,11 @@ public class Tournament {
 
 
 
-    public void addTopic(Topic topic){this.topics.add(topic);}
+    public void addTopic(Topic topic){ this.topics.add(topic); }
     public void addUser(User user){
         this.signedUsers.add(user);
     }
-
-    public void closeTournament(){
-        if(this.state == TournamentState.CLOSED){
-            throw new TutorException(TOURNAMENT_ALREADY_CLOSED);
-        }
-    }
-
+    public void addQuestion(Question question) { this.questions.add(question); }
 
     @Override
     public String toString() {
@@ -154,11 +139,12 @@ public class Tournament {
                 ", availableDate=" + availableDate +
                 ", conclusionDate=" + conclusionDate +
                 ", title='" + title + '\'' +
-                ", state=" + state +
-                ", creator=" + tournamentCreator +
+                ", signedUsers=" + signedUsers +
+                ", topics=" + topics +
+                ", questions=" + questions +
+                ", tournamentCreator=" + tournamentCreator +
                 '}';
     }
-
 
     private void checkAvailableDate(LocalDateTime availableDate) {
         if (availableDate == null) {
@@ -191,4 +177,15 @@ public class Tournament {
         }
     }
 
+    public boolean openForSignings(){
+        return LocalDateTime.now().isBefore(this.availableDate);
+    }
+
+    public boolean isOpen(){
+        return LocalDateTime.now().isAfter(this.availableDate) && LocalDateTime.now().isBefore(this.conclusionDate);
+    }
+
+    public boolean isClosed(){
+        return LocalDateTime.now().isAfter(this.conclusionDate);
+    }
 }
