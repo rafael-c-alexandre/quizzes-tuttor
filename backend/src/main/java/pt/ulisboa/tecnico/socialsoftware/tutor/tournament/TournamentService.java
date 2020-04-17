@@ -147,7 +147,6 @@ public class TournamentService {
         Tournament tournament = new Tournament(tournamentDto);
         tournament.setTournamentCreator(user);
 
-        tournament.addUser(user);
 
         tournament.setCreationDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
@@ -204,7 +203,6 @@ public class TournamentService {
     public TournamentDto enrollInTournament(Integer tournamentId, Integer userId){
         User user = userRepository.findById(userId).get();
         Tournament tournament = tournamentRepository.findTournamentById(tournamentId);
-
         if(user == null){
             throw new TutorException(USER_NOT_FOUND,userId);
         }
@@ -221,7 +219,6 @@ public class TournamentService {
                     }
                 }
                 tournament.addUser(user);
-
             } else {
                 throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
             }

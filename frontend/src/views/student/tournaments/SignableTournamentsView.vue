@@ -57,6 +57,7 @@ export default class SignableTournamentsView extends Vue {
       if (confirm('Are you sure you want to sign to this tournament?')) {
         await RemoteServices.enrollInTournament(tournamentId);
       }
+
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
