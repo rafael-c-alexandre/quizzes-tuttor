@@ -1,34 +1,30 @@
-import Option from '@/models/management/Option';
 import Image from '@/models/management/Image';
+import Option from '@/models/management/Option';
 import Topic from '@/models/management/Topic';
 
-export default class Question {
+export default class Submission {
   id: number | null = null;
+  userId!: number;
+  status: string = 'ONHOLD';
+  justification: string = '';
+  courseId!: number;
+  teacherDecision!: boolean | null;
   title: string = '';
-  status: string = 'AVAILABLE';
-  numberOfAnswers!: number;
-  numberOfGeneratedQuizzes!: number;
-  numberOfNonGeneratedQuizzes!: number;
-  numberOfCorrect!: number;
-  difficulty!: number | null;
   content: string = '';
   creationDate!: string | null;
   image: Image | null = null;
-  sequence: number | null = null;
-
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   topics: Topic[] = [];
 
-  constructor(jsonObj?: Question) {
+  constructor(jsonObj?: Submission) {
     if (jsonObj) {
       this.id = jsonObj.id;
-      this.title = jsonObj.title;
+      this.userId = jsonObj.userId;
       this.status = jsonObj.status;
-      this.numberOfAnswers = jsonObj.numberOfAnswers;
-      this.numberOfGeneratedQuizzes = jsonObj.numberOfGeneratedQuizzes;
-      this.numberOfNonGeneratedQuizzes = jsonObj.numberOfNonGeneratedQuizzes;
-      this.numberOfCorrect = jsonObj.numberOfCorrect;
-      this.difficulty = jsonObj.difficulty;
+      this.justification = jsonObj.justification;
+      this.courseId = jsonObj.courseId;
+      this.teacherDecision = jsonObj.teacherDecision;
+      this.title = jsonObj.title;
       this.content = jsonObj.content;
       this.image = jsonObj.image;
       this.creationDate = jsonObj.creationDate;

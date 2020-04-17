@@ -235,7 +235,6 @@ export default class QuestionsView extends Vue {
         .indexOf(search.toLowerCase()) !== -1
     );
   }
-
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
     return convertMarkDownNoFigure(text, image);
   }

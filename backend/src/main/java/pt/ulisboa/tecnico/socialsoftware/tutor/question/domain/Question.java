@@ -103,6 +103,7 @@ public class Question implements DomainEntity {
         }
     }
 
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestion(this);
@@ -132,6 +133,7 @@ public class Question implements DomainEntity {
             option.setQuestion(this);
         }
     }
+
 
     public Integer getId() {
         return id;
