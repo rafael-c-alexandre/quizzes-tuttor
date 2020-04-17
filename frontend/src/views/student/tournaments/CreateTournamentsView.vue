@@ -126,7 +126,6 @@ export default class CreateTournamentsView extends Vue {
   }
 
   async create() {
-    this.tournament.tournamentCreator = this.$store.getters.getUser;
     try {
       await RemoteServices.createTournament(this.tournament);
     } catch (error) {

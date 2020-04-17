@@ -7,9 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
