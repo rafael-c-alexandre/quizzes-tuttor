@@ -1,6 +1,6 @@
 import Tournament from '@/models/management/Tournament';
 
-export const Signabletournament = new Tournament({
+export const signabletournament = new Tournament({
   id: 123,
   title: 'Torneio com inscricoes abertas de teste',
   creationDate: '',
@@ -15,7 +15,7 @@ export const Signabletournament = new Tournament({
   signedUsers: [1,2,3,4,5,123]
 });
 
-export const OpenTournament = new Tournament({
+export const openTournament = new Tournament({
   id: 124,
   title: 'Torneio Aberto de teste',
   creationDate: '',
@@ -30,7 +30,7 @@ export const OpenTournament = new Tournament({
   signedUsers: [1,2,3,4,5,124]
 });
 
-export const ClosedTouranment = new Tournament({
+export const closedTouranment = new Tournament({
   id: 123,
   title: 'Torneio Fechado de teste',
   creationDate: '',
