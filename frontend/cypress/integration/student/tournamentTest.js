@@ -7,10 +7,9 @@ describe('Tournament Tests', () => {
         cy.contains('Logout').click()
     })
 
-    it('login creates and cancels a course execution', () => {
-        cy.createTournament('Tournament Title','2020-09-22 12:12','2020-10-22 12:12','5','Adventure Builder')
+    it('create tournament', () => {
+        cy.createTournament('Tournament Title','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
 
-       // cy.cancelTournament('Tournament Title')
     });
 /*
     it('login creates two tournaments and deletes it', () => {

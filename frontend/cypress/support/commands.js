@@ -39,15 +39,22 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="saveButton"]').click()
 })
 
-Cypress.Commands.add('createTournament', (name, availableDate, conclusionDate,topics) => {
-    cy.contains('Create').click()
-    cy.get('[data-cy="Name"]').type(name)
-    cy.get('[data-cy="available-date"]').type(availableDate)
-    cy.get('[data-cy="conclusion-date"]').type(conclusionDate)
-    cy.get('[data-cy="5questions"]').click()
+
+Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusionDate
+    , numberOfQuestions, topics) => {
+    cy.contains('List').click()
+    cy.contains('List').click()
+    cy.get('[data-cy="createButton"]').click()
+    cy.get('[data-cy="tournamentName"]').type(tournamentName)
+    cy.get('[data-cy="manADate"]').click()
+    cy.get('[data-cy="availableDateText"]').type(availableDate)
+    cy.get('[data-cy="manCDate"]').click()
+    cy.get('[data-cy="conclusionDateText"]').type(conclusionDate)
     cy.get('[data-cy="topics"]').click()
-    for(topic in topics)
-        cy.get(topic).type(topic)
+    for(let i = 0 ; i < topics.length; i++)
+        cy.contains(topics[i]).click()
+    cy.get('[data-cy="5questions"]').click()
+    cy.get('[data-cy="createTournament"]').click()
 })
 
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
@@ -84,17 +91,5 @@ Cypress.Commands.add('demoStudentLogin', () => {
     cy.visit('/')
     cy.get('[data-cy="studentButton"]').click()
     cy.contains('Tournaments').click()
-    cy.contains('Create').click()
-    cy.contains('Create').click()
-
 })
 
-Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusionDate
-    , numberOfQuestions, Topics) => {
-    cy.get('[data-cy="tournamentName"]').type(tournamentName)
-    cy.get('[data-cy="availableDate"]').type(availableDate)
-    cy.get('[data-cy="conclusionDate"]').type(conclusionDate)
-    cy.get('[data-cy="numberOfQuestions"]').type(numberOfQuestions)
-    cy.get('[data-cy="topics"]').type(Topics)
-    cy.get('[data-cy="createButton"]').click()
-})

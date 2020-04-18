@@ -14,7 +14,7 @@
         dark
         v-if="canCreate"
         @click="create"
-        data-cy="createButton"
+        data-cy="createTournament"
       >
         Create
       </v-btn>
@@ -27,8 +27,14 @@
       />
       <v-row>
         <v-col cols="12" sm="6">
+          <v-text-field
+            data-cy="availableDateText"
+            v-if="maADate"
+            v-model="tournament.availableDate"
+            label="*Manual Available Date"
+          />
           <v-datetime-picker
-            data-cy="availableDate"
+            v-if="!maADate"
             label="*Available Date"
             format="yyyy-MM-dd HH:mm"
             v-model="tournament.availableDate"
@@ -37,10 +43,31 @@
           >
           </v-datetime-picker>
         </v-col>
+        <v-col sm="1">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                small
+                class="mr-2"
+                v-on="on"
+                @click="manualADate"
+                data-cy="manADate"
+                >edit</v-icon
+              >
+            </template>
+            <span>Manually Insert Date</span>
+          </v-tooltip>
+        </v-col>
         <v-spacer></v-spacer>
         <v-col cols="12" sm="6">
+          <v-text-field
+            data-cy="conclusionDateText"
+            v-if="maCDate"
+            v-model="tournament.conclusionDate"
+            label="*Manual Conclusion Date"
+          />
           <v-datetime-picker
-            data-cy="conclusionDate"
+            v-if="!maCDate"
             label="*Conclusion Date"
             format="yyyy-MM-dd HH:mm"
             v-model="tournament.conclusionDate"
@@ -49,13 +76,27 @@
           >
           </v-datetime-picker>
         </v-col>
+        <v-col cols="12" sm="1">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                small
+                class="mr-2"
+                v-on="on"
+                @click="manualCDate"
+                data-cy="manCDate"
+                >edit</v-icon
+              >
+            </template>
+            <span>Manually Insert Date</span>
+          </v-tooltip>
+        </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" sm="6">
           <v-container>
             <p class="pl-0">Number of Questions</p>
             <v-btn-toggle
-              data-cy="numberOfQuestions"
               v-model="tournament.numberOfQuestions"
               mandatory
               class="button-group"
@@ -111,6 +152,8 @@ import Topic from '@/models/management/Topic';
 export default class CreateTournamentsView extends Vue {
   tournament: Tournament = new Tournament();
   topics: Topic[] = [];
+  maADate: boolean = false;
+  maCDate: boolean = false;
 
   async created() {
     await this.$store.dispatch('loading');
@@ -136,6 +179,14 @@ export default class CreateTournamentsView extends Vue {
     this.tournament.topics = this.tournament.topics.filter(
       element => element.id != topic.id
     );
+  }
+
+  manualADate() {
+    this.maADate = !this.maADate;
+  }
+
+  manualCDate() {
+    this.maCDate = !this.maCDate;
   }
 
   async create() {
