@@ -131,10 +131,10 @@ export default class CreateTournamentsView extends Vue {
   async create() {
     try {
       await RemoteServices.createTournament(this.tournament);
+      await this.$router.push({ name: 'all-tournaments' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
-    await this.$router.push({ name: 'all-tournaments' });
   }
 
   close() {

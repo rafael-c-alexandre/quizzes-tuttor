@@ -595,25 +595,12 @@ export default class RemoteServices {
 
   static async enrollInTournament(tournamentId: number): Promise<Tournament> {
     return httpClient
-      .put('/tournament/' + tournamentId)
+      .put('/tournaments/' + tournamentId)
       .then(response => {
         return new Tournament(response.data);
       })
       .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async openTournament(
-    tournamentId: number,
-    userId: number
-  ): Promise<Tournament> {
-    return httpClient
-      .put('/tournament/open/' + tournamentId + '/' + userId)
-      .then(response => {
-        return new Tournament(response.data);
-      })
-      .catch(async error => {
+        console.log(error);
         throw Error(await this.errorMessage(error));
       });
   }

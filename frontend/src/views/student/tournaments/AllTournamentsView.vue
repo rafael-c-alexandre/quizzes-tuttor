@@ -48,13 +48,15 @@ export default class AllTournamentsView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  async cancel(tournament : Tournament){
-    try{
-      await RemoteServices.cancelTournament(tournament.id);
-    } catch (error){
-      await this.$store.dispatch('error',error);
+  async cancel(tournament: Tournament) {
+    try {
+      if(confirm('Are you sure you want to cancel this tournament?')) {
+        await RemoteServices.cancelTournament(tournament.id);
+        this.tournaments = (await RemoteServices.listTournaments()).reverse();
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
-    await this.$router.push({name: 'cancel-tournament'});
   }
 }
 </script>
