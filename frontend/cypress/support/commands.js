@@ -45,6 +45,17 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="saveButton"]').click()
 })
 
+Cypress.Commands.add('createTournament', (name, availableDate, conclusionDate,topics) => {
+    cy.contains('Create').click()
+    cy.get('[data-cy="Name"]').type(name)
+    cy.get('[data-cy="available-date"]').type(availableDate)
+    cy.get('[data-cy="conclusion-date"]').type(conclusionDate)
+    cy.get('[data-cy="5questions"]').click()
+    cy.get('[data-cy="topics"]').click()
+    for(topic in topics)
+        cy.get(topic).type(topic)
+})
+
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
     cy.contains('Error')
         .parent()

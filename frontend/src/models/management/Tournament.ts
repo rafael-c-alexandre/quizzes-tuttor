@@ -5,13 +5,13 @@ import Topic from '@/models/management/Topic';
 export default class Tournament {
   id!: number;
   title!: string;
-  creationDate!: string | undefined;
-  availableDate!: string | undefined;
-  conclusionDate!: string | undefined;
+  creationDate!: string;
+  availableDate!: string;
+  conclusionDate!: string;
   numberOfSignedUsers!: number;
   numberOfTopics!: number;
   numberOfQuestions!: number;
-
+  state!: string;
   questions: Question[] = [];
   topics: Topic[] = [];
   signedUsers: number[] = [];
@@ -27,7 +27,6 @@ export default class Tournament {
       this.numberOfTopics = jsonObj.numberOfTopics;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.signedUsers = jsonObj.signedUsers;
-
       if (jsonObj.questions) {
         this.questions = jsonObj.questions.map(
           (question: Question) => new Question(question)
@@ -36,6 +35,13 @@ export default class Tournament {
       if (jsonObj.topics) {
         this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
       }
+      let a = new Date(this.availableDate);
+      let c = new Date(this.conclusionDate);
+      let n = new Date();
+
+      if (n < a) this.state = 'Signable';
+      else if (n < c) this.state = 'Open';
+      else this.state = 'Closed';
     }
   }
 }

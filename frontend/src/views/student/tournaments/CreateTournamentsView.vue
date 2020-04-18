@@ -14,7 +14,7 @@
       </v-btn>
     </v-card-title>
     <v-card-text>
-      <v-text-field v-model="tournament.title" label="*Title" />
+      <v-text-field v-model="tournament.title" label="*Title" data-cy="Name" />
       <v-row>
         <v-col cols="12" sm="6">
           <v-datetime-picker
@@ -23,6 +23,7 @@
             v-model="tournament.availableDate"
             date-format="yyyy-MM-dd"
             time-format="HH:mm"
+            data-cy="available-date"
           >
           </v-datetime-picker>
         </v-col>
@@ -34,6 +35,7 @@
             v-model="tournament.conclusionDate"
             date-format="yyyy-MM-dd"
             time-format="HH:mm"
+            data-cy="conclusion-date"
           >
           </v-datetime-picker>
         </v-col>
@@ -47,9 +49,9 @@
               mandatory
               class="button-group"
             >
-              <v-btn text value="5">5</v-btn>
-              <v-btn text value="10">10</v-btn>
-              <v-btn text value="20">20</v-btn>
+              <v-btn text value="5" data-cy="5questions">5</v-btn>
+              <v-btn text value="10" data-cy="10questions">10</v-btn>
+              <v-btn text value="20" data-cy="20questions">20</v-btn>
             </v-btn-toggle>
           </v-container>
         </v-col>
@@ -63,6 +65,7 @@
               return-object
               item-text="name"
               item-value="name"
+              data-cy="topics"
             >
               <template v-slot:selection="data">
                 <v-chip

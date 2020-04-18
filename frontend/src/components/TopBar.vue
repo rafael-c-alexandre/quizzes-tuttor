@@ -112,12 +112,12 @@
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/student/tournaments/create">
+            <v-list-item to="/student/tournaments/all">
               <v-list-item-action>
-                <v-icon>create</v-icon>
+                <v-icon>assignment</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Create</v-list-item-title>
+                <v-list-item-title>List</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
 
@@ -130,30 +130,12 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item to="/student/tournaments/all">
-              <v-list-item-action>
-                <v-icon>assignment</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>List</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-
             <v-list-item to="/student/tournaments/closed">
               <v-list-item-action>
                 <v-icon>fas fa-lock</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Closed</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-
-            <v-list-item to="/student/tournaments/signable">
-              <v-list-item-action>
-                <v-icon>fas fa-sign-in-alt</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Sign in</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
