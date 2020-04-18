@@ -137,7 +137,7 @@ export default class AllTournamentsView extends Vue {
       if (confirm('Are you sure you want to sign to this tournament?')) {
         await RemoteServices.enrollInTournament(tournamentId);
         this.tournaments = (
-          await RemoteServices.listSignableTournaments()
+          await RemoteServices.listTournaments()
         ).reverse();
       }
     } catch (error) {
