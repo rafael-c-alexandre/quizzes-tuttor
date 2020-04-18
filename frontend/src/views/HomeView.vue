@@ -9,6 +9,7 @@
     </v-btn>
 
     <div class="demo-buttons" v-if="!isLoggedIn">
+
       <v-btn
         depressed
         small

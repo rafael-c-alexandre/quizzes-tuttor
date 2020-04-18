@@ -9,15 +9,26 @@
         Close
       </v-btn>
 
-      <v-btn color="primary" dark v-if="canCreate" @click="create">
+      <v-btn
+        color="primary"
+        dark
+        v-if="canCreate"
+        @click="create"
+        data-cy="createButton"
+      >
         Create
       </v-btn>
     </v-card-title>
     <v-card-text>
-      <v-text-field v-model="tournament.title" label="*Title" data-cy="Name" />
+      <v-text-field
+        data-cy="tournamentName"
+        v-model="tournament.title"
+        label="*Title"
+      />
       <v-row>
         <v-col cols="12" sm="6">
           <v-datetime-picker
+            data-cy="availableDate"
             label="*Available Date"
             format="yyyy-MM-dd HH:mm"
             v-model="tournament.availableDate"
@@ -30,6 +41,7 @@
         <v-spacer></v-spacer>
         <v-col cols="12" sm="6">
           <v-datetime-picker
+            data-cy="conclusionDate"
             label="*Conclusion Date"
             format="yyyy-MM-dd HH:mm"
             v-model="tournament.conclusionDate"
@@ -45,6 +57,7 @@
           <v-container>
             <p class="pl-0">Number of Questions</p>
             <v-btn-toggle
+              data-cy="numberOfQuestions"
               v-model="tournament.numberOfQuestions"
               mandatory
               class="button-group"
@@ -59,6 +72,7 @@
           <v-form>
             TOPICS
             <v-autocomplete
+              data-cy="topics"
               v-model="tournament.topics"
               :items="topics"
               multiple

@@ -31,12 +31,6 @@ Cypress.Commands.add('demoAdminLogin', () => {
     cy.contains('Manage Courses').click()
 })
 
-Cypress.Commands.add('demoStudentLogin', () => {
-    cy.visit('/')
-    cy.get('[data-cy="studentButton"]').click()
-    cy.contains('Tournaments').click()
-})
-
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="Name"]').type(name)
@@ -86,3 +80,21 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
     cy.get('[data-cy="saveButton"]').click()
 })
 
+Cypress.Commands.add('demoStudentLogin', () => {
+    cy.visit('/')
+    cy.get('[data-cy="studentButton"]').click()
+    cy.contains('Tournaments').click()
+    cy.contains('Create').click()
+    cy.contains('Create').click()
+
+})
+
+Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusionDate
+    , numberOfQuestions, Topics) => {
+    cy.get('[data-cy="tournamentName"]').type(tournamentName)
+    cy.get('[data-cy="availableDate"]').type(availableDate)
+    cy.get('[data-cy="conclusionDate"]').type(conclusionDate)
+    cy.get('[data-cy="numberOfQuestions"]').type(numberOfQuestions)
+    cy.get('[data-cy="topics"]').type(Topics)
+    cy.get('[data-cy="createButton"]').click()
+})
