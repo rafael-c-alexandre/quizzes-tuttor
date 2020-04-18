@@ -67,6 +67,14 @@
           </template>
           <span>Show Submission</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)"
+            >edit</v-icon
+            >
+          </template>
+          <span>Edit Question</span>
+        </v-tooltip>
       </template>
     </v-data-table>
     <edit-submission-dialog
@@ -85,7 +93,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+  import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
 import Submission from '@/models/management/Submission';
@@ -146,6 +154,13 @@ export default class QuestionSubmissionView extends Vue {
       sortable: false
     }
   ];
+
+  @Watch('editSubmissionDialog')
+  closeError() {
+    if (!this.editSubmissionDialog) {
+      this.currentSubmission = null;
+    }
+  }
 
   async created() {
     await this.$store.dispatch('loading');
@@ -212,6 +227,11 @@ export default class QuestionSubmissionView extends Vue {
     if (status === 'REJECTED') return 'red';
     else if (status === 'ONHOLD') return 'orange';
     else return 'green';
+  }
+
+  editSubmission(submission: Submission) {
+    this.currentSubmission = submission;
+    this.editSubmissionDialog = true;
   }
 
   newSubmission() {

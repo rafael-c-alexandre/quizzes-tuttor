@@ -209,7 +209,7 @@ public class QuestionsByStudentService {
 
     private void isSubmitionOnHold(Submission submission) {
         if(!submission.getSubmissionStatus().toString().equals("ONHOLD")){
-            throw new TutorException(SUBMITION_ALREADY_EVALUATED, submission.getId());
+            throw new TutorException(SUBMISSION_ALREADY_EVALUATED, submission.getId());
         }
     }
 

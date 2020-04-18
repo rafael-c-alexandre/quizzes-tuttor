@@ -22,10 +22,11 @@
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
-              <v-textarea v-model="editSubmission.title" label="Title" data-cy="Title" />
+              <v-textarea clearable v-model="editSubmission.title" label="Title" data-cy="Title" />
             </v-flex>
             <v-flex xs24 sm12 md12>
               <v-textarea
+                clearable
                 outline
                 rows="10"
                 v-model="editSubmission.content"
@@ -47,6 +48,7 @@
                 label="Correct"
               />
               <v-textarea
+                clearable
                 outline
                 rows="10"
                 v-model="editSubmission.options[index - 1].content"
@@ -70,10 +72,8 @@
 
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-
 import RemoteServices from '@/services/RemoteServices';
 import Submission from '../../../models/management/Submission';
-import Question from '@/models/management/Question';
 
 @Component
 export default class EditSubmissionDialog extends Vue {
@@ -84,8 +84,6 @@ export default class EditSubmissionDialog extends Vue {
 
   created() {
     this.editSubmission = new Submission(this.submission);
-
-
   }
 
   async saveSubmission() {
@@ -100,11 +98,12 @@ export default class EditSubmissionDialog extends Vue {
       return;
     }
 
+
     if (this.editSubmission && this.editSubmission.id != null) {
       try {
 
-        //const result = await RemoteServices.updateQuestion(this.editQuestion);
-        //this.$emit('save-question', result);
+        const result = await RemoteServices.updateQuestion(this.editSubmission);
+        this.$emit('save-submission', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

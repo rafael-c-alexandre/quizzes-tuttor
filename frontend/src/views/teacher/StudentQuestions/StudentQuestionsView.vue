@@ -22,20 +22,22 @@
       </template>
       <template v-slot:item.content="{ item }">
         <p
-                v-html="convertMarkDownNoFigure(item.content, null)"
-                @click="showSubmissionDialog(item)"
-        /></template>
+          v-html="convertMarkDownNoFigure(item.content, null)"
+          @click="showSubmissionDialog(item)"
+      /></template>
+      <template >
+        <v-list-item>
+          <v-list-item-content>
+            <v-chip   dark>
+              ola
+              </v-chip>
+          </v-list-item-content>
+        </v-list-item>
+      </template>
       <template v-slot:item.status="{ item }">
         <v-chip v-if="item.status" :color="getStatusColor(item.status)" dark>{{
           item.status
         }}</v-chip>
-      </template>
-      <template v-slot:item.topics="{ item }">
-        <edit-submission-topics
-                :submission="item"
-                :topics="topics"
-                v-on:submission-changed-topics="onSubmissionChangedTopics"
-        />
       </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
@@ -81,7 +83,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
 import Submission from '@/models/management/Submission';
@@ -90,13 +92,11 @@ import Topic from '@/models/management/Topic';
 import Image from '@/models/management/Image';
 import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
 import EvaluateSubmissionDialog from '@/views/teacher/StudentQuestions/EvaluateSubmissionDialog.vue';
-import EditSubmissionTopics from '@/views/student/questions/EditSubmissionTopics.vue';
 
 @Component({
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
-    'evaluate-submission-dialog': EvaluateSubmissionDialog,
-    'edit-submission-topics': EditSubmissionTopics
+    'evaluate-submission-dialog': EvaluateSubmissionDialog
   }
 })
 export default class StudentQuestionsView extends Vue {
@@ -126,7 +126,7 @@ export default class StudentQuestionsView extends Vue {
     {
       text: 'Creation Date',
       value: 'creationDate',
-      align: 'center'
+      align: 'center',
     },
     {
       text: 'Image',
@@ -142,6 +142,13 @@ export default class StudentQuestionsView extends Vue {
     }
   ];
 
+  @Watch('evaluateSubmissionDialog')
+  closeError() {
+    if (!this.evaluateSubmissionDialog) {
+      this.currentSubmission = null;
+    }
+  }
+
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -149,6 +156,7 @@ export default class StudentQuestionsView extends Vue {
         RemoteServices.getTopics(),
         RemoteServices.getAllSubmissions()
       ]);
+      this.onHoldFirst();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -163,15 +171,6 @@ export default class StudentQuestionsView extends Vue {
         .toLowerCase()
         .indexOf(search.toLowerCase()) !== -1
     );
-  }
-
-  onSubmissionChangedTopics(submissionId: Number, changedTopics: Topic[]) {
-    let submission = this.submissions.find(
-      (submission: Submission) => submission.id == submissionId
-    );
-    if (submission) {
-      submission.topics = changedTopics;
-    }
   }
 
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
@@ -218,6 +217,33 @@ export default class StudentQuestionsView extends Vue {
     this.submissions.unshift(submission);
     this.evaluateSubmissionDialog = false;
     this.currentSubmission = null;
+  }
+
+  onHoldFirst() {
+    let aux, a, b;
+    for (let i = 0; i < this.submissions.length - 1; i++) {
+      for (let j = i + 1; j < this.submissions.length ; j++) {
+        a = this.submissions[i];
+        b = this.submissions[j];
+        if (a.status === 'REJECTED') {
+          if (b.status === 'ONHOLD') {
+            aux = this.submissions[i];
+            this.submissions[i] = b;
+            this.submissions[j] = aux;
+          } else if (b.status == 'APPROVED') {
+            aux = this.submissions[i];
+            this.submissions[i] = b;
+            this.submissions[j] = aux;
+          }
+        } else if (a.status == 'APPROVED') {
+          if (b.status === 'ONHOLD') {
+            aux = this.submissions[i];
+            this.submissions[i] = b;
+            this.submissions[j] = aux;
+          }
+        }
+      }
+    }
   }
 }
 </script>

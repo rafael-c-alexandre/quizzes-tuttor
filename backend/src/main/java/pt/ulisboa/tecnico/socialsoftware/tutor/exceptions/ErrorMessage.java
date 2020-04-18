@@ -30,7 +30,7 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with name %d"),
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
-    SUBMITION_ALREADY_EVALUATED("Submission with id %d was previously evaluated"),
+    SUBMISSION_ALREADY_EVALUATED("Submission was previously evaluated"),
 
     COURSE_NOT_FOUND("Course not found with name %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
