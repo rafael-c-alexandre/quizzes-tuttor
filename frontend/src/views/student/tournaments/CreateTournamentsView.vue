@@ -34,7 +34,6 @@
             v-model="tournament.availableDate"
             date-format="yyyy-MM-dd"
             time-format="HH:mm"
-            data-cy="available-date"
           >
           </v-datetime-picker>
         </v-col>
@@ -47,7 +46,6 @@
             v-model="tournament.conclusionDate"
             date-format="yyyy-MM-dd"
             time-format="HH:mm"
-            data-cy="conclusion-date"
           >
           </v-datetime-picker>
         </v-col>
@@ -79,7 +77,6 @@
               return-object
               item-text="name"
               item-value="name"
-              data-cy="topics"
             >
               <template v-slot:selection="data">
                 <v-chip
