@@ -5,7 +5,7 @@
 
       <v-spacer />
 
-      <v-btn color="primary" dark to="/">
+      <v-btn color="primary" dark to="/" data-cy="closeButton">
         Close
       </v-btn>
 
@@ -31,7 +31,7 @@
             data-cy="availableDateText"
             v-if="maADate"
             v-model="tournament.availableDate"
-            label="*Manual Available Date"
+            label="*Available Date"
           />
           <v-datetime-picker
             v-if="!maADate"
@@ -64,7 +64,7 @@
             data-cy="conclusionDateText"
             v-if="maCDate"
             v-model="tournament.conclusionDate"
-            label="*Manual Conclusion Date"
+            label="*Conclusion Date"
           />
           <v-datetime-picker
             v-if="!maCDate"

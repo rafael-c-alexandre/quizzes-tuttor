@@ -37,11 +37,11 @@
               v-on="on"
               @click="cancel(item)"
               color="red"
-              data-cy="deleteTournament"
+              data-cy="cancelTournament"
               >delete</v-icon
             >
           </template>
-          <span>Delete Course</span>
+          <span>Cancel Tournament</span>
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
