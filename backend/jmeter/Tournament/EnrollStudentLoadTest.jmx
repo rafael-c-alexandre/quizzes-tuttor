@@ -104,7 +104,7 @@
 	&quot;availableDate&quot;: &quot;2020-10-22 12:12&quot;,&#xd;
 	&quot;conclusionDate&quot;: &quot;2020-11-22 12:12&quot;,&#xd;
 	&quot;signedUsers&quot;:[701],&#xd;
-	&quot;topics&quot;:[91],&#xd;
+	&quot;topics&quot;:[],&#xd;
 	&quot;tournamentCreator&quot;: 700&#xd;
 }&#xd;
 </stringProp>
@@ -334,7 +334,7 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/tournaments/${__property(tournamentId)}/${userId}</stringProp>
+            <stringProp name="HTTPSampler.path">/tournaments/${__property(tournamentId)}</stringProp>
             <stringProp name="HTTPSampler.method">PUT</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -533,7 +533,7 @@
           <stringProp name="dataSource">pool</stringProp>
           <stringProp name="query">DELETE FROM tournaments_signed_users;
 DELETE FROM tournaments_topics;
-DELETE FROM tournaments WHERE state=&apos;CREATED&apos;;</stringProp>
+DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>

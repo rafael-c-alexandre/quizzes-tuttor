@@ -135,7 +135,6 @@ public class TournamentService {
          Integer maxId;
          Random rand = new Random();
          User user;
-         List<Topic> topics = topicRepository.findAll();
          List<Question> questions = questionRepository.findAll();
          List<Tournament> tournaments = tournamentRepository.findAll();
 
@@ -159,10 +158,11 @@ public class TournamentService {
 
 
          for(TopicDto topicDto: tournamentDto.getTopics()){
-             for(Topic topic : topics){
-                 if(topicDto.getName() != null && topicDto.getName().equals(topic.getName()))
-                     tournament.addTopic(topic);
-             }
+             Optional<Topic> t = topicRepository.findById(topicDto.getId());
+             if(t.isPresent())
+                tournament.addTopic(t.get());
+             else
+                 throw new TutorException(TOPIC_NOT_FOUND,topicDto.getId());
          }
 
          //SET SOME RANDOM QUESTION
