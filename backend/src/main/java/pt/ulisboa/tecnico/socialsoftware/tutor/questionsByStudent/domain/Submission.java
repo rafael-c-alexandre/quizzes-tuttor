@@ -76,7 +76,7 @@ public class Submission {
     }
 
     public Submission(SubmissionDto submissionDto, User user, Course course) {
-        checkConsistentQuestion(submissionDto);
+        checkConsistentSubmission(submissionDto);
         this.title = submissionDto.getTitle();
         this.key = submissionDto.getKey();
         this.content = submissionDto.getContent();
@@ -212,7 +212,7 @@ public class Submission {
         this.course = course;
     }
 
-    private void checkConsistentQuestion(SubmissionDto submissionDto) {
+    private void checkConsistentSubmission(SubmissionDto submissionDto) {
         if (submissionDto.getTitle().trim().length() == 0 ||
                 submissionDto.getContent().trim().length() == 0 ||
                 submissionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
@@ -235,6 +235,25 @@ public class Submission {
         newTopics.stream().filter(topic -> !this.topics.contains(topic)).forEach(topic -> {
             this.topics.add(topic);
             topic.getSubmissions().add(this);
+        });
+    }
+
+    private Option getOptionById(Integer id) {
+        return getOptions().stream().filter(option -> option.getId().equals(id)).findAny().orElse(null);
+    }
+    public void update(SubmissionDto submissionDto) {
+        checkConsistentSubmission(submissionDto);
+
+        setTitle(submissionDto.getTitle());
+        setContent(submissionDto.getContent());
+
+        submissionDto.getOptions().forEach(optionDto -> {
+            Option option = getOptionById(optionDto.getId());
+            if (option == null) {
+                throw new TutorException(OPTION_NOT_FOUND, optionDto.getId());
+            }
+            option.setContent(optionDto.getContent());
+            option.setCorrect(optionDto.getCorrect());
         });
     }
 }

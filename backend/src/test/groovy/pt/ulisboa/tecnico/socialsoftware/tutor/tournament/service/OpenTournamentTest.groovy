@@ -23,7 +23,7 @@ class OpenTournamentTest extends Specification{
     public static final String CREATION_DATE = "2020-09-22 12:12"
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
-    public static final Tournament.TournamentState STATE = Tournament.TournamentState.CREATED
+
     @Autowired
     TournamentService tournamentService
 

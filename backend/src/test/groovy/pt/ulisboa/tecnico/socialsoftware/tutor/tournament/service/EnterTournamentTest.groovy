@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament.TournamentState
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -23,7 +23,7 @@ class EnterTournamentTest extends Specification{
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
     public static final Integer ID = 2
-    public static final TournamentState STATE = TournamentState.OPEN
+
     public static final Integer USER = 1
 
     @Autowired
@@ -148,17 +148,6 @@ class EnterTournamentTest extends Specification{
 
     }
 
-        private TournamentDto getTournamentDto(TournamentState state) {
-        def tournamentDto = new TournamentDto()
-        tournamentDto.setTitle(TOURNAMENT_TITLE)
-        tournamentDto.setAvailableDate(AVAILABLE_DATE)
-        tournamentDto.setConclusionDate(CONCLUSION_DATE)
-        tournamentDto.setCreationDate(CREATION_DATE)
-        tournamentDto.setId(ID)
-        tournamentDto.setState(state)
-        tournamentDto.setTournamentCreator(USER)
-        return tournamentDto
-    }
 
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {

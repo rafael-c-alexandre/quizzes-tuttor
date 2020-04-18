@@ -52,10 +52,10 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
 })
 
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
-    cy.contains('Error')
+    cy.get('[data-cy="error"]')
         .parent()
         .find('button')
-        .click()
+        .click({force:true})
 })
 
 Cypress.Commands.add('deleteCourseExecution', (acronym) => {
@@ -93,8 +93,8 @@ Cypress.Commands.add('accessTeacherSubmissionsPage', () => {
 Cypress.Commands.add('submitQuestion', (title, content, options, checkCorrect) => {
 
     cy.get('[data-cy="createSubmissionButton"]').click()
-    cy.get('[data-cy="Title"]').type(title)
-    cy.get('[data-cy="Content"]').type(content)
+    if (title !== '')cy.get('[data-cy="Title"]').type(title)
+    if (content !== '')cy.get('[data-cy="Content"]').type(content)
     let optionFields = cy.get('[data-cy="options"]').first().type(options[0])
     for (let i=1; i < options.length ; i++) {
         optionFields.next().type(options[i])
@@ -114,7 +114,7 @@ Cypress.Commands.add('showSubmission', (title) => {
 
 })
 
-Cypress.Commands.add('evaluateSubmission', (title, newStatus, justification) => {
+Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) => {
 
     cy.contains(title)
       .parent()
@@ -124,8 +124,8 @@ Cypress.Commands.add('evaluateSubmission', (title, newStatus, justification) => 
       .find('[data-cy="evaluateSubmissionButton"]')
       .click()
 
-    cy.get('[data-cy="status"]').click( {force:true}).click({force:true})
-    cy.get('[data-cy="justification"]').type(justification)
+    if (isApproved) cy.get('[data-cy="status"]').check( {force:true})
+    if (justification !== '') cy.get('[data-cy="justification"]').type(justification)
     cy.get('[data-cy="saveEvaluationButton"]').click()
 })
 

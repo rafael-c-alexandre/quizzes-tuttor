@@ -183,6 +183,8 @@ public class QuestionsByStudentService {
     public void updateSubmissionTopics(Integer submissionId, TopicDto[] topics) {
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
 
+        if (!submission.getSubmissionStatus().toString().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+
         submission.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(submission.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
     }
 
@@ -191,7 +193,10 @@ public class QuestionsByStudentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void uploadImage(Integer submissionId, String type) {
+
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+
+        if (!submission.getSubmissionStatus().toString().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
 
         Image image = submission.getImage();
 
@@ -206,10 +211,22 @@ public class QuestionsByStudentService {
         submission.getImage().setUrl(submission.getKey() + "." + type);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto) {
+
+        if (!submissionDto.getStatus().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+        submission.update(submissionDto);
+        return new SubmissionDto(submission);
+    }
+
 
     private void isSubmitionOnHold(Submission submission) {
         if(!submission.getSubmissionStatus().toString().equals("ONHOLD")){
-            throw new TutorException(SUBMITION_ALREADY_EVALUATED, submission.getId());
+            throw new TutorException(SUBMISSION_ALREADY_EVALUATED, submission.getId());
         }
     }
 
