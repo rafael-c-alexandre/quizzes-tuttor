@@ -46,7 +46,7 @@ class CancelTournamentTest extends Specification{
 
     def "cancel existing tournament by creator"(){
         def topicList = new ArrayList<TopicDto>();
-        topicList.add(new TopicDto())
+
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
                 1, USER, topicList)
@@ -54,8 +54,6 @@ class CancelTournamentTest extends Specification{
         def user = new User()
         user.setKey(1)
         userRepository.save(user)
-        def topic = new Topic()
-        topicRepository.save(topic)
 
         tournamentService.createTournament(tournamentDto,USER)
 
