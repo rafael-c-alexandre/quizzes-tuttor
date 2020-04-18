@@ -1,5 +1,5 @@
 <template>
-  <v-card class="table" data-cy="tournamentTable">
+  <v-card class="table">
     <v-card-title>
       <span>Create Tournament</span>
 
@@ -9,12 +9,22 @@
         Close
       </v-btn>
 
-      <v-btn color="primary" dark v-if="canCreate" @click="create" data-cy="createButton">
+      <v-btn
+        color="primary"
+        dark
+        v-if="canCreate"
+        @click="create"
+        data-cy="createButton"
+      >
         Create
       </v-btn>
     </v-card-title>
     <v-card-text>
-      <v-text-field data-cy="tournamentName" v-model="tournament.title" label="*Title" />
+      <v-text-field
+        data-cy="tournamentName"
+        v-model="tournament.title"
+        label="*Title"
+      />
       <v-row>
         <v-col cols="12" sm="6">
           <v-datetime-picker
@@ -30,7 +40,7 @@
         <v-spacer></v-spacer>
         <v-col cols="12" sm="6">
           <v-datetime-picker
-            data-cy="availableDate"
+            data-cy="conclusionDate"
             label="*Conclusion Date"
             format="yyyy-MM-dd HH:mm"
             v-model="tournament.conclusionDate"
