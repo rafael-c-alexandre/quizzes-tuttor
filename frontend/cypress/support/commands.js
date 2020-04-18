@@ -52,7 +52,7 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
 })
 
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
-    cy.contains('Error')
+    cy.get('[data-cy="error"]')
         .parent()
         .find('button')
         .click({force:true})

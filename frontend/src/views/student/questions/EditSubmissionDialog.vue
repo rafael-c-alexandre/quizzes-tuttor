@@ -22,7 +22,7 @@
         <v-container grid-list-md fluid>
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
-              <v-textarea clearable v-model="editSubmission.title" label="Title" data-cy="Title" />
+              <v-textarea clearable v-model="editSubmission.title" label="*Title" data-cy="Title" />
             </v-flex>
             <v-flex xs24 sm12 md12>
               <v-textarea
@@ -30,7 +30,7 @@
                 outline
                 rows="10"
                 v-model="editSubmission.content"
-                label="Content"
+                label="*Content"
                 data-cy="Content"
               ></v-textarea>
             </v-flex>
@@ -102,8 +102,9 @@ export default class EditSubmissionDialog extends Vue {
     if (this.editSubmission && this.editSubmission.id != null) {
       try {
 
-        const result = await RemoteServices.updateQuestion(this.editSubmission);
+        const result = await RemoteServices.updateSubmission(this.editSubmission);
         this.$emit('save-submission', result);
+        confirm('Question "' + this.editSubmission.title + '" edited successfully!');
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

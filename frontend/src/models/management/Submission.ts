@@ -15,6 +15,7 @@ export default class Submission {
   image: Image | null = null;
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   topics: Topic[] = [];
+  topicNames: string[] = []
 
   constructor(jsonObj?: Submission) {
     if (jsonObj) {
@@ -33,6 +34,9 @@ export default class Submission {
         (option: Option) => new Option(option)
       );
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
+
+      for (let i = 0; i < this.topics.length; i++)
+        this.topicNames[i] = ' ' + this.topics[i].name;
     }
   }
 }

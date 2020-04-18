@@ -38,7 +38,7 @@
             <v-flex xs24 sm12 md8>
               <v-row>
                 <v-col cols="6">
-                  <v-subheader> Approve? </v-subheader>
+                  <v-subheader> *Approve? </v-subheader>
                 </v-col>
                 <v-col cols="6">
                   <v-switch
@@ -59,7 +59,7 @@
                 outline
                 rows="5"
                 v-model="evaluateSubmission.justification"
-                label="Justification"
+                label="*Justification"
                 placeholder="Explain your decision here"
                 data-cy="justification"
               ></v-textarea>

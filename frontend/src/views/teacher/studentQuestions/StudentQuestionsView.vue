@@ -91,7 +91,7 @@ import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
 import Image from '@/models/management/Image';
 import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
-import EvaluateSubmissionDialog from '@/views/teacher/StudentQuestions/EvaluateSubmissionDialog.vue';
+import EvaluateSubmissionDialog from '@/views/teacher/studentQuestions/EvaluateSubmissionDialog.vue';
 
 @Component({
   components: {
@@ -112,7 +112,7 @@ export default class StudentQuestionsView extends Vue {
     { text: 'Question', value: 'content', align: 'left' },
     {
       text: 'Topics',
-      value: 'topics',
+      value: 'topicNames',
       align: 'center',
       sortable: false
     },
@@ -156,7 +156,7 @@ export default class StudentQuestionsView extends Vue {
         RemoteServices.getTopics(),
         RemoteServices.getAllSubmissions()
       ]);
-      this.onHoldFirst();
+      this.customSorter();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -217,9 +217,11 @@ export default class StudentQuestionsView extends Vue {
     this.submissions.unshift(submission);
     this.evaluateSubmissionDialog = false;
     this.currentSubmission = null;
+    this.customSorter()
   }
 
-  onHoldFirst() {
+
+  customSorter() {
     let aux, a, b;
     for (let i = 0; i < this.submissions.length - 1; i++) {
       for (let j = i + 1; j < this.submissions.length ; j++) {

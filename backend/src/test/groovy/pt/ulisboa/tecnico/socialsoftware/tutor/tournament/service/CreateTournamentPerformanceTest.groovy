@@ -22,7 +22,7 @@ class CreateTournamentPerformanceTest extends Specification {
     static final String AVAILABLE_DATE = "2020-09-23 12:12"
     static final String CONCLUSION_DATE = "2020-09-24 12:12"
     static final Integer ID = 2
-    static final Tournament.TournamentState STATE = Tournament.TournamentState.CREATED
+
     static final Integer USER = 1
 
     @Autowired
