@@ -137,12 +137,19 @@ public class TournamentService {
          User user;
          List<Topic> topics = topicRepository.findAll();
          List<Question> questions = questionRepository.findAll();
+         List<Tournament> tournaments = tournamentRepository.findAll();
 
 
         if(userRepository.findById(creatorId).isPresent())
             user = userRepository.findById(creatorId).get();
         else
             throw new TutorException(USER_NOT_FOUND,tournamentDto.getTournamentCreator().getUsername());
+
+        for (Tournament t : tournaments){
+            if (tournamentDto.getTitle().equals(t.getTitle()))
+                throw new TutorException(TOURNAMENT_TITLE_ALREADY_USED,tournamentDto.getTitle());
+        }
+
 
         Tournament tournament = new Tournament(tournamentDto);
         tournament.setTournamentCreator(user);
