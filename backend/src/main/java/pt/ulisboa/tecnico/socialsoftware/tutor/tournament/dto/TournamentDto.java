@@ -23,7 +23,7 @@ public class TournamentDto {
     private String creationDate = null;
     private String availableDate = null;
     private String conclusionDate = null;
-    private AuthUserDto tournamentCreator;
+    private int tournamentCreator;
     private int numberOfSignedUsers;
     private int numberOfTopics;
     private int numberOfQuestions;
@@ -95,7 +95,7 @@ public class TournamentDto {
                     .collect(Collectors.toList());
         }
         if(tournament.getTournamentCreator() != null)
-            this.tournamentCreator = new AuthUserDto(tournament.getTournamentCreator());
+            this.tournamentCreator = tournament.getTournamentCreator().getId();
 
 
 
@@ -185,11 +185,11 @@ public class TournamentDto {
         this.topics = topics;
     }
 
-    public AuthUserDto getTournamentCreator() {
+    public Integer getTournamentCreator() {
         return tournamentCreator;
     }
 
-    public void setTournamentCreator(AuthUserDto tournamentCreator) {
+    public void setTournamentCreator(Integer tournamentCreator) {
         this.tournamentCreator = tournamentCreator;
     }
 

@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
@@ -18,6 +19,10 @@ class EnrollInTournamentPerformanceTest extends Specification {
 
     static final Integer KEY = 0
     static final User.Role ROLE = User.Role.STUDENT
+    static final String TOURNAMENT_TITLE = "Tournament"
+    static final String CREATION_DATE = "2020-09-22 12:12"
+    static final String AVAILABLE_DATE = "2020-09-23 12:12"
+    static final String CONCLUSION_DATE = "2020-09-24 12:12"
 
 
     @Autowired
@@ -41,9 +46,12 @@ class EnrollInTournamentPerformanceTest extends Specification {
         def topiclist = new ArrayList<Integer>()
         topiclist.add(1)
 
-        def tournament = new Tournament()
-        tournament.setState(Tournament.TournamentState.CREATED)
-        tournamentRepository.save(tournament)
+        def tournament = new TournamentDto()
+        tournament.setTitle(TOURNAMENT_TITLE)
+        tournament.setAvailableDate(AVAILABLE_DATE)
+        tournament.setConclusionDate(CONCLUSION_DATE)
+        tournament.setCreationDate(CREATION_DATE)
+        tournamentRepository.save(new Tournament(tournament))
 
 
         and: "500 users"

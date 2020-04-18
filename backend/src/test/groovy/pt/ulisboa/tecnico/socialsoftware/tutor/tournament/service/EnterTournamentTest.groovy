@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament.TournamentState
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -23,7 +22,6 @@ class EnterTournamentTest extends Specification{
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
     public static final Integer ID = 2
-    public static final TournamentState STATE = TournamentState.OPEN
     public static final Integer USER = 1
 
     @Autowired
@@ -38,38 +36,15 @@ class EnterTournamentTest extends Specification{
     @Autowired
     UserRepository userRepository
 
-
-    def formatter
-
     def setup(){
 
     }
 
-    def "Student enters in a closed tournament"(){
-
-        given: "a tournament"
-        def tournament = new Tournament()
-        tournament.setState(Tournament.TournamentState.CLOSED)
-        tournamentRepository.save(tournament)
-
-        and: "a student"
-        def student = new User('name', "username", 32, User.Role.STUDENT)
-        userRepository.save(student)
-
-        when:
-        tournamentService.enrollInTournament(1, 1)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_IS_NOT_OPEN
-
-    }
 
     def "Teacher enters in an open tournament"(){
 
         given: "a tournament"
         def tournament = new Tournament()
-        tournament.setState(Tournament.TournamentState.OPEN)
         tournamentRepository.save(tournament)
 
 
@@ -78,7 +53,7 @@ class EnterTournamentTest extends Specification{
         userRepository.save(teacher)
 
         when:
-        tournamentService.enrollInTournament(2, 2)
+        tournamentService.enrollInTournament(1, 1)
 
         then:
         def exception = thrown(TutorException)
@@ -89,7 +64,6 @@ class EnterTournamentTest extends Specification{
     def "Admin enters in an open tournament"(){
         given: "a tournament"
         def tournament = new Tournament()
-        tournament.setState(Tournament.TournamentState.OPEN)
         tournamentRepository.save(tournament)
 
 
@@ -98,7 +72,7 @@ class EnterTournamentTest extends Specification{
         userRepository.save(admin)
 
         when:
-        tournamentService.enrollInTournament(3, 3)
+        tournamentService.enrollInTournament(2, 2)
 
         then:
         def exception = thrown(TutorException)
@@ -109,7 +83,6 @@ class EnterTournamentTest extends Specification{
     def "Demo admin enters in an open tournament"(){
         given: "a tournament"
         def tournament = new Tournament()
-        tournament.setState(Tournament.TournamentState.OPEN)
         tournamentRepository.save(tournament)
 
         and: "a demo"
@@ -117,7 +90,7 @@ class EnterTournamentTest extends Specification{
         userRepository.save(demo)
 
         when:
-        tournamentService.enrollInTournament(4, 4)
+        tournamentService.enrollInTournament(3, 3)
 
         then:
         def exception = thrown(TutorException)
@@ -128,18 +101,21 @@ class EnterTournamentTest extends Specification{
 
     def "Reentering an already enrolled tournament"() {
         given: "a tournament"
-        def tournament = new Tournament()
-        tournament.setState(Tournament.TournamentState.CREATED)
-        tournamentRepository.save(tournament)
+        def tournament = new TournamentDto()
+        tournament.setTitle(TOURNAMENT_TITLE)
+        tournament.setAvailableDate(AVAILABLE_DATE)
+        tournament.setCreationDate(CREATION_DATE)
+        tournament.setConclusionDate(CONCLUSION_DATE)
+        tournamentRepository.save(new Tournament(tournament))
 
         and: "a student"
         def student = new User('name', "username", 32, User.Role.STUDENT)
         userRepository.save(student)
 
-        tournamentService.enrollInTournament(5, 5)
+        tournamentService.enrollInTournament(4, 4)
 
         when:
-        tournamentService.enrollInTournament(5, 5)
+        tournamentService.enrollInTournament(4, 4)
 
 
         then:
@@ -148,14 +124,13 @@ class EnterTournamentTest extends Specification{
 
     }
 
-        private TournamentDto getTournamentDto(TournamentState state) {
+        private TournamentDto getTournamentDto() {
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate(AVAILABLE_DATE)
         tournamentDto.setConclusionDate(CONCLUSION_DATE)
         tournamentDto.setCreationDate(CREATION_DATE)
         tournamentDto.setId(ID)
-        tournamentDto.setState(state)
         tournamentDto.setTournamentCreator(USER)
         return tournamentDto
     }

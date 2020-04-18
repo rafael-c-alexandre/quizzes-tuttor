@@ -31,11 +31,6 @@ class ListTournamentTest extends Specification{
     def t4 = new Tournament()
 
     def setup(){
-        t1.setState(Tournament.TournamentState.OPEN)
-        t2.setState(Tournament.TournamentState.OPEN)
-        t3.setState(Tournament.TournamentState.OPEN)
-        t4.setState(Tournament.TournamentState.CLOSED)
-
         tournamentRepository.save(t1)
         tournamentRepository.save(t2)
         tournamentRepository.save(t3)
@@ -43,36 +38,15 @@ class ListTournamentTest extends Specification{
     }
 
 
-    def "successfully list all open tournament"(){
+    def "successfully list all tournament"(){
 
         given: "a list of open tournaments"
-        def result = tournamentService.listTournamentsByState("OPEN")
+        def result = tournamentService.listTournaments()
 
         expect:
-        result.size() == 3
-        for (TournamentDto t : result) {
-            t.getState() == Tournament.TournamentState.OPEN
-        }
+        result.size() == 4
     }
 
-
-    def "missing open tournament"() {
-
-        given: "a list of all tournaments"
-
-        def allTournaments = tournamentService.listTournaments()
-
-        def openTournaments = tournamentService.listTournamentsByState('OPEN')
-
-        expect:
-        allTournaments.size() != 0
-        openTournaments.size() != 0
-        for (TournamentDto t : allTournaments) {
-            if(t.getState() == Tournament.TournamentState.OPEN){
-                openTournaments.contains(t)
-            }
-        }
-    }
 
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {

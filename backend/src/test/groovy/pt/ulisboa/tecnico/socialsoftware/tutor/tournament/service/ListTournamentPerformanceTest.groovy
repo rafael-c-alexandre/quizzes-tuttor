@@ -30,10 +30,6 @@ class ListTournamentPerformanceTest extends Specification{
     def t4 = new Tournament()
 
     def setup(){
-        t1.setState(Tournament.TournamentState.OPEN)
-        t2.setState(Tournament.TournamentState.OPEN)
-        t3.setState(Tournament.TournamentState.OPEN)
-        t4.setState(Tournament.TournamentState.CLOSED)
 
         tournamentRepository.save(t1)
         tournamentRepository.save(t2)
@@ -45,7 +41,7 @@ class ListTournamentPerformanceTest extends Specification{
     def "successfully list 100 times all open tournament"(){
 
         given: "a list of 3 open tournaments, 100 times"
-        1.upto(100, {tournamentService.listTournamentsByState("OPEN")});
+        1.upto(100, {tournamentService.listTournaments()});
 
         expect:
         true

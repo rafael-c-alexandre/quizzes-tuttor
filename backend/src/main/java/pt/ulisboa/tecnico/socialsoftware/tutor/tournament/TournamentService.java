@@ -143,7 +143,7 @@ public class TournamentService {
         if(userRepository.findById(creatorId).isPresent())
             user = userRepository.findById(creatorId).get();
         else
-            throw new TutorException(USER_NOT_FOUND,tournamentDto.getTournamentCreator().getUsername());
+            throw new TutorException(USER_NOT_FOUND,creatorId);
 
         for (Tournament t : tournaments){
             if (tournamentDto.getTitle().equals(t.getTitle()))
@@ -160,7 +160,7 @@ public class TournamentService {
 
          for(TopicDto topicDto: tournamentDto.getTopics()){
              for(Topic topic : topics){
-                 if(topicDto.getName().equals(topic.getName()))
+                 if(topicDto.getName() != null && topicDto.getName().equals(topic.getName()))
                      tournament.addTopic(topic);
              }
          }

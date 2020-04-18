@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
@@ -21,7 +22,6 @@ class CancelTournamentPerformanceTest extends Specification {
     static final String CREATION_DATE = "2020-09-22 12:12"
     static final String AVAILABLE_DATE = "2020-09-23 12:12"
     static final String CONCLUSION_DATE = "2020-09-24 12:12"
-    static final Tournament.TournamentState STATE = Tournament.TournamentState.CREATED
     static final Integer USER = 1
 
     @Autowired
@@ -48,15 +48,14 @@ class CancelTournamentPerformanceTest extends Specification {
         1.upto(500, {
 
 
-            def topiclist = new ArrayList<Integer>()
-            topiclist.add(1)
+            def topiclist = new ArrayList<TopicDto>()
+            topiclist.add(new TopicDto(topic))
 
             def tournamentDto = new TournamentDto()
             tournamentDto.setTitle(TOURNAMENT_TITLE)
             tournamentDto.setCreationDate(CREATION_DATE)
             tournamentDto.setAvailableDate(AVAILABLE_DATE)
             tournamentDto.setConclusionDate(CONCLUSION_DATE)
-            tournamentDto.setState(STATE);
             tournamentDto.setTournamentCreator(USER);
             tournamentDto.setTopics(topiclist);
             tournamentDtoList.add(tournamentDto)
@@ -66,7 +65,7 @@ class CancelTournamentPerformanceTest extends Specification {
         when:
         1.upto(500, {
             println(tournamentDtoList.get(it.intValue() - 1))
-            TournamentDto t = tournamentService.createTournament(tournamentDtoList.get(it.intValue() - 1))
+            TournamentDto t = tournamentService.createTournament(tournamentDtoList.get(it.intValue() - 1),USER)
             tournamentService.cancelTournament(t.getId(), tournamentDtoList.get(it.intValue() - 1).getTournamentCreator())
         })
 
@@ -74,8 +73,6 @@ class CancelTournamentPerformanceTest extends Specification {
         true
 
     }
-
-
 
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {

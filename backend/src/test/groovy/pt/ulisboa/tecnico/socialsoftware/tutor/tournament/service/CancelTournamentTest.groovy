@@ -25,7 +25,6 @@ class CancelTournamentTest extends Specification{
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
     public static final Integer ID = 2
-    public static final Tournament.TournamentState STATE = Tournament.TournamentState.CREATED
     public static final Integer USER = 1
 
 
@@ -46,11 +45,11 @@ class CancelTournamentTest extends Specification{
     }
 
     def "cancel existing tournament by creator"(){
-        def topicList = new ArrayList<Integer>();
-        topicList.add(1)
+        def topicList = new ArrayList<TopicDto>();
+        topicList.add(new TopicDto())
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
-                1, STATE, USER, topicList)
+                1, USER, topicList)
 
         def user = new User()
         user.setKey(1)
@@ -58,7 +57,7 @@ class CancelTournamentTest extends Specification{
         def topic = new Topic()
         topicRepository.save(topic)
 
-        tournamentService.createTournament(tournamentDto)
+        tournamentService.createTournament(tournamentDto,USER)
 
         when:
         tournamentService.cancelTournament(1,USER)
@@ -83,7 +82,7 @@ class CancelTournamentTest extends Specification{
 
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
-                ID, STATE, USER, null)
+                ID, USER, null)
 
 
         def tournament = new Tournament(tournamentDto)
@@ -101,26 +100,8 @@ class CancelTournamentTest extends Specification{
     }
 
 
-    def "cancel non open tournament"(){
-
-        def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
-                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
-                ID, Tournament.TournamentState.CLOSED, USER, null)
-
-        def tournament = new Tournament(tournamentDto)
-        tournamentRepository.save(tournament)
-
-        when:
-        tournamentService.cancelTournament(tournamentRepository.findAll().get(0).getId(),USER)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.TOURNAMENT_ALREADY_CLOSED
-
-    }
-
     private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate,
-                                    Integer id, Tournament.TournamentState state, Integer creator, List<Integer> topicList){
+                                    Integer id, Integer creator, List<TopicDto> topicList){
 
         TournamentDto tournamentDto = new TournamentDto()
         tournamentDto.setTitle(title)
@@ -128,7 +109,6 @@ class CancelTournamentTest extends Specification{
         tournamentDto.setConclusionDate(conclusionDate)
         tournamentDto.setCreationDate(creationDate)
         tournamentDto.setId(id)
-        tournamentDto.setState(state)
         tournamentDto.setTournamentCreator(creator)
         tournamentDto.setTopics(topicList)
 
