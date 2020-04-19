@@ -20,8 +20,8 @@ describe('Tournament Tests', () => {
     it('login creates two tournaments, opens them with time and confirms open tournaments list', () => {
 
         tournamentName = 'Tournament Title1'
-        cy.createTournament(tournamentName,'2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
-        cy.createTournament(tournamentName,'2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
+        cy.createTournament('Tournament Title1','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
+        cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
 
         now = new Date(2020, 9, 22, 12, 12)
 
@@ -83,8 +83,6 @@ describe('Tournament Tests', () => {
 
         cy.log('close dialog')
 
-        cy.get('[data-cy="closeButton"]').click()
-
-        cy.listTournaments()
+        cy.cancelTournament('Tournament Title2')
     });
 });

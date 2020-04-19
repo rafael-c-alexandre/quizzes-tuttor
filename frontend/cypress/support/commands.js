@@ -51,9 +51,8 @@ Cypress.Commands.add('listTournaments', ()=>{
 });
 
 Cypress.Commands.add('listOpenTournaments', ()=>{
-    cy.contains('Tournaments').click()
-    cy.contains('Open').click()
-    cy.contains('Open').trigger('mouseover')
+    cy.contains('Tournaments').click({force: true})
+    cy.contains('Open').click({force: true})
 });
 
 
