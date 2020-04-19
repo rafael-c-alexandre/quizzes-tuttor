@@ -27,26 +27,28 @@ describe('Tournament Tests', () => {
         cy.enrollTournament('Tournament Title1')
         cy.enrollTournament('Tournament Title1')
 
-        cy.clock(now)
-        cy.listOpenTournaments()
+        cy.clock().then((clock) => {
+            cy.listOpenTournaments()
 
-        //asserts
-        cy.contains('Tournament Title1')
-            .parent()
-            .should('have.length', 2)
-            .children()
-            .should('have.length', 4)
+            //asserts
+            cy.contains('Tournament Title1')
+                .parent()
+                .should('have.length', 2)
+                .children()
+                .should('have.length', 4)
 
-        cy.contains('Tournament Title2')
-            .parent()
-            .should('have.length', 2)
-            .children()
-            .should('have.length', 4)
+            cy.contains('Tournament Title2')
+                .parent()
+                .should('have.length', 2)
+                .children()
+                .should('have.length', 4)
+        })
 
         cy.cancelTournament('Tournament Title1')
         cy.cancelTournament('Tournament Title2')
     });
 
+    /*
     it('login creates two tournaments, closes them with time and confirms closed tournaments list, ', () => {
 
         cy.createTournament('Tournament Title1','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
@@ -74,7 +76,7 @@ describe('Tournament Tests', () => {
         cy.cancelTournament('Tournament Title2')
 
     });
-
+*/
     it('login creates two tournaments with same name and deletes it', () => {
         cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
 
@@ -121,8 +123,7 @@ describe('Tournament Tests', () => {
 
         cy.log('close dialog')
 
-        cy.get('[data-cy="closeButton"]').click()
-
-        cy.listTournaments()
+        cy.cancelTournament('Tournament Title2')
     });
+
 });
