@@ -56,6 +56,12 @@ Cypress.Commands.add('listOpenTournaments', ()=>{
     cy.contains('Open').trigger('mouseover')
 });
 
+Cypress.Commands.add('listClosedTournaments', ()=>{
+    cy.contains('Tournaments').click()
+    cy.contains('Closed').click()
+    cy.contains('Closed').trigger('mouseover')
+});
+
 
 Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusionDate
     , numberOfQuestions, topics) => {

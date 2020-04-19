@@ -19,21 +19,59 @@ describe('Tournament Tests', () => {
 
     it('login creates two tournaments, opens them with time and confirms open tournaments list', () => {
 
-        tournamentName = 'Tournament Title1'
-        cy.createTournament(tournamentName,'2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
-        cy.createTournament(tournamentName,'2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
+        cy.createTournament('Tournament Title1','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
+        cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
 
         now = new Date(2020, 9, 22, 12, 12)
+
+        cy.enrollTournament('Tournament Title1')
+        cy.enrollTournament('Tournament Title1')
 
         cy.clock(now)
         cy.listOpenTournaments()
 
         //asserts
-        cy.contains(tournamentName)
+        cy.contains('Tournament Title1')
             .parent()
             .should('have.length', 2)
             .children()
             .should('have.length', 4)
+
+        cy.contains('Tournament Title2')
+            .parent()
+            .should('have.length', 2)
+            .children()
+            .should('have.length', 4)
+
+        cy.cancelTournament('Tournament Title1')
+        cy.cancelTournament('Tournament Title2')
+    });
+
+    it('login creates two tournaments, closes them with time and confirms closed tournaments list, ', () => {
+
+        cy.createTournament('Tournament Title1','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
+        cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
+
+        now = new Date(2020, 9, 22, 12, 12)
+
+        cy.clock(now)
+        cy.listClosedTournaments()
+
+        //asserts
+        cy.contains('Tournament Title1')
+            .parent()
+            .should('have.length', 2)
+            .children()
+            .should('have.length', 4)
+
+        cy.contains('Tournament Title2')
+            .parent()
+            .should('have.length', 2)
+            .children()
+            .should('have.length', 4)
+
+        cy.cancelTournament('Tournament Title1')
+        cy.cancelTournament('Tournament Title2')
 
     });
 
