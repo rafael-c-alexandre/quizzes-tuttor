@@ -88,6 +88,7 @@ Cypress.Commands.add('enrollTournament',(tournamentName) => {
 })
 
 Cypress.Commands.add('cancelTournament', (tournamentName) => {
+    cy.listTournaments()
     cy.contains(tournamentName)
         .parent()
         .should('have.length', 1)
