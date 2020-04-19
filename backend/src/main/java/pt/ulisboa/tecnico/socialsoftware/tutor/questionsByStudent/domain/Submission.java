@@ -48,7 +48,7 @@ public class Submission {
     private LocalDateTime creationDate;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submission", orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL,  mappedBy = "submission", orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
     @ManyToMany(mappedBy = "submissions")

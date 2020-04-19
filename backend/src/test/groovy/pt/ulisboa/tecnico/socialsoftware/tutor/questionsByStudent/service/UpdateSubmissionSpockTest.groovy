@@ -9,7 +9,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
@@ -20,7 +22,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NOT_TEACHER_ERROR
 
 
 @DataJpaTest
@@ -59,37 +60,44 @@ class UpdateSubmissionSpockTest extends Specification{
         @Autowired
         UserRepository userRepository;
 
-        def setup() {
+        def user
+        def course
+        def submissionDto
+        def optionDto
+        def options
+        def submission
 
+
+        def setup() {
+            given: "a user"
+            user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
+            userRepository.save(user)
+            and: "a course"
+            course = new Course(COURSE_ONE, Course.Type.TECNICO)
+            courseRepository.save(course)
+            and: " a submissionDto"
+            submissionDto = new SubmissionDto()
+            submissionDto.setId(1)
+            submissionDto.setKey(1)
+            submissionDto.setStatus("ONHOLD")
+            submissionDto.setCourseId(COURSE_ID)
+            submissionDto.setJustification("")
+            submissionDto.setTitle(QUESTION_TITLE)
+            submissionDto.setContent(QUESTION_CONTENT)
+            optionDto = new OptionDto()
+            optionDto.setContent(OPTION_CONTENT)
+            optionDto.setCorrect(true)
+            options = new ArrayList<OptionDto>()
+            options.add(optionDto)
+            submissionDto.setOptions(options)
+            submissionDto.setUser(user.getId())
+            submissionDto.setCourseId(course.getId())
+            submission = new Submission(submissionDto,user, course)
+            submissionRepository.save(submission)
         }
 
-    def "update on Hold submission"() {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: " a submissionDto"
-        def submissionDto = new SubmissionDto()
-        submissionDto.setId(1)
-        submissionDto.setKey(1)
-        submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourseId(COURSE_ID)
-        submissionDto.setJustification("")
-        submissionDto.setTitle(QUESTION_TITLE)
-        submissionDto.setContent(QUESTION_CONTENT)
-        def optionDto = new OptionDto()
-        optionDto.setContent(OPTION_CONTENT)
-        optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
-        options.add(optionDto)
-        submissionDto.setOptions(options)
-        submissionDto.setUser(user.getId())
-        submissionDto.setCourseId(course.getId())
-        def submission = new Submission(submissionDto,user, course)
-        submissionRepository.save(submission)
-        and: 'another submissionDto'
+    def "update topics of onHold submission"() {
+        given: 'another submissionDto'
         def submissionDto2 = new SubmissionDto()
         submissionDto2.setId(1)
         submissionDto2.setKey(1)
@@ -115,36 +123,12 @@ class UpdateSubmissionSpockTest extends Specification{
         then:
         result.getTitle() == QUESTION_TITLE_2
         result.getContent() == QUESTION_CONTENT2
+        result.getOptions().size() == 1
         result.getOptions().get(0).getContent() == OPTION_CONTENT2
     }
 
     def "tries to update non-pending submission"() {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: " a submissionDto"
-        def submissionDto = new SubmissionDto()
-        submissionDto.setId(1)
-        submissionDto.setKey(1)
-        submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourseId(COURSE_ID)
-        submissionDto.setJustification("")
-        submissionDto.setTitle(QUESTION_TITLE)
-        submissionDto.setContent(QUESTION_CONTENT)
-        def optionDto = new OptionDto()
-        optionDto.setContent(OPTION_CONTENT)
-        optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
-        options.add(optionDto)
-        submissionDto.setOptions(options)
-        submissionDto.setUser(user.getId())
-        submissionDto.setCourseId(course.getId())
-        def submission = new Submission(submissionDto,user, course)
-        submissionRepository.save(submission)
-        and: 'another submissionDto'
+        given: 'another submissionDto'
         def submissionDto2 = new SubmissionDto()
         submissionDto2.setId(1)
         submissionDto2.setKey(1)
