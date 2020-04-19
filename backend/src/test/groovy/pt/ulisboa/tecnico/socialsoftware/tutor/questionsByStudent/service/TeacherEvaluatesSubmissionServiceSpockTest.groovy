@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
@@ -161,7 +162,9 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
         and : "a submission"
-        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId(),course.getId() )
+        def submission = new Submission(submissionDto,user,course)
+        submissionRepository.save(submission)
+
 
         when:
         def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true, "like it")
@@ -198,7 +201,9 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionDto.setOptions(options)
         submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
-        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId(), course.getId())
+        and : "a submission"
+        def submission = new Submission(submissionDto,user,course)
+        submissionRepository.save(submission)
 
         when:
         def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), false, "not like it")
@@ -235,7 +240,9 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionDto.setOptions(options)
         submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
-        def submission = teacherEvaluatesSubmissionService.studentSubmitQuestion(submissionDto,user.getId(), course.getId())
+        and : "a submission"
+        def submission = new Submission(submissionDto,user,course)
+        submissionRepository.save(submission)
 
         when:
         teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true, "like it")

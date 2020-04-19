@@ -117,7 +117,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
 
 
         when:
-        def result = questionByStudentService.studentSubmitQuestion(submissionDto,user.getId())
+        def result = questionByStudentService.studentSubmitQuestion(submissionDto,user.getId(),course.getId())
         then: "the correct question is inside the repository"
         submissionRepository.count() == 1L
 
@@ -163,8 +163,7 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
 
 
         when:
-        questionByStudentService.studentSubmitQuestion(submissionDto, user.getId())
-
+        questionByStudentService.studentSubmitQuestion(submissionDto, user.getId(),course.getId())
         then: "throw exception"
         def exception = thrown(TutorException)
         exception.errorMessage == ErrorMessage.QUESTION_MISSING_DATA
