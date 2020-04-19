@@ -661,7 +661,13 @@ export default class RemoteServices {
 
 
   static updateSubmissionTopics(submissionId: number, topics: Topic[]) {
-    return httpClient.put(`/submissions/${submissionId}/topics`, topics);
+    return httpClient.put(`/submissions/${submissionId}/topics`, topics)
+      .then(response => {
+        return new Submission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static evaluateSubmission(submission: Submission) {

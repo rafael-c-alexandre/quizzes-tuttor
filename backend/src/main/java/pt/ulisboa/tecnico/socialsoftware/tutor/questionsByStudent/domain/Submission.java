@@ -41,7 +41,7 @@ public class Submission {
 
     private String title;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "submission", orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL)
     private Image image;
 
     @Column(name = "creation_date")

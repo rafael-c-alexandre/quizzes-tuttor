@@ -130,7 +130,7 @@ export default class StudentQuestionsView extends Vue {
     },
     {
       text: 'Image',
-      value: 'image',
+      value: 'imageUrl',
       align: 'center',
       sortable: false
     },

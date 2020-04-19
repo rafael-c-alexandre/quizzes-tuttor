@@ -4,12 +4,12 @@
     <ul>
       <li v-for="option in submission.options" :key="option.number">
         <span
-                v-if="option.correct"
-                v-html="convertMarkDown('**[★]** ', null)"
+          v-if="option.correct"
+          v-html="convertMarkDown('**[★]** ', null)"
         />
         <span
-                v-html="convertMarkDown(option.content, null)"
-                v-bind:class="[option.correct ? 'font-weight-bold' : '']"
+          v-html="convertMarkDown(option.content, null)"
+          v-bind:class="[option.correct ? 'font-weight-bold' : '']"
         />
       </li>
     </ul>

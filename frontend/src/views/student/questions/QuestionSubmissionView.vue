@@ -73,7 +73,7 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)"
+            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmission"
               >edit</v-icon
             >
           </template>
@@ -95,7 +95,6 @@
     />
   </v-card>
 </template>
-
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
@@ -212,6 +211,7 @@ export default class QuestionSubmissionView extends Vue {
         );
         submission.image = new Image();
         submission.image.url = imageURL;
+        submission.imageUrl = imageURL;
         confirm('Image ' + imageURL + ' was uploaded!');
       } catch (error) {
         await this.$store.dispatch('error', error);

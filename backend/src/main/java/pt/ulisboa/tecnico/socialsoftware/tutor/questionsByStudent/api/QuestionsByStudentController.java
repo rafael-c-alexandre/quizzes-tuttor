@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.SUBMISSION_NOT_FOUND;
 
 
 @RestController
@@ -121,8 +122,6 @@ public class QuestionsByStudentController {
 
         int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
         String type = file.getContentType().substring(lastIndex + 1);
-
-
 
         questionsByStudentService.uploadImage(submissionId, type);
 

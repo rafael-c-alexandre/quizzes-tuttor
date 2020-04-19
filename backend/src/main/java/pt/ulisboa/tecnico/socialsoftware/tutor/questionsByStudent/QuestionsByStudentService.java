@@ -196,11 +196,11 @@ public class QuestionsByStudentService {
             image = new Image();
 
             submission.setImage(image);
-
             imageRepository.save(image);
         }
 
         submission.getImage().setUrl(submission.getKey() + "." + type);
+
     }
 
     @Retryable(

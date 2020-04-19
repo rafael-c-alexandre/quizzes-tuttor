@@ -34,5 +34,22 @@ describe('Student submits questions walkthrough', () => {
     cy.get('[data-cy="cancelSubmissionButton"]').click()
   });
 
+  it('login submits and edits submission title and content ', () => {
+    cy.submitQuestion('Demo Question1','What is the best subject in the Computer engineering course at IST?',['ES','AMS', 'GESTAO', 'LP'], true)
+
+    cy.log('close dialog')
+
+    cy.editSubmission('Demo Question1','Demo Question2', 'Demo Content 2');
+
+    cy.log('close dialog')
+
+    cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM options WHERE content = \'ES\' or content = \'AMS\' or content = \'GESTAO\' or content = \'LP\'" ')
+    cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM submissions WHERE title = \'Demo Question2\'"')
+
+
+  });
+
+
+
 
 });

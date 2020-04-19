@@ -16,6 +16,7 @@ export default class Submission {
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   topics: Topic[] = [];
   topicNames: string[] = []
+  imageUrl: string = '';
 
   constructor(jsonObj?: Submission) {
     if (jsonObj) {
@@ -37,6 +38,11 @@ export default class Submission {
 
       for (let i = 0; i < this.topics.length; i++)
         this.topicNames[i] = ' ' + this.topics[i].name;
+
+      if (jsonObj.image != null) {
+        this.image = new Image(jsonObj.image);
+        this.imageUrl = this.image.url;
+      }
     }
   }
 }
