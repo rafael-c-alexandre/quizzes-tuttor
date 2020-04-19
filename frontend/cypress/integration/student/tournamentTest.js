@@ -43,6 +43,8 @@ describe('Tournament Tests', () => {
             .children()
             .should('have.length', 4)
 
+        cy.listTournaments()
+
         cy.cancelTournament('Tournament Title1')
         cy.cancelTournament('Tournament Title2')
     });
@@ -74,6 +76,8 @@ describe('Tournament Tests', () => {
             .should('have.length', 2)
             .children()
             .should('have.length', 4)
+
+        cy.listTournaments()
 
         cy.cancelTournament('Tournament Title1')
         cy.cancelTournament('Tournament Title2')
