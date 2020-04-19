@@ -71,8 +71,7 @@ public class QuestionsByStudentService {
         student.addSubmission(submission);
         course.addSubmission(submission);
         submissionRepository.save(submission);
-        SubmissionDto submissionResult = new SubmissionDto(submission);
-        return submissionResult;
+        return new SubmissionDto(submission);
     }
 
     @Retryable(

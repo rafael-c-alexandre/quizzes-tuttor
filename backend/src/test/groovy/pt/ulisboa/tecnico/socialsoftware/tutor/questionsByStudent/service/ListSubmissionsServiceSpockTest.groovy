@@ -103,7 +103,7 @@ class ListSubmissionsServiceSpockTest extends Specification {
         submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
         and : "a submission"
-        listSubmissionsService.studentSubmitQuestion(submissionDto,user.getId())
+        listSubmissionsService.studentSubmitQuestion(submissionDto,user.getId(), course.getId())
 
 
         when:

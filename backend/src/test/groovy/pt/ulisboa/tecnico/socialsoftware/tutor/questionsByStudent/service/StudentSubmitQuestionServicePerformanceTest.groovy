@@ -83,7 +83,7 @@ class StudentSubmitQuestionServicePerformanceTest extends Specification{
         when:
 
         1.upto(100, {
-            questionsByStudentService.studentSubmitQuestion(submissionDtoList.get(it.intValue()-1),user.getId())})
+            questionsByStudentService.studentSubmitQuestion(submissionDtoList.get(it.intValue()-1),user.getId(),course.getId())})
 
         then:
         true
