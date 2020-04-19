@@ -69,7 +69,6 @@ describe('Tournament Tests', () => {
         cy.cancelTournament('Tournament Title2')
 
     });
-<<<<<<< HEAD
 
     it('login creates tournament and tries to enroll twice', () => {
         cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
@@ -86,7 +85,5 @@ describe('Tournament Tests', () => {
 
         cy.cancelTournament('Tournament Title2')
     });
-=======
-    
->>>>>>> a141c7e3e94f201f58661223cada3b7c8573b84b
+
 });
