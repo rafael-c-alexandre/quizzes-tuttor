@@ -50,7 +50,6 @@ Cypress.Commands.add('listTournaments', ()=>{
     cy.contains('List').trigger('mouseover')
 });
 
-
 Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusionDate
     , numberOfQuestions, topics) => {
     cy.get('[data-cy="createButton"]').click()
@@ -64,6 +63,16 @@ Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusi
         cy.contains(topics[i]).click()
     cy.get('[data-cy="5questions"]').click()
     cy.get('[data-cy="createTournament"]').click()
+})
+
+Cypress.Commands.add('enrollTournament',(tournamentName) => {
+    cy.contains(tournamentName)
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 7)
+        .find('[data-cy="signTournament"]')
+        .click()
 })
 
 Cypress.Commands.add('cancelTournament', (tournamentName) => {
