@@ -31,11 +31,8 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
     static final String COURSE_ONE ="CourseOne"
     static final int COURSE_ID = 14
     static final String QUESTION_TITLE = "QUESTION_ONE"
-    static final String QUESTION_TITLE_2 = "QUESTION_TWO"
     static final String QUESTION_CONTENT = "CONTENT_ONE"
-    static final String QUESTION_CONTENT2 = "CONTENT_TWO"
     public static final String OPTION_CONTENT = "optionId content"
-    public static final String OPTION_CONTENT2 = "optionId content2"
     public static final String TOPIC_ONE = 'nameOne'
     public static final String TOPIC_TWO = 'nameTwo'
     public static final String TOPIC_THREE = 'nameThree'
@@ -148,7 +145,7 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
 
 
         when:
-        submissionService.updateSubmissionTopics(submissionDto.getId(), topics)
+        submissionService.updateSubmissionTopics(submission.getId(), topics)
 
         then:
         submission.getTopics().size() == 1

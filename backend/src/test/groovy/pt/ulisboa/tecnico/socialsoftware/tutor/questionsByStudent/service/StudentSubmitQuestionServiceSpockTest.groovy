@@ -53,34 +53,36 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
     @Autowired
      UserRepository userRepository;
 
+    def course
+    def submissionDto
+    def optionDto
+    def options
+
     def setup() {
-
-    }
-
-    def "the user is not a student"() {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
+        course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
-        and: " a submissionDto"
-        def submissionDto = new SubmissionDto()
+        submissionDto = new SubmissionDto()
         submissionDto.setKey(1)
         submissionDto.setStatus("ONHOLD")
         submissionDto.setCourseId(COURSE_ID)
         submissionDto.setJustification("")
         submissionDto.setTitle(QUESTION_TITLE)
         submissionDto.setContent(QUESTION_CONTENT)
-        and: 'a optionId'
-        def optionDto = new OptionDto()
+        optionDto = new OptionDto()
         optionDto.setContent(OPTION_CONTENT)
         optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
+        options = new ArrayList<OptionDto>()
         options.add(optionDto)
         submissionDto.setOptions(options)
-        submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
+
+    }
+
+    def "the user is not a student"() {
+        given: "a teacher user"
+        def user = new User(NAME, USERNAME, KEY, User.Role.TEACHER)
+        userRepository.save(user)
+        submissionDto.setUser(user.getId())
 
         when:
         questionByStudentService.studentSubmitQuestion(submissionDto,user.getId(),course.getId())
@@ -91,30 +93,10 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
     }
 
     def "question is correctly submitted"(){
-        given: "a user"
+        given: "a student user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: " a submissionDto"
-        def submissionDto = new SubmissionDto()
-        submissionDto.setKey(1)
-        submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourseId(COURSE_ID)
-        submissionDto.setJustification("")
-        submissionDto.setTitle(QUESTION_TITLE)
-        submissionDto.setContent(QUESTION_CONTENT)
-        and: 'a optionId'
-        def optionDto = new OptionDto()
-        optionDto.setContent(OPTION_CONTENT)
-        optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
-        options.add(optionDto)
-        submissionDto.setOptions(options)
         submissionDto.setUser(user.getId())
-        submissionDto.setCourseId(course.getId())
-
 
         when:
         def result = questionByStudentService.studentSubmitQuestion(submissionDto,user.getId(),course.getId())
@@ -137,33 +119,15 @@ class StudentSubmitQuestionServiceSpockTest extends Specification{
     }
 
     def "student submit question with empty title"()  {
-        given: "a user"
+        given: "a student user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: " a submissionDto"
-        def submissionDto = new SubmissionDto()
-        submissionDto.setKey(1)
-        submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourseId(COURSE_ID)
-        submissionDto.setJustification("")
-        submissionDto.setTitle(" ")
-        submissionDto.setContent(QUESTION_CONTENT)
-        and: 'a optionId'
-        def optionDto = new OptionDto()
-        optionDto.setContent(OPTION_CONTENT)
-        optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
-        options.add(optionDto)
-        submissionDto.setOptions(options)
         submissionDto.setUser(user.getId())
-        submissionDto.setCourseId(course.getId())
-
+        submissionDto.setTitle("")
 
         when:
         questionByStudentService.studentSubmitQuestion(submissionDto, user.getId(),course.getId())
+
         then: "throw exception"
         def exception = thrown(TutorException)
         exception.errorMessage == ErrorMessage.QUESTION_MISSING_DATA

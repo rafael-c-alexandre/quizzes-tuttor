@@ -70,6 +70,7 @@ public class QuestionsByStudentService {
         submission.setCreationDate(LocalDateTime.now());
         student.addSubmission(submission);
         course.addSubmission(submission);
+
         submissionRepository.save(submission);
         return new SubmissionDto(submission);
     }
