@@ -22,7 +22,7 @@ describe('Tournament Tests', () => {
         cy.createTournament('Tournament Title1','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
         cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
 
-        now = new Date(2020, 9, 22, 12, 12).getTime()
+        now = new Date(Date.UTC(2020, 9, 22, 12, 12)).getTime()
 
         cy.enrollTournament('Tournament Title1')
         cy.enrollTournament('Tournament Title1')
@@ -57,9 +57,9 @@ describe('Tournament Tests', () => {
         cy.enrollTournament('Tournament Title1')
         cy.enrollTournament('Tournament Title1')
 
-        start_date = new Date(2020, 9, 22, 12, 12).getTime()
+        start_date = new Date(Date.UTC(2020, 9, 22, 12, 12)).getTime()
         cy.clock(start_date)
-        end_date = new Date(2020, 10, 22, 12, 12).getTime()
+        end_date = new Date(Date.UTC(2020, 10, 22, 12, 12)).getTime()
         cy.clock(end_date)
 
         cy.listClosedTournaments()
