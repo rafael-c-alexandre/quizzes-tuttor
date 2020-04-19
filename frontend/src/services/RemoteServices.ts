@@ -579,6 +579,7 @@ export default class RemoteServices {
         return response.data.map((submission: any) => {
           return new Submission(submission);
         })
+      })
         .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -603,6 +604,7 @@ export default class RemoteServices {
         return response.data.map((submission: any) => {
           return new Submission(submission);
     })
+      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -622,6 +624,7 @@ export default class RemoteServices {
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament);
+        })
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -649,6 +652,7 @@ export default class RemoteServices {
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament);
+        })
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -657,7 +661,13 @@ export default class RemoteServices {
 
 
   static updateSubmissionTopics(submissionId: number, topics: Topic[]) {
-    return httpClient.put(`/submissions/${submissionId}/topics`, topics);
+    return httpClient.put(`/submissions/${submissionId}/topics`, topics)
+      .then(response => {
+        return new Submission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static evaluateSubmission(submission: Submission) {
@@ -720,6 +730,19 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  static updateSubmission(submission: Submission): Promise<Submission> {
+    return httpClient
+      .put(`/submissions/${submission.id}`, submission)
+      .then(response => {
+        return new Submission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+
 
   static async exportAll() {
     return httpClient

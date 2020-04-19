@@ -8,6 +8,7 @@
       item-text="name"
       item-value="name"
       @change="saveTopics"
+      data-cy="topics"
     >
       <template v-slot:selection="data">
         <v-chip

@@ -20,7 +20,11 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="newSubmission" data-cy="createSubmissionButton"
+          <v-btn
+            color="primary"
+            dark
+            @click="newSubmission"
+            data-cy="createSubmissionButton"
             >New Question</v-btn
           >
         </v-card-title>
@@ -67,6 +71,14 @@
           </template>
           <span>Show Submission</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmission"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Question</span>
+        </v-tooltip>
       </template>
     </v-data-table>
     <edit-submission-dialog
@@ -83,9 +95,8 @@
     />
   </v-card>
 </template>
-
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
 import Submission from '@/models/management/Submission';
@@ -147,6 +158,13 @@ export default class QuestionSubmissionView extends Vue {
     }
   ];
 
+  @Watch('editSubmissionDialog')
+  closeError() {
+    if (!this.editSubmissionDialog) {
+      this.currentSubmission = null;
+    }
+  }
+
   async created() {
     await this.$store.dispatch('loading');
     try {
@@ -154,6 +172,7 @@ export default class QuestionSubmissionView extends Vue {
         RemoteServices.getTopics(),
         RemoteServices.getStudentSubmissions()
       ]);
+      this.customSorter();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -192,6 +211,7 @@ export default class QuestionSubmissionView extends Vue {
         );
         submission.image = new Image();
         submission.image.url = imageURL;
+        submission.imageUrl = imageURL;
         confirm('Image ' + imageURL + ' was uploaded!');
       } catch (error) {
         await this.$store.dispatch('error', error);
@@ -214,6 +234,11 @@ export default class QuestionSubmissionView extends Vue {
     else return 'green';
   }
 
+  editSubmission(submission: Submission) {
+    this.currentSubmission = submission;
+    this.editSubmissionDialog = true;
+  }
+
   newSubmission() {
     this.currentSubmission = new Submission();
     this.editSubmissionDialog = true;
@@ -224,6 +249,33 @@ export default class QuestionSubmissionView extends Vue {
     this.submissions.unshift(submission);
     this.editSubmissionDialog = false;
     this.currentSubmission = null;
+  }
+
+  customSorter() {
+    let aux, a, b;
+    for (let i = 0; i < this.submissions.length - 1; i++) {
+      for (let j = i + 1; j < this.submissions.length; j++) {
+        a = this.submissions[i];
+        b = this.submissions[j];
+        if (a.status === 'REJECTED') {
+          if (b.status === 'ONHOLD') {
+            aux = this.submissions[i];
+            this.submissions[i] = b;
+            this.submissions[j] = aux;
+          } else if (b.status == 'APPROVED') {
+            aux = this.submissions[i];
+            this.submissions[i] = b;
+            this.submissions[j] = aux;
+          }
+        } else if (a.status == 'APPROVED') {
+          if (b.status === 'ONHOLD') {
+            aux = this.submissions[i];
+            this.submissions[i] = b;
+            this.submissions[j] = aux;
+          }
+        }
+      }
+    }
   }
 }
 </script>

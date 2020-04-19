@@ -26,9 +26,6 @@ import spock.lang.Specification
 @DataJpaTest
 class ListSubmissionsServiceSpockTest extends Specification {
     static final String COURSE_ONE ="CourseOne"
-    static final String WRONG_COURSE = "WrongCourse"
-    static final int QUESTION_ID =10
-    static final int QUESTION_KEY =14
     static final int COURSE_ID = 14
     static final String QUESTION_TITLE = "QUESTION_ONE";
     static final String QUESTION_CONTENT = "CONTENT_ONE";
@@ -58,15 +55,37 @@ class ListSubmissionsServiceSpockTest extends Specification {
     @Autowired
     UserRepository userRepository;
 
+    def user
+    def course
+    def submissionDto
+    def optionDto
+    def options
+
     def setup() {
+        user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
+        userRepository.save(user)
+        course = new Course(COURSE_ONE, Course.Type.TECNICO)
+        courseRepository.save(course)
+        submissionDto = new SubmissionDto()
+        submissionDto.setKey(KEY)
+        submissionDto.setStatus("ONHOLD")
+        submissionDto.setCourseId(COURSE_ID)
+        submissionDto.setJustification("")
+        submissionDto.setTitle(QUESTION_TITLE)
+        submissionDto.setContent(QUESTION_CONTENT)
+        optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        submissionDto.setOptions(options)
+        submissionDto.setUser(user.getId())
+        submissionDto.setCourseId(course.getId())
+
 
     }
 
     def "list an empty list of submissions"() {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
-        userRepository.save(user)
-
 
         when:
         def result = listSubmissionsService.findQuestionsSubmittedByStudent(user.getId())
@@ -79,31 +98,9 @@ class ListSubmissionsServiceSpockTest extends Specification {
 
 
     def "list a non-empty list of submissions of size 1"() {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: " a submissionDto"
-        def submissionDto = new SubmissionDto()
-        submissionDto.setKey(KEY)
-        submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourseId(COURSE_ID)
-        submissionDto.setJustification("")
-        submissionDto.setTitle(QUESTION_TITLE)
-        submissionDto.setContent(QUESTION_CONTENT)
-        and: 'a optionId'
-        def optionDto = new OptionDto()
-        optionDto.setContent(OPTION_CONTENT)
-        optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
-        options.add(optionDto)
-        submissionDto.setOptions(options)
-        submissionDto.setUser(user.getId())
-        submissionDto.setCourseId(course.getId())
-        and : "a submission"
-        listSubmissionsService.studentSubmitQuestion(submissionDto,user.getId())
+        given : "a submission"
+        def submission = new Submission(submissionDto, user, course)
+        submissionRepository.save(submission)
 
 
         when:
@@ -115,40 +112,6 @@ class ListSubmissionsServiceSpockTest extends Specification {
 
     }
 
-    def "user is not a student"() {
-        given: "a user"
-        def user = new User(NAME, USERNAME, KEY, User.Role.ADMIN)
-        userRepository.save(user)
-        and: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: " a submissionDto"
-        def submissionDto = new SubmissionDto()
-        submissionDto.setKey(KEY)
-        submissionDto.setStatus("ONHOLD")
-        submissionDto.setCourseId(COURSE_ID)
-        submissionDto.setJustification("")
-        submissionDto.setTitle(QUESTION_TITLE)
-        submissionDto.setContent(QUESTION_CONTENT)
-        and: 'a optionId'
-        def optionDto = new OptionDto()
-        optionDto.setContent(OPTION_CONTENT)
-        optionDto.setCorrect(true)
-        def options = new ArrayList<OptionDto>()
-        options.add(optionDto)
-        submissionDto.setOptions(options)
-        submissionDto.setUser(user.getId())
-        submissionDto.setCourseId(course.getId())
-
-        when:
-        listSubmissionsService.findQuestionsSubmittedByStudent(user.getId())
-
-        then:
-        def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.NOT_STUDENT_ERROR
-
-
-    }
 
     @TestConfiguration
     static class ServiceImplTestContextConfiguration {

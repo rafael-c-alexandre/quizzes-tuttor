@@ -48,6 +48,7 @@ class ListSubmissionServicePerformanceTest extends Specification {
     @Autowired
     QuestionRepository questionRepository
 
+
     def "performance testing to get 2000 lists of student submissions"() {
         given: "a user"
         def user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
@@ -80,7 +81,7 @@ class ListSubmissionServicePerformanceTest extends Specification {
         })
 
         when:
-        1.upto(2000, { questionsByStudentService.findQuestionsSubmittedByStudent(user.getId())})
+        1.upto(100, { questionsByStudentService.findQuestionsSubmittedByStudent(user.getId())})
 
         then:
         true

@@ -88,7 +88,7 @@ class TeacherEvaluatesQuestionServicePerformanceTest extends Specification{
         when:
 
         1.upto(100, {
-            questionsByStudentService.teacherEvaluatesQuestion(user.getId(), submissionList.get(it.intValue()-1).getId(),true)})
+            questionsByStudentService.teacherEvaluatesQuestion(user.getId(), submissionList.get(it.intValue()-1).getId(),true,"a justification")})
 
         then:
         true

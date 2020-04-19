@@ -16,7 +16,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeSubmissionDialog"
+        <v-btn dark color="blue darken-1" @click="closeSubmissionDialog " data-cy = "closeSubmissionButton"
           >close</v-btn
         >
       </v-card-actions>

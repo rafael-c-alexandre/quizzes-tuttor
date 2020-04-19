@@ -1,8 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
@@ -10,29 +17,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.SubmissionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import org.springframework.transaction.annotation.Transactional;
-
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -61,7 +53,7 @@ public class QuestionsByStudentService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubmissionDto studentSubmitQuestion(SubmissionDto submissionDto, int userId, int courseId) {
 
         isStudent(userId);
@@ -78,9 +70,9 @@ public class QuestionsByStudentService {
         submission.setCreationDate(LocalDateTime.now());
         student.addSubmission(submission);
         course.addSubmission(submission);
+
         submissionRepository.save(submission);
-        SubmissionDto submissionResult = new SubmissionDto(submission);
-        return submissionResult;
+        return new SubmissionDto(submission);
     }
 
     @Retryable(
@@ -183,6 +175,8 @@ public class QuestionsByStudentService {
     public void updateSubmissionTopics(Integer submissionId, TopicDto[] topics) {
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
 
+        if (!submission.getSubmissionStatus().toString().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+
         submission.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(submission.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
     }
 
@@ -191,7 +185,10 @@ public class QuestionsByStudentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void uploadImage(Integer submissionId, String type) {
+
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+
+        if (!submission.getSubmissionStatus().toString().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
 
         Image image = submission.getImage();
 
@@ -199,17 +196,29 @@ public class QuestionsByStudentService {
             image = new Image();
 
             submission.setImage(image);
-
             imageRepository.save(image);
         }
 
         submission.getImage().setUrl(submission.getKey() + "." + type);
+
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto) {
+
+        if (!submissionDto.getStatus().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+        submission.update(submissionDto);
+        return new SubmissionDto(submission);
     }
 
 
     private void isSubmitionOnHold(Submission submission) {
         if(!submission.getSubmissionStatus().toString().equals("ONHOLD")){
-            throw new TutorException(SUBMITION_ALREADY_EVALUATED, submission.getId());
+            throw new TutorException(SUBMISSION_ALREADY_EVALUATED, submission.getId());
         }
     }
 
