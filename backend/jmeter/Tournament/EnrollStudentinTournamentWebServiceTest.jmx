@@ -99,13 +99,12 @@
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
-	&quot;title&quot;: &quot;Title&quot;,&#xd;
+	&quot;title&quot;: &quot;Title1&quot;,&#xd;
 	&quot;state&quot;: &quot;CREATED&quot;,&#xd;
 	&quot;creationDate&quot;: &quot;2020-09-22 12:12&quot;,&#xd;
 	&quot;availableDate&quot;: &quot;2020-10-22 12:12&quot;,&#xd;
 	&quot;conclusionDate&quot;: &quot;2020-11-22 12:12&quot;,&#xd;
-	&quot;signedUsers&quot;:[701],&#xd;
-	&quot;topics&quot;:[91],&#xd;
+	&quot;topics&quot;:[],&#xd;
 	&quot;tournamentCreator&quot;: 700&#xd;
 }</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
@@ -163,7 +162,7 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/tournaments/${tournamentId}/${userId}</stringProp>
+            <stringProp name="HTTPSampler.path">/tournaments/${tournamentId}</stringProp>
             <stringProp name="HTTPSampler.method">PUT</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -176,7 +175,7 @@
           <hashTree>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament numberOfSignedUsers" enabled="true">
               <stringProp name="JSON_PATH">$.numberOfSignedUsers</stringProp>
-              <stringProp name="EXPECTED_VALUE">3</stringProp>
+              <stringProp name="EXPECTED_VALUE">1</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -297,7 +296,7 @@
           <stringProp name="dataSource">pool</stringProp>
           <stringProp name="query">DELETE FROM tournaments_signed_users;
 DELETE FROM tournaments_topics;
-DELETE FROM tournaments WHERE state=&apos;CREATED&apos;;</stringProp>
+DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>

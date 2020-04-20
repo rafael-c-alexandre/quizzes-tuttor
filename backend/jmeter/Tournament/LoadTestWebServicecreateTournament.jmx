@@ -117,7 +117,7 @@
 	&quot;availableDate&quot;: &quot;${availableDate}&quot;,&#xd;
 	&quot;conclusionDate&quot;: &quot;${conclusionDate}&quot;,&#xd;
 	&quot;signedUsers&quot;:${signedUsers},&#xd;
-	&quot;topics&quot;:${topics},&#xd;
+	&quot;topics&quot;:[],&#xd;
 	&quot;tournamentCreator&quot;: ${tournamentCreator}&#xd;
 }&#xd;
 </stringProp>
@@ -254,7 +254,7 @@
           <stringProp name="dataSource">pool</stringProp>
           <stringProp name="query">DELETE FROM tournaments_signed_users;
 DELETE FROM tournaments_topics;
-DELETE FROM tournaments WHERE state=&apos;CREATED&apos;;</stringProp>
+DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>

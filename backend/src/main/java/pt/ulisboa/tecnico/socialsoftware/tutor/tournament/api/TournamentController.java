@@ -44,6 +44,9 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
     public List<TournamentDto> listOpenTournaments(Principal principal) {
         User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
         return tournamentService.listOpenTournaments(user.getId());
     }
 
@@ -59,6 +62,7 @@ public class TournamentController {
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
     public List<TournamentDto> listSignableTournaments(Principal principal) {
         User user = (User)((Authentication) principal).getPrincipal();
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
         return tournamentService.listSignableTournaments(user.getId());
     }
 
@@ -75,6 +79,7 @@ public class TournamentController {
     public TournamentDto cancelTournament(Principal principal,@PathVariable Integer tournamentId){
         logger.debug("cancelTournament tournamentId: {}: ", tournamentId);
         User user = (User)((Authentication) principal).getPrincipal();
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
         return tournamentService.cancelTournament(tournamentId,user.getId());
     }
 

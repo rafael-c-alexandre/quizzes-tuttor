@@ -135,28 +135,34 @@ public class TournamentService {
          Integer maxId;
          Random rand = new Random();
          User user;
-         List<Topic> topics = topicRepository.findAll();
          List<Question> questions = questionRepository.findAll();
+         List<Tournament> tournaments = tournamentRepository.findAll();
 
 
         if(userRepository.findById(creatorId).isPresent())
             user = userRepository.findById(creatorId).get();
         else
-            throw new TutorException(USER_NOT_FOUND,tournamentDto.getTournamentCreator().getUsername());
+            throw new TutorException(USER_NOT_FOUND,creatorId);
+
+        for (Tournament t : tournaments){
+            if (tournamentDto.getTitle().equals(t.getTitle()))
+                throw new TutorException(TOURNAMENT_TITLE_ALREADY_USED,tournamentDto.getTitle());
+        }
+
 
         Tournament tournament = new Tournament(tournamentDto);
         tournament.setTournamentCreator(user);
 
-        tournament.addUser(user);
 
         tournament.setCreationDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
 
 
          for(TopicDto topicDto: tournamentDto.getTopics()){
-             for(Topic topic : topics){
-                 if(topicDto.getName().equals(topic.getName()))
-                     tournament.addTopic(topic);
-             }
+             Optional<Topic> t = topicRepository.findById(topicDto.getId());
+             if(t.isPresent())
+                tournament.addTopic(t.get());
+             else
+                 throw new TutorException(TOPIC_NOT_FOUND,topicDto.getId());
          }
 
          //SET SOME RANDOM QUESTION
@@ -204,7 +210,6 @@ public class TournamentService {
     public TournamentDto enrollInTournament(Integer tournamentId, Integer userId){
         User user = userRepository.findById(userId).get();
         Tournament tournament = tournamentRepository.findTournamentById(tournamentId);
-
         if(user == null){
             throw new TutorException(USER_NOT_FOUND,userId);
         }
@@ -221,7 +226,6 @@ public class TournamentService {
                     }
                 }
                 tournament.addUser(user);
-
             } else {
                 throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
             }

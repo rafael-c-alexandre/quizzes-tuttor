@@ -74,7 +74,7 @@
           <stringProp name="dataSource">pool</stringProp>
           <stringProp name="query">DELETE FROM tournaments_signed_users;
 DELETE FROM tournaments_topics;
-DELETE FROM tournaments WHERE state=&apos;OPEN&apos;;</stringProp>
+DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>
@@ -134,13 +134,9 @@ DELETE FROM tournaments WHERE state=&apos;OPEN&apos;;</stringProp>
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
 	&quot;title&quot;: &quot;Title&quot;,&#xd;
-	&quot;state&quot;: &quot;CREATED&quot;,&#xd;
-	&quot;creationDate&quot;: &quot;2020-09-22 12:12&quot;,&#xd;
 	&quot;availableDate&quot;: &quot;2020-10-22 12:12&quot;,&#xd;
 	&quot;conclusionDate&quot;: &quot;2020-11-22 12:12&quot;,&#xd;
-	&quot;signedUsers&quot;:[701],&#xd;
-	&quot;topics&quot;:[91],&#xd;
-	&quot;tournamentCreator&quot;: ${creatorId}&#xd;
+	&quot;topics&quot;:[]&#xd;
 }&#xd;
 </stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
@@ -169,25 +165,6 @@ DELETE FROM tournaments WHERE state=&apos;OPEN&apos;;</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request to list open tournaments" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-              <collectionProp name="Arguments.arguments"/>
-            </elementProp>
-            <stringProp name="HTTPSampler.domain">${server}</stringProp>
-            <stringProp name="HTTPSampler.port">${port}</stringProp>
-            <stringProp name="HTTPSampler.protocol"></stringProp>
-            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/tournaments/open/${tournamentId}/${creatorId}</stringProp>
-            <stringProp name="HTTPSampler.method">PUT</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-            <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          </HTTPSamplerProxy>
-          <hashTree/>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -290,7 +267,7 @@ DELETE FROM tournaments WHERE state=&apos;OPEN&apos;;</stringProp>
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/tournaments/open</stringProp>
+            <stringProp name="HTTPSampler.path">/tournaments/</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -301,27 +278,9 @@ DELETE FROM tournaments WHERE state=&apos;OPEN&apos;;</stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Tournament State" enabled="true">
-              <stringProp name="JSON_PATH">$[0].state</stringProp>
-              <stringProp name="EXPECTED_VALUE">OPEN</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">true</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert tournament Title" enabled="true">
               <stringProp name="JSON_PATH">$[0].title</stringProp>
               <stringProp name="EXPECTED_VALUE">Title</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">true</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert Tournament Creator Id" enabled="true">
-              <stringProp name="JSON_PATH">$[0].tournamentCreator</stringProp>
-              <stringProp name="EXPECTED_VALUE">${creatorId}</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -442,7 +401,7 @@ DELETE FROM tournaments WHERE state=&apos;OPEN&apos;;</stringProp>
           <stringProp name="dataSource">pool</stringProp>
           <stringProp name="query">DELETE FROM tournaments_signed_users;
 DELETE FROM tournaments_topics;
-DELETE FROM tournaments WHERE state=&apos;OPEN&apos;;</stringProp>
+DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>
           <stringProp name="queryTimeout"></stringProp>

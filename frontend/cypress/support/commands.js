@@ -36,6 +36,7 @@ Cypress.Commands.add('demoStudentLogin', () => {
     cy.get('[data-cy="studentButton"]').click()
 })
 
+
 Cypress.Commands.add('demoTeacherLogin', () => {
     cy.visit('/')
     cy.get('[data-cy="teacherButton"]').click()
@@ -51,11 +52,63 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="saveButton"]').click()
 })
 
-Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
+Cypress.Commands.add('listTournaments', ()=>{
+    cy.contains('Tournaments').click()
+    cy.contains('List').click()
+});
+
+Cypress.Commands.add('listOpenTournaments', ()=>{
+    cy.contains('Tournaments').click({force: true})
+    cy.get('[data-cy="openButton"]').click({force: true})
+});
+
+Cypress.Commands.add('listClosedTournaments', ()=>{
+    cy.contains('Tournaments').click({force: true})
+    cy.get('[data-cy="closedButton"]').click({force: true})
+});
+
+
+Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusionDate
+    , numberOfQuestions, topics) => {
+    cy.get('[data-cy="createButton"]').click({force:true})
+    cy.get('[data-cy="tournamentName"]').type(tournamentName)
+    cy.get('[data-cy="manADate"]').click()
+    cy.get('[data-cy="availableDateText"]').type(availableDate)
+    cy.get('[data-cy="manCDate"]').click()
+    cy.get('[data-cy="conclusionDateText"]').type(conclusionDate)
+    cy.get('[data-cy="topics"]').click()
+    for(let i = 0 ; i < topics.length; i++)
+        cy.contains(topics[i]).click()
+    cy.get('[data-cy="5questions"]').click()
+    cy.get('[data-cy="createTournament"]').click()
+})
+
+Cypress.Commands.add('enrollTournament',(tournamentName) => {
+    cy.contains(tournamentName)
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 7)
+        .find('[data-cy="signTournament"]')
+        .click({force:true})
+})
+
+Cypress.Commands.add('cancelTournament', (tournamentName) => {
+    cy.contains(tournamentName)
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 7)
+        .find('[data-cy="cancelTournament"]')
+        .click({force:true})
+
+});
+
+Cypress.Commands.add('closeErrorMessage', () => {
     cy.get('[data-cy="error"]')
         .parent()
         .find('button')
-        .click({force:true})
+        .click()
 })
 
 Cypress.Commands.add('deleteCourseExecution', (acronym) => {
@@ -80,6 +133,7 @@ Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) 
     cy.get('[data-cy="AcademicTerm"]').type(academicTerm)
     cy.get('[data-cy="saveButton"]').click()
 })
+
 
 Cypress.Commands.add('accessStudentQuestionsPage', () => {
     cy.contains('Questions').click()
@@ -147,7 +201,4 @@ Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) =>
     if (justification !== '') cy.get('[data-cy="justification"]').type(justification)
     cy.get('[data-cy="saveEvaluationButton"]').click()
 })
-
-
-
 
