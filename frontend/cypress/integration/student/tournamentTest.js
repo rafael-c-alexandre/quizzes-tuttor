@@ -1,40 +1,32 @@
 describe('Tournament Tests', () => {
     beforeEach(()=> {
-        cy.demoStudentLogin()
-        cy.listTournaments()
+
     })
 
     afterEach( () => {
-        cy.contains('Logout').click()
+
     })
 
-    it('login creates a tournament, enrolls in it and deletes it', () => {
-        cy.createTournament('Tournament Title1','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
-
-        cy.enrollTournament('Tournament Title1')
-
-        cy.cancelTournament('Tournament Title1')
-
-    });
 
     it('login checks open tournaments list', () => {
+        cy.demoStudentLogin()
+        cy.listTournaments()
 
         cy.listOpenTournaments()
 
         //asserts
         cy.contains('Torneio5')
             .parent()
-            .should('have.length', 2)
+            .should('have.length', 1)
             .children()
             .should('have.length', 4)
 
         cy.contains('Torneio2')
             .parent()
-            .should('have.length', 2)
+            .should('have.length', 1)
             .children()
             .should('have.length', 4)
 
-        cy.listTournaments()
     });
 
     it('login checks closed tournaments list, ', () => {
@@ -43,39 +35,40 @@ describe('Tournament Tests', () => {
         //asserts
         cy.contains('Torneio4')
             .parent()
-            .should('have.length', 2)
-            .children()
-            .should('have.length', 4)
-
-        cy.contains('Torneio3')
-            .parent()
-            .should('have.length', 2)
+            .should('have.length', 1)
             .children()
             .should('have.length', 3)
 
-        cy.listTournaments()
+        cy.contains('Torneio3')
+            .parent()
+            .should('have.length', 1)
+            .children()
+            .should('have.length', 3)
+
     });
 
     it('login tries to cancel a  closed tournament', () => {
         cy.listTournaments()
-        cy.cancelTournament("Torneio4")
+        cy.cancelTournament('Torneio4')
         cy.closeErrorMessage()
     });
 
     it('login tries to sign into a  closed tournament', () => {
         cy.listTournaments()
-        cy.enrollTournament("Torneio4")
+        cy.enrollTournament('Torneio4')
         cy.closeErrorMessage()
     });
 
     it('login tries to sign into an open tournament', () => {
         cy.listTournaments()
-        cy.enrollTournament("Torneio2")
+        cy.enrollTournament('Torneio2')
         cy.closeErrorMessage()
     });
 
 
     it('login creates two tournaments with same name and deletes it', () => {
+        cy.listTournaments()
+
         cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
 
         cy.log('try to create with the same name')
@@ -94,6 +87,8 @@ describe('Tournament Tests', () => {
     });
 
     it('login creates tournament and tries to enroll twice and then cancels it', () => {
+        cy.listTournaments()
+
         cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
 
         cy.enrollTournament('Tournament Title2')
@@ -108,7 +103,11 @@ describe('Tournament Tests', () => {
 
     });
 
+
+
     it('login creates tournament and tries to enroll twice', () => {
+        cy.listTournaments()
+
         cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
 
         cy.enrollTournament('Tournament Title2')
@@ -122,6 +121,17 @@ describe('Tournament Tests', () => {
         cy.log('close dialog')
 
         cy.cancelTournament('Tournament Title2')
+    });
+
+    it('login creates a tournament, enrolls in it and deletes it', () => {
+        cy.listTournaments()
+
+        cy.createTournament('Tournament Title1','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
+
+        cy.enrollTournament('Tournament Title1')
+
+        cy.cancelTournament('Tournament Title1')
+
     });
 
 });

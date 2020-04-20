@@ -47,18 +47,16 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
 Cypress.Commands.add('listTournaments', ()=>{
     cy.contains('Tournaments').click()
     cy.contains('List').click()
-    cy.contains('List').trigger('mouseover')
 });
 
 Cypress.Commands.add('listOpenTournaments', ()=>{
     cy.contains('Tournaments').click({force: true})
-    cy.contains('Open').click({force: true})
+    cy.get('[data-cy="openButton"]').click({force: true})
 });
 
 Cypress.Commands.add('listClosedTournaments', ()=>{
-    cy.contains('Tournaments').click()
-    cy.contains('Closed').click()
-    cy.contains('Closed').trigger('mouseover')
+    cy.contains('Tournaments').click({force: true})
+    cy.get('[data-cy="closedButton"]').click({force: true})
 });
 
 
