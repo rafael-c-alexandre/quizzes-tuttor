@@ -121,7 +121,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item to="/student/tournaments/open">
+            <v-list-item data-cy="openButton" to="/student/tournaments/open">
               <v-list-item-action>
                 <v-icon>fas fa-unlock</v-icon>
               </v-list-item-action>
@@ -130,7 +130,10 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item to="/student/tournaments/closed">
+            <v-list-item
+              data-cy="closedButton"
+              to="/student/tournaments/closed"
+            >
               <v-list-item-action>
                 <v-icon>fas fa-lock</v-icon>
               </v-list-item-action>
