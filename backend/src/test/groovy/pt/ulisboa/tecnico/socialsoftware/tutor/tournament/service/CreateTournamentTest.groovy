@@ -195,4 +195,5 @@ class CreateTournamentTest extends Specification{
             return new TournamentService()
         }
     }
+
 }

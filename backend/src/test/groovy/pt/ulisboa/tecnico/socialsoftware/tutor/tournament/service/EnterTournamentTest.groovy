@@ -135,6 +135,7 @@ class EnterTournamentTest extends Specification{
         return tournamentDto
     }
 
+
     @TestConfiguration
     static class TournamentServiceImplTestContextConfiguration {
 

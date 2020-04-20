@@ -40,7 +40,7 @@
       <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data to create submission" enabled="true">
         <stringProp name="filename">SubmissionData.csv</stringProp>
         <stringProp name="fileEncoding"></stringProp>
-        <stringProp name="variableNames">userId, status, questionId, justification, courseId</stringProp>
+        <stringProp name="variableNames">title,content,optionsContent,status,correct</stringProp>
         <boolProp name="ignoreFirstLine">false</boolProp>
         <stringProp name="delimiter">,</stringProp>
         <boolProp name="quotedData">false</boolProp>
@@ -104,19 +104,7 @@
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data to create question" enabled="true">
-            <stringProp name="filename">StudentQuestionData_noKey.csv</stringProp>
-            <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="variableNames">title,content,optionsContent,correct</stringProp>
-            <boolProp name="ignoreFirstLine">false</boolProp>
-            <stringProp name="delimiter">,</stringProp>
-            <boolProp name="quotedData">false</boolProp>
-            <boolProp name="recycle">true</boolProp>
-            <boolProp name="stopThread">false</boolProp>
-            <stringProp name="shareMode">shareMode.all</stringProp>
-          </CSVDataSet>
-          <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request to create question" enabled="true">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request to create submission" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
               <collectionProp name="Arguments.arguments">
@@ -138,55 +126,6 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol"></stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">/courses/${courseId}/questions</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-            <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">questionId</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            </JSONPostProcessor>
-            <hashTree/>
-            <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="BeanShell Assertion" enabled="true">
-              <stringProp name="BeanShellAssertion.query">${__setProperty(questionId, ${questionId})};</stringProp>
-              <stringProp name="BeanShellAssertion.filename"></stringProp>
-              <stringProp name="BeanShellAssertion.parameters"></stringProp>
-              <boolProp name="BeanShellAssertion.resetInterpreter">false</boolProp>
-            </BeanShellAssertion>
-            <hashTree/>
-          </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request to create submission" enabled="true">
-            <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments">
-                <elementProp name="" elementType="HTTPArgument">
-                  <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                  <stringProp name="Argument.value">{&#xd;
-	&quot;userId&quot;: ${userId},&#xd;
-	&quot;status&quot;: &quot;${status}&quot;,&#xd;
-	&quot;questionId&quot;: ${__property(questionId)},&#xd;
-	&quot;justification&quot;: &quot;${justification}&quot;,&#xd;
-	&quot;courseId&quot;: ${courseId}&#xd;
-	&#xd;
-	&#xd;
-}&#xd;
-</stringProp>
-                  <stringProp name="Argument.metadata">=</stringProp>
-                </elementProp>
-              </collectionProp>
-            </elementProp>
-            <stringProp name="HTTPSampler.domain">${server}</stringProp>
-            <stringProp name="HTTPSampler.port">${port}</stringProp>
-            <stringProp name="HTTPSampler.protocol"></stringProp>
-            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
             <stringProp name="HTTPSampler.path">/courses/${courseId}/submissions</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -198,51 +137,6 @@
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Asser submission status" enabled="true">
-              <stringProp name="JSON_PATH">$.status</stringProp>
-              <stringProp name="EXPECTED_VALUE">${status}</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert user Id" enabled="true">
-              <stringProp name="JSON_PATH">$.userId</stringProp>
-              <stringProp name="EXPECTED_VALUE">676</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert question id" enabled="true">
-              <stringProp name="JSON_PATH">$.questionId</stringProp>
-              <stringProp name="EXPECTED_VALUE">${__property(questionId)}</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert justification" enabled="true">
-              <stringProp name="JSON_PATH">$.justification</stringProp>
-              <stringProp name="EXPECTED_VALUE"></stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert course id" enabled="true">
-              <stringProp name="JSON_PATH">$.courseId</stringProp>
-              <stringProp name="EXPECTED_VALUE">2</stringProp>
-              <boolProp name="JSONVALIDATION">true</boolProp>
-              <boolProp name="EXPECT_NULL">false</boolProp>
-              <boolProp name="INVERT">false</boolProp>
-              <boolProp name="ISREGEX">false</boolProp>
-            </JSONPathAssertion>
-            <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">submissionId</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
@@ -388,6 +282,18 @@
             </collectionProp>
           </HeaderManager>
           <hashTree/>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data to evaluate question Submission" enabled="true">
+            <stringProp name="filename">SubmissionDataToEvaluate.csv</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="variableNames">title,content,optionsContent,status,correct,justification,teacherDecision</stringProp>
+            <boolProp name="ignoreFirstLine">false</boolProp>
+            <stringProp name="delimiter">,</stringProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+          </CSVDataSet>
+          <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request to evaluate submission" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -395,15 +301,16 @@
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
-	&quot;id&quot;: ${__property(submissionId)},&#xd;
-	&quot;userId&quot;: ${userId},&#xd;
-	&quot;status&quot;: &quot;${status}&quot;,&#xd;
-	&quot;questionId&quot;: ${__property(questionId)},&#xd;
+	&quot;id&quot;: &quot;${__property(submissionId)}&quot;,&#xd;
+	&quot;title&quot;: &quot;${title}&quot;,&#xd;
+	&quot;content&quot;: &quot;${content}&quot;,&#xd;
+	&quot;options&quot; : [{&#xd;
+		&quot;content&quot;: &quot;${optionsContent}&quot;,&#xd;
+		&quot;correct&quot;: &quot;${correct}&quot;}],&#xd;
 	&quot;justification&quot;: &quot;${justification}&quot;,&#xd;
-	&quot;courseId&quot;: &quot;${courseId}&quot;,&#xd;
-	&quot;teacherDecision&quot;: true&#xd;
-	&#xd;
+	&quot;teacherDecision&quot;: &quot;${teacherDecision}&quot;&#xd;
 }&#xd;
+&#xd;
 </stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -424,27 +331,36 @@
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Asser submission status" enabled="true">
-              <stringProp name="JSON_PATH">$.status</stringProp>
-              <stringProp name="EXPECTED_VALUE">APPROVED</stringProp>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert submission title" enabled="true">
+              <stringProp name="JSON_PATH">$.title</stringProp>
+              <stringProp name="EXPECTED_VALUE">Demo_Question</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert user Id" enabled="true">
-              <stringProp name="JSON_PATH">$.userId</stringProp>
-              <stringProp name="EXPECTED_VALUE">676</stringProp>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert submission content" enabled="true">
+              <stringProp name="JSON_PATH">$.content</stringProp>
+              <stringProp name="EXPECTED_VALUE">Demo_Content</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert question id" enabled="true">
-              <stringProp name="JSON_PATH">$.questionId</stringProp>
-              <stringProp name="EXPECTED_VALUE">${__property(questionId)}</stringProp>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert submission options" enabled="true">
+              <stringProp name="JSON_PATH">$.options[0].content</stringProp>
+              <stringProp name="EXPECTED_VALUE">Option_Content</stringProp>
+              <boolProp name="JSONVALIDATION">true</boolProp>
+              <boolProp name="EXPECT_NULL">false</boolProp>
+              <boolProp name="INVERT">false</boolProp>
+              <boolProp name="ISREGEX">false</boolProp>
+            </JSONPathAssertion>
+            <hashTree/>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert correction" enabled="true">
+              <stringProp name="JSON_PATH">$.options[0].correct</stringProp>
+              <stringProp name="EXPECTED_VALUE">true</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -453,16 +369,16 @@
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert justification" enabled="true">
               <stringProp name="JSON_PATH">$.justification</stringProp>
-              <stringProp name="EXPECTED_VALUE">Question well structured and correct</stringProp>
+              <stringProp name="EXPECTED_VALUE">Question well structured</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert course id" enabled="true">
-              <stringProp name="JSON_PATH">$.courseId</stringProp>
-              <stringProp name="EXPECTED_VALUE">2</stringProp>
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert submission status" enabled="true">
+              <stringProp name="JSON_PATH">$.status</stringProp>
+              <stringProp name="EXPECTED_VALUE">APPROVED</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
               <boolProp name="INVERT">false</boolProp>
@@ -581,9 +497,8 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">sampleReq</stringProp>
-          <stringProp name="query">DELETE FROM submissions WHERE user_id = 676 AND question_id = ${__property(questionId)} AND course_id = 2 ;
-DELETE FROM options WHERE content = &apos;Option_Content_FOR_TEST1&apos;;
-DELETE FROM questions WHERE id = ${__property(questionId)};
+          <stringProp name="query">DELETE FROM options WHERE content = &apos;Option_Content&apos;;
+DELETE FROM submissions WHERE title = &apos;Demo_Question&apos; AND content = &apos;Demo_Content&apos;;
 </stringProp>
           <stringProp name="queryArguments"></stringProp>
           <stringProp name="queryArgumentsTypes"></stringProp>

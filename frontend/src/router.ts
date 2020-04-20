@@ -18,6 +18,7 @@ import QuizView from './views/student/quiz/QuizView.vue';
 import ResultsView from './views/student/quiz/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
 import ScanView from './views/student/ScanView.vue';
+import SubmitQuestionView from '@/views/student/questions/QuestionSubmissionView.vue';
 
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
@@ -25,6 +26,8 @@ import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
+import QuestionSubmissionView from '@/views/student/questions/QuestionSubmissionView.vue';
+import StudentQuestionsView from '@/views/teacher/studentQuestions/EvaluateQuestionsView.vue';
 
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
 import OpenTournamentsView from '@/views/student/tournaments/OpenTournamentsView.vue';
@@ -109,6 +112,15 @@ let router = new Router({
           component: StudentsView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Students',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'studentQuestions',
+          name: 'student-questions-management',
+          component: StudentQuestionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Student Questions',
             requiredAuth: 'Teacher'
           }
         },
@@ -240,6 +252,15 @@ let router = new Router({
           component: ScanView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Scan',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'question',
+          name: 'submit-questions',
+          component: QuestionSubmissionView,
+          meta: {
+            title: process.env.VUE_APP_NAME + '- Submit Questions',
             requiredAuth: 'Student'
           }
         }

@@ -36,6 +36,14 @@ Cypress.Commands.add('demoStudentLogin', () => {
     cy.get('[data-cy="studentButton"]').click()
 })
 
+
+Cypress.Commands.add('demoTeacherLogin', () => {
+    cy.visit('/')
+    cy.get('[data-cy="teacherButton"]').click()
+    cy.contains('Management').click()
+})
+
+
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="Name"]').type(name)
@@ -62,7 +70,7 @@ Cypress.Commands.add('listClosedTournaments', ()=>{
 
 Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusionDate
     , numberOfQuestions, topics) => {
-    cy.get('[data-cy="createButton"]').click()
+    cy.get('[data-cy="createButton"]').click({force:true})
     cy.get('[data-cy="tournamentName"]').type(tournamentName)
     cy.get('[data-cy="manADate"]').click()
     cy.get('[data-cy="availableDateText"]').type(availableDate)
@@ -82,7 +90,7 @@ Cypress.Commands.add('enrollTournament',(tournamentName) => {
         .children()
         .should('have.length', 7)
         .find('[data-cy="signTournament"]')
-        .click()
+        .click({force:true})
 })
 
 Cypress.Commands.add('cancelTournament', (tournamentName) => {
@@ -92,12 +100,12 @@ Cypress.Commands.add('cancelTournament', (tournamentName) => {
         .children()
         .should('have.length', 7)
         .find('[data-cy="cancelTournament"]')
-        .click()
+        .click({force:true})
 
 });
 
-Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
-    cy.contains('Error')
+Cypress.Commands.add('closeErrorMessage', () => {
+    cy.get('[data-cy="error"]')
         .parent()
         .find('button')
         .click()
@@ -115,15 +123,82 @@ Cypress.Commands.add('deleteCourseExecution', (acronym) => {
 
 Cypress.Commands.add('createFromCourseExecution', (name, acronym, academicTerm) => {
     cy.contains(name)
-        .parent()
-        .should('have.length', 1)
-        .children()
-        .should('have.length', 7)
-        .find('[data-cy="createFromCourse"]')
-        .click()
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 7)
+      .find('[data-cy="createFromCourse"]')
+      .click()
     cy.get('[data-cy="Acronym"]').type(acronym)
     cy.get('[data-cy="AcademicTerm"]').type(academicTerm)
     cy.get('[data-cy="saveButton"]').click()
 })
 
+
+Cypress.Commands.add('accessStudentQuestionsPage', () => {
+    cy.contains('Questions').click()
+    cy.contains('Manage').click()
+})
+
+Cypress.Commands.add('accessTeacherSubmissionsPage', () => {
+    cy.contains('Student Questions').click()
+})
+
+Cypress.Commands.add('submitQuestion', (title, content, options, checkCorrect) => {
+
+    cy.get('[data-cy="createSubmissionButton"]').click()
+    if (title !== '')cy.get('[data-cy="Title"]').type(title)
+    if (content !== '')cy.get('[data-cy="Content"]').type(content)
+    let optionFields = cy.get('[data-cy="options"]').first().type(options[0])
+    for (let i=1; i < options.length ; i++) {
+        optionFields.next().type(options[i])
+    }
+    if (checkCorrect) cy.get('[data-cy="options"]').get('[type="checkbox"]').first().check({force:true})
+    cy.get('[data-cy="saveSubmissionButton"]').click()
+})
+
+Cypress.Commands.add('editSubmission', (oldTitle,newTitle, content) => {
+
+    cy.contains(oldTitle)
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 8)
+      .find('[data-cy="editSubmission"]')
+      .click()
+
+    if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
+    if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
+
+    cy.get('[data-cy="saveSubmissionButton"]').click()
+})
+
+
+
+Cypress.Commands.add('showSubmission', (title) => {
+    cy.contains(title)
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 8)
+      .find('[data-cy="showSubmission"]')
+      .click()
+    cy.get('[data-cy = "closeSubmissionButton"]').click()
+
+})
+
+Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) => {
+
+    cy.contains(title)
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 8)
+      .find('[data-cy="evaluateSubmissionButton"]')
+      .click()
+
+    if (isApproved) cy.get('[data-cy="status"]').check( {force:true})
+    if (justification !== '') cy.get('[data-cy="justification"]').type(justification)
+    cy.get('[data-cy="saveEvaluationButton"]').click()
+})
 

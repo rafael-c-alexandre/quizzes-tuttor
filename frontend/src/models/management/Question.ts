@@ -36,7 +36,6 @@ export default class Question {
       this.options = jsonObj.options.map(
         (option: Option) => new Option(option)
       );
-
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }
   }

@@ -27,7 +27,7 @@ public class TopicController {
     }
 
     @PostMapping(value = "/courses/{courseId}/topics")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
     public TopicDto createTopic(@PathVariable int courseId, @Valid @RequestBody TopicDto topicDto) {
         return this.topicService.createTopic(courseId, topicDto);
     }
