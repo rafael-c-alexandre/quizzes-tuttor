@@ -50,6 +50,13 @@ Cypress.Commands.add('listTournaments', ()=>{
     cy.contains('List').trigger('mouseover')
 });
 
+Cypress.Commands.add('listOpenTournaments', ()=>{
+    cy.contains('Tournaments').click()
+    cy.contains('Open').click()
+    cy.contains('Open').trigger('mouseover')
+});
+
+
 Cypress.Commands.add('createTournament',(tournamentName, availableDate, conclusionDate
     , numberOfQuestions, topics) => {
     cy.get('[data-cy="createButton"]').click()
