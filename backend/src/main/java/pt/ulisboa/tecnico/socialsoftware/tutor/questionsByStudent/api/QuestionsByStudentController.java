@@ -28,6 +28,7 @@ public class QuestionsByStudentController {
 
 
 
+    // JFF: unused vars (and imports)
     @Autowired
     private UserRepository userRepository;
 

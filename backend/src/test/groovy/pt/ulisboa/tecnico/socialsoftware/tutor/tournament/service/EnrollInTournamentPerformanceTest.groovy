@@ -49,6 +49,7 @@ class EnrollInTournamentPerformanceTest extends Specification {
         and: "500 users"
 
         ArrayList<User> userList = new ArrayList<User>()
+        // JFF: Should have changed this to a smaller number after the profiling
         1.upto(500, {
 
             def user = new User()
@@ -62,6 +63,7 @@ class EnrollInTournamentPerformanceTest extends Specification {
         })
 
         when:
+        // JFF: Should have changed this to a smaller number after the profiling
         1.upto(500,{
             println(userList.get(it.intValue()-1))
             tournamentService.enrollInTournament(1,userList.get(it.intValue()-1).getId())})

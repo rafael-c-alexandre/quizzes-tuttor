@@ -52,6 +52,7 @@ class ListSubmissionServicePerformanceTest extends Specification {
         courseRepository.save(course)
         
         and: "a 2000 question submissions"
+        // JFF: Should have changed this to a smaller number after the profiling
         1.upto(2000, {
             and: "a question"
             def questionDto = new QuestionDto()

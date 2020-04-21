@@ -45,6 +45,7 @@ class CancelTournamentPerformanceTest extends Specification {
 
         given: "500 tournaments created"
         ArrayList<TournamentDto> tournamentDtoList = new ArrayList<TournamentDto>()
+        // JFF: Should have changed this to a smaller number after the profiling
         1.upto(500, {
 
 
@@ -64,6 +65,7 @@ class CancelTournamentPerformanceTest extends Specification {
         })
 
         when:
+        // JFF: Should have changed this to a smaller number after the profiling
         1.upto(500, {
             println(tournamentDtoList.get(it.intValue() - 1))
             TournamentDto t = tournamentService.createTournament(tournamentDtoList.get(it.intValue() - 1))
