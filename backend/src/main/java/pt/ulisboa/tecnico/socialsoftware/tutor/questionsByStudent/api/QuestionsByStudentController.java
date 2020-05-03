@@ -95,8 +95,9 @@ public class QuestionsByStudentController {
 
         SubmissionDto result = questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId(), submissionDto.getTeacherDecision(), submissionDto.getJustification());
 
-        questionService.createQuestion(courseId,generateQuestionDto(result));
-
+        //questionService.createQuestion(courseId,generateQuestionDto(result));
+        //criar uma submissao e coloca nas disponives
+        //
         return result;
     }
 
@@ -149,9 +150,14 @@ public class QuestionsByStudentController {
     }
 
     @PutMapping("/submissions/{submissionId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS')")
-    public SubmissionDto updateSubmission(@PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
-        return this.questionsByStudentService.updateSubmission(submissionId, submission);
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS'))or hasRole('ROLE_TEACHER') ")
+    public SubmissionDto updateSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
+
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        return this.questionsByStudentService.updateSubmission(submissionId, submission, user);
     }
 
 }

@@ -207,12 +207,17 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto) {
+    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto, User user) {
+        if((user.getRole().equals(User.Role.TEACHER) && (!submissionDto.getStatus().equals("APPROVED"))))
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
 
-        if (!submissionDto.getStatus().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+        else if(user.getRole().equals(User.Role.STUDENT) && (!submissionDto.getStatus().equals("ONHOLD")))
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
         submission.update(submissionDto);
         return new SubmissionDto(submission);
+
     }
 
 
@@ -224,18 +229,20 @@ public class QuestionsByStudentService {
 
 
 
-    private void isTeacher(Integer userId) {
+    private boolean isTeacher(Integer userId) {
         User teacher = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
         if (!teacher.getRole().toString().equals("TEACHER")) {
             throw new TutorException(NOT_TEACHER_ERROR);
         }
+        return true;
     }
 
-    private void isStudent(Integer userId) {
+    private boolean isStudent(Integer userId) {
         User teacher = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
         if (!teacher.getRole().toString().equals("STUDENT")) {
             throw new TutorException(NOT_STUDENT_ERROR);
         }
+        return true;
     }
 
 }
