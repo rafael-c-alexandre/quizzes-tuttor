@@ -98,7 +98,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Submission from '@/models/management/Submission';
 import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
@@ -199,7 +199,7 @@ export default class QuestionSubmissionView extends Vue {
   }
 
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
+    return convertMarkDown(text, image);
   }
 
   async handleFileUpload(event: File, submission: Submission) {

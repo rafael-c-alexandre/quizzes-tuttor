@@ -107,4 +107,16 @@ public class StatementController {
 
         return statementService.concludeQuiz(user.getId(), quizId);
     }
+
+    @GetMapping("/quizzes/{tournamentId}/tournament")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public StatementQuizDto getTournamentQuiz(Principal principal,@PathVariable int tournamentId){
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return statementService.getTournamentQuiz(user.getId(),tournamentId);
+    }
 }

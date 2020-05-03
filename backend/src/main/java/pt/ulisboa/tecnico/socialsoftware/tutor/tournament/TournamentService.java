@@ -6,6 +6,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -29,6 +31,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -73,9 +76,19 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> listOpenTournaments(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+
+        Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
+                .map(QuizAnswer::getQuiz)
+                .map(Quiz::getId)
+                .collect(Collectors.toSet());
+
         return tournamentRepository.findOpenTournaments().stream()
                 .map(TournamentDto::new)
-                .filter(tournament -> tournament.getSignedUsers().contains(userId))
+                .filter(tournament -> tournament.getSignedUsers().contains(userId)
+                        && tournament.getAssociatedQuiz() != null
+                        && !studentQuizIds.contains(tournament.getAssociatedQuiz().getId()))
                 .collect(Collectors.toList());
     }
 
@@ -152,7 +165,7 @@ public class TournamentService {
         tournament.setCourseExecution(courseExecution);
 
 
-        tournament.setCreationDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        tournament.setCreationDate(DateHandler.now().truncatedTo(ChronoUnit.SECONDS));
 
 
         for (TopicDto topicDto : tournamentDto.getTopics()) {
@@ -222,12 +235,13 @@ public class TournamentService {
             throw new TutorException(USER_IS_NOT_STUDENT);
 
         //Generate new quiz after user reach 2
-        if (tournament.getSignedUsers().size() == 2) {
+        if (tournament.getSignedUsers().size() == 1) {
             Quiz quiz = new Quiz();
             quiz.setKey(getMaxQuizKey() + 1);
             quiz.setAssociatedTournament(tournament);
             quiz.generate(new ArrayList<>(tournament.getQuestions()));
             quiz.setTitle(tournament.getTitle() + " Tournament-Quiz");
+            quiz.setCourseExecution(tournament.getCourseExecution());
             quizRepository.save(quiz);
             tournament.setAssociatedQuiz(quiz);
         }

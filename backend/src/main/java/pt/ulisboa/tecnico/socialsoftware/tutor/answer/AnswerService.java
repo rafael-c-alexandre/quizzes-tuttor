@@ -127,6 +127,8 @@ public class AnswerService {
         }
 
         if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
+            System.out.println(quizAnswer.getQuiz().getAvailableDate());
+            System.out.println(DateHandler.now());
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 

@@ -153,7 +153,6 @@ export default class RemoteServices {
       });
   }
 
-
   static async createQuestion(question: Question): Promise<Question> {
     return httpClient
       .post(
@@ -242,6 +241,17 @@ export default class RemoteServices {
         return response.data.map((statementQuiz: any) => {
           return new StatementQuiz(statementQuiz);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getTournamentQuiz(tournamentId: number): Promise<StatementQuiz> {
+    return httpClient
+      .get(`/quizzes/${tournamentId}/tournament`)
+      .then(response => {
+        return new StatementQuiz(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
