@@ -1,9 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -17,12 +19,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(
         name = "tournaments"
-        )
+)
 public class Tournament {
 
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "creation_date")
@@ -45,16 +47,24 @@ public class Tournament {
     private Set<Topic> topics = new HashSet<>();
 
     @ManyToMany
-    private Set<Question> questions = new HashSet<>();
+    private final Set<Question> questions = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "course_execution_id")
+    private CourseExecution courseExecution;
 
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User tournamentCreator;
 
-    public Tournament() {}
+    @OneToOne
+    private Quiz associatedQuiz;
 
-    public  Tournament(TournamentDto tournamentDto){
+    public Tournament() {
+    }
+
+    public Tournament(TournamentDto tournamentDto) {
 
         this.id = tournamentDto.getId();
         this.availableDate = tournamentDto.getAvailableDateDate();
@@ -69,67 +79,86 @@ public class Tournament {
     public LocalDateTime getAvailableDate() {
         return availableDate;
     }
+
+    public void setAvailableDate(LocalDateTime availableDate) {
+        checkAvailableDate(availableDate);
+        this.availableDate = availableDate;
+    }
+
     public LocalDateTime getConclusionDate() {
         return conclusionDate;
     }
+
+    public void setConclusionDate(LocalDateTime conclusionDate) {
+        checkConclusionDate(conclusionDate);
+        this.conclusionDate = conclusionDate;
+    }
+
     public String getTitle() {
         return title;
     }
-    public Integer getId() {
-        return id;
-    }
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-    public Set<User> getSignedUsers() {
-        return signedUsers;
-    }
-    public Set<Topic> getTopics() {
-        return topics;
-    }
-    public User getTournamentCreator() {
-        return tournamentCreator;
-    }
-    public Set<Question> getQuestions() { return questions; }
 
     //Setters
     public void setTitle(String title) {
         checkTitle(title);
         this.title = title;
     }
-    public void setAvailableDate(LocalDateTime availableDate) {
-        checkAvailableDate(availableDate);
-        this.availableDate = availableDate;
+
+    public Integer getId() {
+        return id;
     }
-    public void setConclusionDate(LocalDateTime conclusionDate) {
-        checkConclusionDate(conclusionDate);
-        this.conclusionDate = conclusionDate;
-    }
+
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
+
+    public Set<User> getSignedUsers() {
+        return signedUsers;
+    }
+
     public void setSignedUsers(Set<User> signedUsers) {
         this.signedUsers = signedUsers;
     }
+
+    public Set<Topic> getTopics() {
+        return topics;
+    }
+
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;
     }
+
+    public User getTournamentCreator() {
+        return tournamentCreator;
+    }
+
     public void setTournamentCreator(User tournamentCreator) {
         this.tournamentCreator = tournamentCreator;
     }
 
+    public Set<Question> getQuestions() {
+        return questions;
+    }
 
+    public void addTopic(Topic topic) {
+        this.topics.add(topic);
+    }
 
-
-
-    public void addTopic(Topic topic){ this.topics.add(topic); }
-    public void addUser(User user){
+    public void addUser(User user) {
         this.signedUsers.add(user);
     }
-    public void addQuestion(Question question) { this.questions.add(question); }
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+    }
 
     @Override
     public String toString() {
@@ -150,7 +179,7 @@ public class Tournament {
         if (availableDate == null) {
             throw new TutorException(TOURNAMENT_EMPTY_DATE, "Available date");
         }
-        if(availableDate.isBefore(LocalDateTime.now())){
+        if (availableDate.isBefore(LocalDateTime.now())) {
             throw new TutorException(TOURNAMENT_INVALID_DATE);
         }
         if (this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
@@ -165,27 +194,43 @@ public class Tournament {
     }
 
     private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if(conclusionDate == null){
+        if (conclusionDate == null) {
             throw new TutorException(TOURNAMENT_EMPTY_DATE);
         }
-        if(conclusionDate.isBefore(LocalDateTime.now())){
+        if (conclusionDate.isBefore(LocalDateTime.now())) {
             throw new TutorException(TOURNAMENT_INVALID_DATE);
         }
-        if (    this.availableDate != null &&
+        if (this.availableDate != null &&
                 conclusionDate.isBefore(availableDate)) {
             throw new TutorException(TOURNAMENT_INVALID_DATE);
         }
     }
 
-    public boolean openForSignings(){
+    public CourseExecution getCourseExecution() {
+        return courseExecution;
+    }
+
+    public void setCourseExecution(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
+    }
+
+    public Quiz getAssociatedQuiz() {
+        return associatedQuiz;
+    }
+
+    public void setAssociatedQuiz(Quiz associatedQuiz) {
+        this.associatedQuiz = associatedQuiz;
+    }
+
+    public boolean openForSignings() {
         return LocalDateTime.now().isBefore(this.availableDate);
     }
 
-    public boolean isOpen(){
+    public boolean isOpen() {
         return LocalDateTime.now().isAfter(this.availableDate) && LocalDateTime.now().isBefore(this.conclusionDate);
     }
 
-    public boolean isClosed(){
+    public boolean isClosed() {
         return LocalDateTime.now().isAfter(this.conclusionDate);
     }
 }

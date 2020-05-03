@@ -20,7 +20,6 @@ import Submission from '@/models/management/Submission';
 
 import Tournament from '@/models/management/Tournament';
 
-
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
@@ -571,23 +570,25 @@ export default class RemoteServices {
       });
   }
 
-
   static async getStudentSubmissions(): Promise<Submission[]> {
     return httpClient
       .get('/submissions/')
       .then(response => {
         return response.data.map((submission: any) => {
           return new Submission(submission);
-        })
+        });
       })
-        .catch(async error => {
+      .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
 
   static async createTournament(tournament: Tournament): Promise<Tournament> {
     return httpClient
-      .post('/tournaments/', tournament)
+      .post(
+        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}`,
+        tournament
+      )
       .then(response => {
         return new Tournament(response.data);
       })
@@ -596,14 +597,15 @@ export default class RemoteServices {
       });
   }
 
-
   static async getAllSubmissions(): Promise<Submission[]> {
     return httpClient
-      .get('/courses/' + Store.getters.getCurrentCourse.courseId + '/submissions/')
+      .get(
+        '/courses/' + Store.getters.getCurrentCourse.courseId + '/submissions/'
+      )
       .then(response => {
         return response.data.map((submission: any) => {
           return new Submission(submission);
-    })
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -624,24 +626,22 @@ export default class RemoteServices {
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament);
-        })
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-
-  static async createSubmission(
-    submission: Submission
-  ): Promise<Submission> {
+  static async createSubmission(submission: Submission): Promise<Submission> {
     return httpClient
       .post(
         '/courses/' + Store.getters.getCurrentCourse.courseId + '/submissions',
-        submission)
+        submission
+      )
       .then(response => {
         return new Submission(response.data);
-    })
+      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -652,16 +652,16 @@ export default class RemoteServices {
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament);
-        })
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-
   static updateSubmissionTopics(submissionId: number, topics: Topic[]) {
-    return httpClient.put(`/submissions/${submissionId}/topics`, topics)
+    return httpClient
+      .put(`/submissions/${submissionId}/topics`, topics)
       .then(response => {
         return new Submission(response.data);
       })
@@ -671,7 +671,11 @@ export default class RemoteServices {
   }
 
   static evaluateSubmission(submission: Submission) {
-    return httpClient.put('/courses/' + Store.getters.getCurrentCourse.courseId +'/submissions', submission)
+    return httpClient
+      .put(
+        '/courses/' + Store.getters.getCurrentCourse.courseId + '/submissions',
+        submission
+      )
       .then(response => {
         return new Submission(response.data);
       })
@@ -729,8 +733,6 @@ export default class RemoteServices {
       });
   }
 
-
-
   static async exportAll() {
     return httpClient
       .get('/admin/export', {
@@ -753,7 +755,10 @@ export default class RemoteServices {
       });
   }
 
-  static uploadSubmissionImage(file: File, submissionId: number): Promise<string> {
+  static uploadSubmissionImage(
+    file: File,
+    submissionId: number
+  ): Promise<string> {
     let formData = new FormData();
     formData.append('file', file);
     return httpClient

@@ -23,6 +23,7 @@ class EnrollInTournamentPerformanceTest extends Specification {
     static final String CREATION_DATE = "2020-09-22 12:12"
     static final String AVAILABLE_DATE = "2020-09-23 12:12"
     static final String CONCLUSION_DATE = "2020-09-24 12:12"
+    static final Integer CICLES = 50
 
 
     @Autowired
@@ -57,7 +58,7 @@ class EnrollInTournamentPerformanceTest extends Specification {
         and: "500 users"
 
         ArrayList<User> userList = new ArrayList<User>()
-        1.upto(500, {
+        1.upto(CICLES, {
 
             def user = new User()
             user.setKey(KEY + it.intValue())
@@ -70,14 +71,14 @@ class EnrollInTournamentPerformanceTest extends Specification {
         })
 
         when:
-        1.upto(500,{
-            println(userList.get(it.intValue()-1))
-            tournamentService.enrollInTournament(1,userList.get(it.intValue()-1).getId())})
+        1.upto(CICLES, {
+            println(userList.get(it.intValue() - 1))
+            tournamentService.enrollInTournament(1, userList.get(it.intValue() - 1).getId())
+        })
 
-            then:
-            true
-        }
-
+        then:
+        true
+    }
 
 
     @TestConfiguration

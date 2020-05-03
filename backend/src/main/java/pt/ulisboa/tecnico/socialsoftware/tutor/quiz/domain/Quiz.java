@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -74,6 +75,9 @@ public class Quiz implements DomainEntity {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
+    @OneToOne
+    private Tournament associatedTournament;
+
     public Quiz() {}
 
     public Quiz(QuizDto quizDto) {
@@ -95,6 +99,14 @@ public class Quiz implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuiz(this);
+    }
+
+    public Tournament getAssociatedTournament() {
+        return associatedTournament;
+    }
+
+    public void setAssociatedTournament(Tournament associatedTournament) {
+        this.associatedTournament = associatedTournament;
     }
 
     public Integer getId() {
@@ -289,9 +301,9 @@ public class Quiz implements DomainEntity {
         IntStream.range(0,questions.size())
                 .forEach(index -> new QuizQuestion(this, questions.get(index), index));
 
+        this.setType(QuizType.GENERATED);
         this.setAvailableDate(LocalDateTime.now());
         this.setCreationDate(LocalDateTime.now());
-        this.setType(QuizType.GENERATED);
         this.title = "Generated Quiz";
     }
 }
