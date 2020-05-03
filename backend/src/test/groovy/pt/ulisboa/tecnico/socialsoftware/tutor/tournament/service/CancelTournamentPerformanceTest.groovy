@@ -57,6 +57,7 @@ class CancelTournamentPerformanceTest extends Specification {
         courseExecutionRepository.save(courseExecution)
 
         def topic = new Topic()
+        topic.setName("name")
         topicRepository.save(topic)
         def user = new User()
         user.setKey(1)

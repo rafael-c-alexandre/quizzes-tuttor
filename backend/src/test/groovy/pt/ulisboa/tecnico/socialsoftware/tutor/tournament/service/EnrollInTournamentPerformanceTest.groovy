@@ -42,6 +42,7 @@ class EnrollInTournamentPerformanceTest extends Specification {
         given: "a tournament"
 
         def topic = new Topic()
+        topic.setName("name")
         topicRepository.save(topic)
 
         def topiclist = new ArrayList<Integer>()
@@ -62,7 +63,6 @@ class EnrollInTournamentPerformanceTest extends Specification {
 
             def user = new User()
             user.setKey(KEY + it.intValue())
-            user.setId(KEY + it.intValue())
             user.setRole(ROLE)
             userList.add(user)
             userRepository.save(user)

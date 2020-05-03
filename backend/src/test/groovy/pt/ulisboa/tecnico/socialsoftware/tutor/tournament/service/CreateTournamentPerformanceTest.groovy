@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.administration.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -57,6 +57,7 @@ class CreateTournamentPerformanceTest extends Specification {
         def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
         def topic = new Topic()
+        topic.setName("name")
         topicRepository.save(topic)
         def user = new User()
         user.setKey(1)

@@ -4,5 +4,7 @@
 
 scripts
 
+jmeter.log
+
 backend/src/main/resources/static/images/questions/
 data/

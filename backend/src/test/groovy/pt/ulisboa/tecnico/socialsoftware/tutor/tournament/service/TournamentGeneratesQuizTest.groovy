@@ -43,13 +43,13 @@ class TournamentGeneratesQuizTest extends Specification {
 
     def setup() {
         Question q1 = new Question()
-        q1.setKey(0)
+        q1.setTitle("1")
         Question q2 = new Question()
-        q2.setKey(1)
+        q2.setTitle("2")
         Question q3 = new Question()
-        q3.setKey(2)
+        q3.setTitle("3")
         Question q4 = new Question()
-        q4.setKey(3)
+        q4.setTitle("4")
 
         questionRepository.save(q1)
         questionRepository.save(q2)
