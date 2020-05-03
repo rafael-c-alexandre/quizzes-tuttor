@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class EnterTournamentTest extends Specification{
+class EnterTournamentTest extends Specification {
     public static final String TOURNAMENT_TITLE = "Tournament"
     public static final String CREATION_DATE = "2020-09-22 12:12"
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
@@ -36,12 +36,12 @@ class EnterTournamentTest extends Specification{
     @Autowired
     UserRepository userRepository
 
-    def setup(){
+    def setup() {
 
     }
 
 
-    def "Teacher enters in an open tournament"(){
+    def "Teacher enters in an open tournament"() {
 
         given: "a tournament"
         def tournament = new Tournament()
@@ -61,7 +61,7 @@ class EnterTournamentTest extends Specification{
     }
 
 
-    def "Admin enters in an open tournament"(){
+    def "Admin enters in an open tournament"() {
         given: "a tournament"
         def tournament = new Tournament()
         tournamentRepository.save(tournament)
@@ -80,7 +80,7 @@ class EnterTournamentTest extends Specification{
 
     }
 
-    def "Demo admin enters in an open tournament"(){
+    def "Demo admin enters in an open tournament"() {
         given: "a tournament"
         def tournament = new Tournament()
         tournamentRepository.save(tournament)
@@ -124,7 +124,7 @@ class EnterTournamentTest extends Specification{
 
     }
 
-        private TournamentDto getTournamentDto() {
+    private TournamentDto getTournamentDto() {
         def tournamentDto = new TournamentDto()
         tournamentDto.setTitle(TOURNAMENT_TITLE)
         tournamentDto.setAvailableDate(AVAILABLE_DATE)
