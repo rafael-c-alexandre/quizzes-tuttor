@@ -216,11 +216,11 @@ public class Submission {
         if (submissionDto.getTitle().trim().length() == 0 ||
                 submissionDto.getContent().trim().length() == 0 ||
                 submissionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
-            throw new TutorException(QUESTION_MISSING_DATA);
+           // throw new TutorException(QUESTION_MISSING_DATA);
         }
 
         if (submissionDto.getOptions().stream().filter(OptionDto::getCorrect).count() != 1) {
-            throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
+            //throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
         }
     }
 
