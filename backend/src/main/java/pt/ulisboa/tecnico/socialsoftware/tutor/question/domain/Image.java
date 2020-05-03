@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
@@ -7,13 +8,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submiss
 
 import javax.persistence.*;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_URL_FOR_IMAGE;
+
 @Entity
 @Table(name = "images")
 public class Image implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(nullable = false)
     private String url;
+
     private Integer width;
 
     @OneToOne
@@ -27,8 +33,8 @@ public class Image implements DomainEntity {
     public Image() {}
 
     public Image(ImageDto imageDto) {
-        this.url = imageDto.getUrl();
-        this.width = imageDto.getWidth();
+        setUrl(imageDto.getUrl());
+        setWidth(imageDto.getWidth());
     }
 
     @Override
@@ -40,23 +46,14 @@ public class Image implements DomainEntity {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
-    }
-
     public String getUrl() {
         return url;
     }
 
     public void setUrl(String url) {
+        if (url == null || url.isBlank())
+            throw new TutorException(INVALID_URL_FOR_IMAGE);
+
         this.url = url;
     }
 
@@ -74,6 +71,13 @@ public class Image implements DomainEntity {
 
     public void setSubmission(Submission submission) {
         this.submission = submission;
+    }
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
     @Override
