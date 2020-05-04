@@ -259,6 +259,15 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeUserDashboardPrivacy(int userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        user.setPublicTournamentDashboard(!user.getPublicTournamentDashboard());
+    }
+
     public Integer getMaxQuizKey() {
         Integer maxQuizKey = quizRepository.getMaxQuizKey();
         return maxQuizKey != null ? maxQuizKey : 0;
