@@ -277,7 +277,9 @@ public class Submission {
         question.setCreationDate(DateHandler.toLocalDateTime(this.getCreationDate().toString()));
         question.setCourse(this.course);
 
+        int index = 0;
         for (Option option : getOptions()) {
+            option.setSequence(index++);
             option.setQuestion(question);
         }
 
