@@ -131,6 +131,9 @@ public class User implements UserDetails, DomainEntity {
         return enrolledCoursesAcronyms;
     }
 
+    public Set<Tournament> getSignedTournaments() { return signedTournaments;}
+    public int getNumberCreatedTournaments() { return createdTournaments.size();}
+
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
     }

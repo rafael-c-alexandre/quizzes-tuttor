@@ -232,38 +232,6 @@ public class Question implements DomainEntity {
         course.addQuestion(this);
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", key=" + key +
-                ", content='" + content + '\'' +
-                ", title='" + title + '\'' +
-                ", numberOfAnswers=" + numberOfAnswers +
-                ", numberOfCorrect=" + numberOfCorrect +
-                ", status=" + status +
-                ", image=" + image +
-                ", options=" + options +
-                ", topics=" + topics +
-                '}';
-    }
-
-    private void generateKeys() {
-        int max = this.course.getQuestions().stream()
-                .filter(question -> question.key != null)
-                .map(Question::getKey)
-                .max(Comparator.comparing(Integer::valueOf))
-                .orElse(0);
-
-        List<Question> nullKeyQuestions = this.course.getQuestions().stream()
-                .filter(question -> question.key == null).collect(Collectors.toList());
-
-        for (Question question: nullKeyQuestions) {
-            max = max + 1;
-            question.key = max;
-        }
-    }
-
     public Integer getCorrectOptionId() {
         return this.getOptions().stream()
                 .filter(Option::getCorrect)
@@ -274,6 +242,7 @@ public class Question implements DomainEntity {
 
     public void addAnswerStatistics(QuestionAnswer questionAnswer) {
         numberOfAnswers++;
+
         if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
             numberOfCorrect++;
         }
@@ -323,4 +292,37 @@ public class Question implements DomainEntity {
         getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
     }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", key=" + key +
+                ", content='" + content + '\'' +
+                ", title='" + title + '\'' +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", numberOfCorrect=" + numberOfCorrect +
+                ", status=" + status +
+                ", image=" + image +
+                ", options=" + options +
+                ", topics=" + topics +
+                '}';
+    }
+
+    private void generateKeys() {
+        int max = this.course.getQuestions().stream()
+                .filter(question -> question.key != null)
+                .map(Question::getKey)
+                .max(Comparator.comparing(Integer::valueOf))
+                .orElse(0);
+
+        List<Question> nullKeyQuestions = this.course.getQuestions().stream()
+                .filter(question -> question.key == null).collect(Collectors.toList());
+
+        for (Question question: nullKeyQuestions) {
+            max = max + 1;
+            question.key = max;
+        }
+    }
+
 }
