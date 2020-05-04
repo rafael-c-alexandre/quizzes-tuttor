@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
@@ -21,6 +25,9 @@ class EnterTournamentTest extends Specification {
     public static final String CREATION_DATE = "2020-09-22 12:12"
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final Integer ID = 2
     public static final Integer USER = 1
 
@@ -36,8 +43,19 @@ class EnterTournamentTest extends Specification {
     @Autowired
     UserRepository userRepository
 
-    def setup() {
+    @Autowired
+    CourseRepository courseRepository
 
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    def courseExecution
+    def setup() {
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
     }
 
 
@@ -106,7 +124,11 @@ class EnterTournamentTest extends Specification {
         tournament.setAvailableDate(AVAILABLE_DATE)
         tournament.setCreationDate(CREATION_DATE)
         tournament.setConclusionDate(CONCLUSION_DATE)
-        tournamentRepository.save(new Tournament(tournament))
+
+        tournament = new Tournament(tournament)
+        tournament.setCourseExecution(courseExecution)
+
+        tournamentRepository.save(tournament)
 
         and: "a student"
         def student = new User('name', "username", 32, User.Role.STUDENT)

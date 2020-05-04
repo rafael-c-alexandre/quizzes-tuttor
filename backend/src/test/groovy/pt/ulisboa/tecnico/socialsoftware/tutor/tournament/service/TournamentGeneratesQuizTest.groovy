@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -22,6 +26,9 @@ class TournamentGeneratesQuizTest extends Specification {
     static final String CREATION_DATE = "2020-09-22 12:12"
     static final String AVAILABLE_DATE = "2020-09-23 12:12"
     static final String CONCLUSION_DATE = "2020-09-24 12:12"
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
 
 
     @Autowired
@@ -36,12 +43,26 @@ class TournamentGeneratesQuizTest extends Specification {
     @Autowired
     UserRepository userRepository
 
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
+    CourseRepository courseRepository
+
     Tournament tournament
     User u1
     User u2
     User u3
 
     def setup() {
+
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+
+
         Question q1 = new Question()
         q1.setTitle("1")
         Question q2 = new Question()
@@ -73,7 +94,6 @@ class TournamentGeneratesQuizTest extends Specification {
         userRepository.save(u2)
         userRepository.save(u3)
 
-
         TournamentDto dto = new TournamentDto()
         dto.setTitle(TOURNAMENT_TITLE)
         dto.setAvailableDate(AVAILABLE_DATE)
@@ -86,6 +106,7 @@ class TournamentGeneratesQuizTest extends Specification {
         tournament.addQuestion(q2)
         tournament.addQuestion(q3)
         tournament.addQuestion(q4)
+        tournament.setCourseExecution(courseExecution)
 
 
         tournamentRepository.save(tournament)
