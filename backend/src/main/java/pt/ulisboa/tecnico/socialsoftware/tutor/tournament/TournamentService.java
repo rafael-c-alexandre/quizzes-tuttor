@@ -140,7 +140,7 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_CANCELER_IS_NOT_CREATOR);
         }
 
-        if(tournament.getSignedUsers()!=null){
+        if(!tournament.getSignedUsers().isEmpty()){
             throw new TutorException(TOURNAMENT_ALREADY_ENROLLED);
         }
 
@@ -245,7 +245,7 @@ public class TournamentService {
             throw new TutorException(USER_IS_NOT_STUDENT);
 
         //Generate new quiz after user reach 2
-        if (tournament.getSignedUsers().size() == 1) {
+        if (tournament.getSignedUsers().size() == 2) {
             Quiz quiz = new Quiz();
             quiz.setKey(getMaxQuizKey() + 1);
             quiz.setAssociatedTournament(tournament);
@@ -257,6 +257,18 @@ public class TournamentService {
         }
 
         return new TournamentDto(tournament);
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeUserDashboardPrivacy(int userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        if(user.getPublicTournamentDashboard() != null)
+            user.setPublicTournamentDashboard(!user.getPublicTournamentDashboard());
+        else
+            user.setPublicTournamentDashboard(false);
     }
 
     public Integer getMaxQuizKey() {

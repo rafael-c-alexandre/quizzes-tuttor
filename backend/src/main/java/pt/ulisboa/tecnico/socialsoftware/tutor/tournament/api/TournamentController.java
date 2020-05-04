@@ -92,6 +92,17 @@ public class TournamentController {
         return tournamentService.enrollInTournament(tournamentId, user.getId());
     }
 
+    @PutMapping("/tournaments/privacy")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public void changeDashboardPrivacy(Principal principal){
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        tournamentService.changeUserDashboardPrivacy(user.getId());
+    }
+
+
     private void formatDates(TournamentDto tournament) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
