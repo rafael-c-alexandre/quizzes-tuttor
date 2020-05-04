@@ -111,7 +111,6 @@ public class QuestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-
         Question question = new Question(course, questionDto);
         questionRepository.save(question);
         return new QuestionDto(question);
