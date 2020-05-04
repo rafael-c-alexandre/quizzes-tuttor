@@ -265,7 +265,10 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void changeUserDashboardPrivacy(int userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        user.setPublicTournamentDashboard(!user.getPublicTournamentDashboard());
+        if(user.getPublicTournamentDashboard() != null)
+            user.setPublicTournamentDashboard(!user.getPublicTournamentDashboard());
+        else
+            user.setPublicTournamentDashboard(false);
     }
 
     public Integer getMaxQuizKey() {
