@@ -1,8 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto;
@@ -33,7 +37,7 @@ public class Submission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
+    @Column(unique = true, nullable = false)
     private Integer key;
 
     @Column(columnDefinition = "TEXT")
@@ -47,8 +51,9 @@ public class Submission {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = CascadeType.ALL,  mappedBy = "submission", orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submission", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Option> options = new ArrayList<>();
 
     @ManyToMany(mappedBy = "submissions")
@@ -71,36 +76,23 @@ public class Submission {
     private Course course;
 
 
-    public Submission(){
+    public Submission() {
 
     }
 
     public Submission(SubmissionDto submissionDto, User user, Course course) {
-        checkConsistentSubmission(submissionDto);
-        this.title = submissionDto.getTitle();
-        this.key = submissionDto.getKey();
-        this.content = submissionDto.getContent();
+        setTitle(submissionDto.getTitle());
+        setKey(submissionDto.getKey());
+        setContent(submissionDto.getContent());
+        setCreationDate(DateHandler.toLocalDateTime(submissionDto.getCreationDate()));
+        setCourse(course);
+        setOptions(submissionDto.getOptions());
 
-        this.course = course;
-        course.addSubmission(this);
-
-        if (submissionDto.getImage() != null) {
-            Image img = new Image(submissionDto.getImage());
-            setImage(img);
-
-        }
-
-        int index = 0;
-        for (OptionDto optionDto : submissionDto.getOptions()) {
-            optionDto.setSequence(index++);
-            Option option = new Option(optionDto);
-            this.options.add(option);
-            option.setSubmission(this);
-
-        }
-        this.user = user;
-        this.justification = "";
-        this.teacherDecision = false;
+        if (submissionDto.getImage() != null)
+            setImage(new Image(submissionDto.getImage()));
+        setUser(user);
+        setJustification("");
+        setTeacherDecision(false);
     }
 
 
@@ -109,7 +101,10 @@ public class Submission {
     }
 
     public void setUser(User user) {
+
         this.user = user;
+        user.addSubmission(this);
+
     }
 
     public String getJustification() {
@@ -157,6 +152,9 @@ public class Submission {
     }
 
     public void setContent(String content) {
+        if (content == null || content.isBlank())
+            throw new TutorException(INVALID_CONTENT_FOR_QUESTION);
+
         this.content = content;
     }
 
@@ -165,6 +163,8 @@ public class Submission {
     }
 
     public void setTitle(String title) {
+        if (title == null || title.isBlank())
+            throw new TutorException(INVALID_TITLE_FOR_QUESTION);
         this.title = title;
     }
 
@@ -174,6 +174,7 @@ public class Submission {
 
     public void setImage(Image image) {
         this.image = image;
+        image.setSubmission(this);
     }
 
     public LocalDateTime getCreationDate() {
@@ -181,15 +182,44 @@ public class Submission {
     }
 
     public void setCreationDate(LocalDateTime creationDate) {
-        this.creationDate = creationDate;
+        if (this.creationDate == null) {
+            this.creationDate = DateHandler.now();
+        } else {
+            this.creationDate = creationDate;
+        }
     }
 
     public List<Option> getOptions() {
         return options;
     }
 
-    public void setOptions(List<Option> options) {
-        this.options = options;
+    public void setOptions(List<OptionDto> options) {
+
+        if (options.stream().filter(OptionDto::getCorrect).count() != 1) {
+            throw new TutorException(ONE_CORRECT_OPTION_NEEDED);
+        }
+
+        int index = 0;
+        for (OptionDto optionDto : options) {
+            if (optionDto.getId() == null) {
+                optionDto.setSequence(index++);
+                new Option(optionDto).setSubmission(this);
+            } else {
+                Option option = getOptions()
+                        .stream()
+                        .filter(op -> op.getId().equals(optionDto.getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, optionDto.getId()));
+
+                option.setContent(optionDto.getContent());
+                option.setCorrect(optionDto.getCorrect());
+            }
+        }
+
+    }
+
+    public void addOption(Option option) {
+        options.add(option);
     }
 
     public Set<Topic> getTopics() {
@@ -210,18 +240,7 @@ public class Submission {
 
     public void setCourse(Course course) {
         this.course = course;
-    }
-
-    private void checkConsistentSubmission(SubmissionDto submissionDto) {
-        if (submissionDto.getTitle().trim().length() == 0 ||
-                submissionDto.getContent().trim().length() == 0 ||
-                submissionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
-           // throw new TutorException(QUESTION_MISSING_DATA);
-        }
-
-        if (submissionDto.getOptions().stream().filter(OptionDto::getCorrect).count() != 1) {
-            //throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
-        }
+        course.addSubmission(this);
     }
 
     public void updateTopics(Set<Topic> newTopics) {
@@ -241,19 +260,32 @@ public class Submission {
     private Option getOptionById(Integer id) {
         return getOptions().stream().filter(option -> option.getId().equals(id)).findAny().orElse(null);
     }
+
     public void update(SubmissionDto submissionDto) {
-        checkConsistentSubmission(submissionDto);
 
         setTitle(submissionDto.getTitle());
         setContent(submissionDto.getContent());
-
-        submissionDto.getOptions().forEach(optionDto -> {
-            Option option = getOptionById(optionDto.getId());
-            if (option == null) {
-                throw new TutorException(OPTION_NOT_FOUND, optionDto.getId());
-            }
-            option.setContent(optionDto.getContent());
-            option.setCorrect(optionDto.getCorrect());
-        });
+        setOptions(submissionDto.getOptions());
     }
+
+    public Question convertToQuestion() {
+        Question question = new Question();
+        question.setTitle(this.getTitle());
+        question.setKey(this.getKey());
+        question.setContent(this.getContent());
+        question.setStatus(Question.Status.AVAILABLE);
+        question.setCreationDate(DateHandler.toLocalDateTime(this.getCreationDate().toString()));
+        question.setCourse(this.course);
+
+        for (Option option : getOptions()) {
+            option.setQuestion(question);
+        }
+
+        if (this.getImage() != null)
+            question.setImage(new Image(new ImageDto(this.getImage())));
+
+
+        return question;
+    }
+
 }

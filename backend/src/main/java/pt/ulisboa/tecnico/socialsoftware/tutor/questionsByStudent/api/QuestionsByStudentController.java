@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService;
@@ -93,12 +94,8 @@ public class QuestionsByStudentController {
 
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
 
-        SubmissionDto result = questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId(), submissionDto.getTeacherDecision(), submissionDto.getJustification());
+        return questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId(), submissionDto.getTeacherDecision(), submissionDto.getJustification());
 
-        //questionService.createQuestion(courseId,generateQuestionDto(result));
-        //criar uma submissao e coloca nas disponives
-        //
-        return result;
     }
 
     @PutMapping("/submissions/{submissionId}/topics")
@@ -138,16 +135,6 @@ public class QuestionsByStudentController {
         return Paths.get(fileLocation);
     }
 
-    private QuestionDto generateQuestionDto(SubmissionDto submissionDto) {
-        QuestionDto questionDto = new QuestionDto();
-        questionDto.setTitle(submissionDto.getTitle());
-        questionDto.setContent(submissionDto.getContent());
-        questionDto.setOptions(submissionDto.getOptions());
-        questionDto.setImage(submissionDto.getImage());
-        questionDto.setTopics(submissionDto.getTopics());
-        questionDto.setStatus("AVAILABLE");
-       return questionDto;
-    }
 
     @PutMapping("/submissions/{submissionId}")
     @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS'))or hasRole('ROLE_TEACHER') ")

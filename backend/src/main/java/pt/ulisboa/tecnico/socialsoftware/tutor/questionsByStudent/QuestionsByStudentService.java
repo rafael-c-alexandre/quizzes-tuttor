@@ -10,9 +10,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto;
@@ -48,6 +52,9 @@ public class QuestionsByStudentService {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
 
 
     @Retryable(
@@ -68,8 +75,6 @@ public class QuestionsByStudentService {
 
         Submission submission = new Submission(submissionDto, student, course );
         submission.setCreationDate(LocalDateTime.now());
-        student.addSubmission(submission);
-        course.addSubmission(submission);
 
         submissionRepository.save(submission);
         return new SubmissionDto(submission);
@@ -82,6 +87,26 @@ public class QuestionsByStudentService {
     public List<SubmissionDto> findQuestionsSubmittedByStudent(Integer userId) {
         isStudent(userId);
         return submissionRepository.findSubmissionByStudent(userId).stream().map(SubmissionDto::new).collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuestionDto makeQuestionAvailable(Integer courseId, Integer submissionId) {
+
+        courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND,courseId));
+
+        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND,submissionId));
+
+        if (!submission.getSubmissionStatus().name().equals("APPROVED")) throw new TutorException(QUESTION_CANNOT_BE_AVAILABLE);
+
+        Question question = submission.convertToQuestion();
+        questionRepository.save(question);
+
+
+
+        return new QuestionDto(question);
     }
 
     @Retryable(
@@ -243,6 +268,17 @@ public class QuestionsByStudentService {
             throw new TutorException(NOT_STUDENT_ERROR);
         }
         return true;
+    }
+
+    private QuestionDto generateQuestionDto(SubmissionDto submissionDto) {
+        QuestionDto questionDto = new QuestionDto();
+        questionDto.setTitle(submissionDto.getTitle());
+        questionDto.setContent(submissionDto.getContent());
+        questionDto.setOptions(submissionDto.getOptions());
+        questionDto.setImage(submissionDto.getImage());
+        questionDto.setTopics(submissionDto.getTopics());
+        questionDto.setStatus("AVAILABLE");;
+        return questionDto;
     }
 
 }
