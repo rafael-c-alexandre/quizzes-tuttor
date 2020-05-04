@@ -155,7 +155,7 @@ public class StatsService {
                 .flatMap(Collection::stream)
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .filter(quizAnswer -> quizAnswer.getUser().equals(user))
-                .filter(quizAnswer -> quizAnswer.isCompleted())
+                .filter(QuizAnswer::isCompleted)
                 .count();
 
         int uniqueCorrectAnswers = (int) signedTournaments.stream()
