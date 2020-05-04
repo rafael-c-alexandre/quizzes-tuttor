@@ -58,7 +58,7 @@ public class Tournament {
     @JoinColumn(name = "user_id")
     private User tournamentCreator;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Quiz associatedQuiz;
 
     public Tournament() {
