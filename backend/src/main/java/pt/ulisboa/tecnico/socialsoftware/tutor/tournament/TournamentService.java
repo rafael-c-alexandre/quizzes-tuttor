@@ -140,7 +140,7 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_CANCELER_IS_NOT_CREATOR);
         }
 
-        if(tournament.getSignedUsers()!=null){
+        if(!tournament.getSignedUsers().isEmpty()){
             throw new TutorException(TOURNAMENT_ALREADY_ENROLLED);
         }
 
@@ -245,7 +245,7 @@ public class TournamentService {
             throw new TutorException(USER_IS_NOT_STUDENT);
 
         //Generate new quiz after user reach 2
-        if (tournament.getSignedUsers().size() == 1) {
+        if (tournament.getSignedUsers().size() == 2) {
             Quiz quiz = new Quiz();
             quiz.setKey(getMaxQuizKey() + 1);
             quiz.setAssociatedTournament(tournament);
