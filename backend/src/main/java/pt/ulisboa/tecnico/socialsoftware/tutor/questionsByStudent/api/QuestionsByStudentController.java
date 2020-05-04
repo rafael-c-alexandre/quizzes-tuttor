@@ -108,7 +108,6 @@ public class QuestionsByStudentController {
 
         return questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId(), submissionDto.getTeacherDecision(), submissionDto.getJustification());
 
-
     }
 
     @PutMapping("/submissions/{submissionId}/topics")
