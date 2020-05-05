@@ -69,9 +69,7 @@ class UpdateSubmissionSpockTest extends Specification{
 
         def optionOK
         def submission
-        def submissionTeacher
-        def submissionDtoTeacher2
-        def submissionTeacher2
+
 
 
         def setup() {
@@ -138,6 +136,7 @@ class UpdateSubmissionSpockTest extends Specification{
         submissionDto2.setId(1)
         submissionDto2.setKey(1)
         submissionDto2.setStatus("APPROVED")
+        submission.setSubmissionStatus(Submission.Status.APPROVED)
         submissionDto2.setCourseId(COURSE_ID)
         submissionDto2.setJustification("")
         submissionDto2.setTitle(QUESTION_TITLE_2)
@@ -166,6 +165,7 @@ class UpdateSubmissionSpockTest extends Specification{
         submissionDto2.setId(1)
         submissionDto2.setKey(1)
         submissionDto2.setStatus("APPROVED")
+        submission.setSubmissionStatus(Submission.Status.APPROVED)
         submissionDto2.setCourseId(COURSE_ID)
         submissionDto2.setJustification("")
         submissionDto2.setTitle(QUESTION_TITLE_2)
