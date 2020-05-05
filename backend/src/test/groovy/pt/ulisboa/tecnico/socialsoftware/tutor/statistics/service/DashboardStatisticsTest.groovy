@@ -61,12 +61,14 @@ class DashboardStatisticsTest extends Specification{
 
     def user1, user2
     def tournament
-
+    def courseExecutionId
     def setup(){
         user1 = new User()
         user2 = new User()
+        user1.setRole(User.Role.STUDENT)
+        user2.setRole(User.Role.STUDENT)
         user1.setKey(1)
-        user1.setKey(2)
+        user2.setKey(2)
 
         userRepository.save(user1)
         userRepository.save(user2)
@@ -75,11 +77,11 @@ class DashboardStatisticsTest extends Specification{
         def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
-        def courseExecutionId = courseExecution.getId()
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        courseExecutionId = courseExecution.getId()
+        def formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         def topic = new Topic()
         topic.setName("TOPICO")
@@ -93,13 +95,14 @@ class DashboardStatisticsTest extends Specification{
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
                 TNMT_ID, USER_ID, topicList)
 
-        tournamentService.createTournament(tournamentDto, user2.getId(), courseExecutionId)
+        tournament = tournamentService.createTournament(tournamentDto, user2.getId(), courseExecutionId)
     }
 
     def "testar calculo de  torneios signed"(){
         when: "an enrollment by user 1"
 
-        tournamentService.enrollInTournament(TNMT_ID, user1.getId())
+        System.out.println(tournament.getId())
+        tournamentService.enrollInTournament(1, user1.getId())
 
         then: "1 signed tournaments must be equal to the number retrieved"
         def tournamentStatsDto = statsService.getTournamentStats(user1.getId(), courseExecutionId)
