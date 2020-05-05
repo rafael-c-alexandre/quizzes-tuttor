@@ -65,8 +65,20 @@
           </template>
           <span>Evaluate Submission</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmission">edit</v-icon>
+          </template>
+          <span>Edit Question</span>
+        </v-tooltip>
       </template>
     </v-data-table>
+    <edit-submission-dialog
+      v-if="currentSubmission"
+      v-model="editSubmissionDialog"
+      :submission="currentSubmission"
+      v-on:save-submission="onSaveSubmission"
+    />
     <show-submission-dialog
       v-if="currentSubmission"
       :dialog="submissionDialog"
@@ -106,6 +118,7 @@ export default class StudentQuestionsView extends Vue {
   search: string = '';
   submissionDialog: boolean = false;
   evaluateSubmissionDialog: boolean = false;
+  editSubmissionDialog: boolean = false;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -220,7 +233,10 @@ export default class StudentQuestionsView extends Vue {
     this.customSorter()
   }
 
-
+  editSubmission(submission: Submission) {
+    this.currentSubmission = submission;
+    this.editSubmissionDialog = true;
+  }
   customSorter() {
     let aux, a, b;
     for (let i = 0; i < this.submissions.length - 1; i++) {

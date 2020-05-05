@@ -152,6 +152,8 @@ public class QuestionsByStudentService {
         }
 
         else {
+            System.out.println("Prof rejeitou");
+            System.out.println(isApproved);
             makeSubmissionRejected(submissionDto, justification, submission);
             return submissionDto; }
     }
@@ -197,12 +199,13 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void updateSubmissionTopics(Integer submissionId, TopicDto[] topics) {
+    public void updateSubmissionTopics(Integer submissionId, TopicDto[] topics, User user) {
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
-
-        if (!submission.getSubmissionStatus().toString().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
-
-        submission.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(submission.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
+        if(hasPermissionToEdit(submission, user)) {
+            submission.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(submission.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
+        } else{
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+        }
     }
 
     @Retryable(
@@ -232,19 +235,42 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto, User user) {
-        if((user.getRole().equals(User.Role.TEACHER) && (!submissionDto.getStatus().equals("APPROVED"))))
-            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
-
-        else if(user.getRole().equals(User.Role.STUDENT) && (!submissionDto.getStatus().equals("ONHOLD")))
-            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
-
+    public SubmissionDto reSubmitSubmission(Integer submissionId, SubmissionDto submissionDto, User user) {
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
-        submission.update(submissionDto);
-        return new SubmissionDto(submission);
+        if(user.getRole().equals(User.Role.STUDENT) && (submission.getSubmissionStatus().name().equals("REJECTED"))){
+            submission.update(submissionDto);
+            submission.setSubmissionStatus(Submission.Status.ONHOLD);
+            return new SubmissionDto(submission);
+        } else{
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+        }
+    }
+//fazer testes -> aluno cria submissao, prof rejeita, aluno resubmete
+    //jmeter vai ser igual ao
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto, User user) {
+        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+        if(hasPermissionToEdit(submission, user)) {
+            submission.update(submissionDto);
+            return new SubmissionDto(submission);
+        } else{
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+        }
     }
 
+    private boolean hasPermissionToEdit(Submission submission,  User user){
+        if((user.getRole().equals(User.Role.TEACHER) && (submission.getSubmissionStatus().name().equals("APPROVED"))))
+            return true;
+        else if(user.getRole().equals(User.Role.STUDENT) && (submission.getSubmissionStatus().name().equals("ONHOLD")))
+            return true;
+        else{
+            return false;
+        }
+    }
 
     private void isSubmitionOnHold(Submission submission) {
         if(!submission.getSubmissionStatus().toString().equals("ONHOLD")){

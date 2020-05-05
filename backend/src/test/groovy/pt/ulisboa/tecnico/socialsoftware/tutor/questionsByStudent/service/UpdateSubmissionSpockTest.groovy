@@ -99,7 +99,7 @@ class UpdateSubmissionSpockTest extends Specification{
             submissionRepository.save(submission)
 
         }
-
+    //tests for F1
     def "update options of onHold submission"() {
         given: 'another submissionDto'
         def submissionDto2 = new SubmissionDto()
@@ -160,7 +160,9 @@ class UpdateSubmissionSpockTest extends Specification{
         exception.errorMessage == ErrorMessage.SUBMISSION_CANNOT_BE_EDITED
     }
 
-    def "update topics of APPROVED submission by a teacher"() {
+
+    //tests for F4
+    def "update options of APPROVED submission by a teacher"() {
         given: 'another submissionDto'
         def submissionDto2 = new SubmissionDto()
         submissionDto2.setId(1)
@@ -220,7 +222,34 @@ class UpdateSubmissionSpockTest extends Specification{
         exception.errorMessage == ErrorMessage.SUBMISSION_CANNOT_BE_EDITED
     }
 
+    //tests for F6
+    def "student updates and resubmits rejected submission"() {
+        given: "a teacher"
+        teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
+        userRepository.save(teacher)
+        and: 'a submission rejection'
+        def submissionDto2 = submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), false,"don't like it")
 
+        and: 'a option'
+        def options = new ArrayList<OptionDto>()
+        def optionDto2 = new OptionDto(optionOK)
+
+        optionDto2.setContent(OPTION_CONTENT2)
+        optionDto2.setCorrect(true)
+        options.add(optionDto2)
+        submissionDto2.setOptions(options)
+
+        when:
+
+        def result = submissionService.reSubmitSubmission(submission.getId(), submissionDto2, user)
+
+        then:
+        result.getTitle() == QUESTION_TITLE_2
+        result.getContent() == QUESTION_CONTENT2
+        result.getStatus() == "ONHOLD"
+        result.getOptions().size() == 1
+        result.getOptions().get(0).getContent() == OPTION_CONTENT2
+    }
 
     @TestConfiguration
     static class ServiceImplTestContextConfiguration {
