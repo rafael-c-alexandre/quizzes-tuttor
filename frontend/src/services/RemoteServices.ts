@@ -18,6 +18,7 @@ import store from '@/store';
 import Submission from '@/models/management/Submission';
 
 import Tournament from '@/models/management/Tournament';
+import TournamentUser from '@/models/user/TournamentUser';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -86,7 +87,7 @@ export default class RemoteServices {
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
       .get(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats`
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats/quiz`
       )
       .then(response => {
         return new StudentStats(response.data);
@@ -615,6 +616,20 @@ export default class RemoteServices {
       .then(response => {
         return response.data.map((submission: any) => {
           return new Submission(submission);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getPublicDashboardUsers(): Promise<TournamentUser[]> {
+    return httpClient
+      .get('/tournaments/public')
+      .then(response => {
+        console.log(response);
+        return response.data.map((user: any) => {
+          return new TournamentUser(user);
         });
       })
       .catch(async error => {

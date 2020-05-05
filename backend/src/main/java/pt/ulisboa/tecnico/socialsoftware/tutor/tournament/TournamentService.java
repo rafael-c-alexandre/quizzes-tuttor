@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.persistence.EntityManager;
 import java.sql.SQLException;
@@ -144,6 +145,23 @@ public class TournamentService {
 
 
         return new TournamentDto(tournament);
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<UserDto> getPublicDashboardUsersNames(){
+
+        userRepository.findAll().stream()
+                .filter(user -> user.getPublicTournamentDashboard() == null)
+                .forEach(user -> user.setPublicTournamentDashboard(true));
+
+        return userRepository.findAll().stream()
+                .filter(user -> user.getRole() == User.Role.STUDENT)
+                .filter(User::getPublicTournamentDashboard)
+                .map(UserDto::new)
+                .collect(Collectors.toList());
     }
 
 

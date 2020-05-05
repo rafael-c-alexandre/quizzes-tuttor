@@ -19,7 +19,6 @@ import ResultsView from './views/student/quiz/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
 import ScanView from './views/student/ScanView.vue';
 
-
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
@@ -34,6 +33,7 @@ import OpenTournamentsView from '@/views/student/tournaments/OpenTournamentsView
 import AllTournamentsView from '@/views/student/tournaments/AllTournamentsView.vue';
 import ClosedTournamentsView from '@/views/student/tournaments/ClosedTournamentsView.vue';
 import SignableTournamentsView from '@/views/student/tournaments/SignableTournamentsView.vue';
+import DashboardView from '@/views/student/tournaments/DashboardView.vue';
 
 Vue.use(Router);
 
@@ -178,6 +178,15 @@ let router = new Router({
               component: ClosedTournamentsView,
               meta: {
                 title: process.env.VUE_APP_NAME + ' - Closed Tournaments',
+                requiredAuth: 'Student'
+              }
+            },
+            {
+              path: 'dashboard',
+              name: 'student-dashboard',
+              component: DashboardView,
+              meta: {
+                title: process.env.VUE_APP_NAME + ' - Student Dashboard',
                 requiredAuth: 'Student'
               }
             },

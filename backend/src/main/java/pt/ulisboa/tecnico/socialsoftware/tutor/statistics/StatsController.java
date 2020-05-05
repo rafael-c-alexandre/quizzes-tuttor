@@ -19,7 +19,7 @@ public class StatsController {
     @Autowired
     private StatsService statsService;
 
-    @GetMapping("/executions/{executionId}/stats/quizz")
+    @GetMapping("/executions/{executionId}/stats/quiz")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public QuizStatsDto getQuizzStats(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();

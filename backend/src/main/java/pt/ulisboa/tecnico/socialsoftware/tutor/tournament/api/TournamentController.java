@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -100,6 +101,12 @@ public class TournamentController {
         if (user == null) throw new TutorException(AUTHENTICATION_ERROR);
 
         tournamentService.changeUserDashboardPrivacy(user.getId());
+    }
+
+    @GetMapping("/tournaments/public")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<UserDto> getPublicDashboardUsersNames(){
+        return tournamentService.getPublicDashboardUsersNames();
     }
 
 
