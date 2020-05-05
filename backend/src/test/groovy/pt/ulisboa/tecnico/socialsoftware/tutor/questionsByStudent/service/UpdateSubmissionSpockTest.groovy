@@ -263,6 +263,7 @@ class UpdateSubmissionSpockTest extends Specification{
         then:
         result.getTitle() == QUESTION_TITLE_2
         result.getContent() == QUESTION_CONTENT2
+        result.getJustification() == ""
         result.getStatus() == "ONHOLD"
         result.getOptions().size() == 1
         result.getOptions().get(0).getContent() == OPTION_CONTENT2
@@ -275,7 +276,7 @@ class UpdateSubmissionSpockTest extends Specification{
         and: 'a submission acception'
         submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), true,"like it")
 
-        and: 'anthoer  submisionDto'
+        and: 'another  submisionDto'
         def submissionDto2 = new SubmissionDto()
         submissionDto2.setId(1)
         submissionDto2.setKey(1)

@@ -164,7 +164,7 @@ public class QuestionsByStudentController {
         return this.questionsByStudentService.updateSubmission(submissionId, submission, user);
     }
 
-    @PutMapping("/submissions/{submissionId}")
+    @PutMapping("/submissions/rejected/{submissionId}")
     @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS'))")
     public SubmissionDto reSubmitSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
 

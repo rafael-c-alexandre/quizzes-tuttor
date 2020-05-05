@@ -234,6 +234,7 @@ public class QuestionsByStudentService {
         if(user.getRole().equals(User.Role.STUDENT) && (submission.getSubmissionStatus().name().equals("REJECTED"))){
             submission.update(submissionDto);
             submission.setSubmissionStatus(Submission.Status.ONHOLD);
+            submission.setJustification("");
             return new SubmissionDto(submission);
         } else{
             throw new TutorException(SUBMISSION_CANNOT_BE_RESUBMITED);

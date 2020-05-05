@@ -66,11 +66,12 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-<<<<<<< HEAD
             <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmission">edit</v-icon>
           </template>
-          <span>Edit Question</span>
-=======
+          <span>Edit Submission</span>
+        </v-tooltip>
+            <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
             <v-icon
               small
               class="mr-2"
@@ -81,8 +82,7 @@
             >
           </template>
           <span>Make question available</span>
->>>>>>> a9d90e284c479dc19b42c499199349a1fcc7a228
-        </v-tooltip>
+            </v-tooltip>
       </template>
     </v-data-table>
     <edit-submission-dialog
@@ -137,11 +137,8 @@ export default class StudentQuestionsView extends Vue {
   search: string = '';
   submissionDialog: boolean = false;
   evaluateSubmissionDialog: boolean = false;
-<<<<<<< HEAD
   editSubmissionDialog: boolean = false;
-=======
   makeQuestionAvailableDialog: boolean = false;
->>>>>>> a9d90e284c479dc19b42c499199349a1fcc7a228
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -266,12 +263,10 @@ export default class StudentQuestionsView extends Vue {
     this.customSorter();
   }
 
-<<<<<<< HEAD
   editSubmission(submission: Submission) {
     this.currentSubmission = submission;
     this.editSubmissionDialog = true;
   }
-=======
   async onExitQuestionAvailableDialog() {
     this.currentSubmission = null;
     this.makeQuestionAvailableDialog = false;
@@ -284,7 +279,6 @@ export default class StudentQuestionsView extends Vue {
     this.makeQuestionAvailableDialog = true;
   }
 
->>>>>>> a9d90e284c479dc19b42c499199349a1fcc7a228
   customSorter() {
     let aux, a, b;
     for (let i = 0; i < this.submissions.length - 1; i++) {
