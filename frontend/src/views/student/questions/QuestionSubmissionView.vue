@@ -113,7 +113,8 @@ import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
     'edit-submission-dialog': EditSubmissionDialog,
-    'edit-submission-topics': EditSubmissionTopics
+    'edit-submission-topics': EditSubmissionTopics,
+
   }
 })
 export default class QuestionSubmissionView extends Vue {

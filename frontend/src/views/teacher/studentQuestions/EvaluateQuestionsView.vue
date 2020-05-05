@@ -66,7 +66,7 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmission">edit</v-icon>
+            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmissionTeacher">edit</v-icon>
           </template>
           <span>Edit Submission</span>
         </v-tooltip>
@@ -122,12 +122,15 @@ import Image from '@/models/management/Image';
 import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
 import EvaluateSubmissionDialog from '@/views/teacher/studentQuestions/EvaluateSubmissionDialog.vue';
 import MakeQuestionAvailableDialog from '@/views/teacher/studentQuestions/MakeQuestionAvailableDialog.vue';
+import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog.vue';
+
 
 @Component({
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
     'make-question-available-dialog': MakeQuestionAvailableDialog,
-    'evaluate-submission-dialog': EvaluateSubmissionDialog
+    'evaluate-submission-dialog': EvaluateSubmissionDialog,
+    'edit-submission-dialog': EditSubmissionDialog
   }
 })
 export default class StudentQuestionsView extends Vue {
