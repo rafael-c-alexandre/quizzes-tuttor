@@ -133,8 +133,8 @@ public class StatsService {
 
 
         statsDto.setTotalQuestionsApproved(totalQuestionsApproved);
-        statsDto.setTotalQuestionOnHold(totalQuestionsOnHold);
-        statsDto.setTotalQuestionRejected(totalQuestionsRejected);
+        statsDto.setTotalQuestionsOnHold(totalQuestionsOnHold);
+        statsDto.setTotalQuestionsRejected(totalQuestionsRejected);
         statsDto.setTotalQuestionsAvailable(totalQuestionsAvailable);
         statsDto.setTotalQuestionsSubmitted(totalquestionsSubmitted);
 

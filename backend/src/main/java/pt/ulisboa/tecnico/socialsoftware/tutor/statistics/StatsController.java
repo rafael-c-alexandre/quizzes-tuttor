@@ -30,4 +30,16 @@ public class StatsController {
 
         return statsService.getStats(user.getId(), executionId);
     }
+
+    @GetMapping("/stats/submissions")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public StudentQuestionStatsDto getStudentQuestionsStats(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return statsService.getStudentQuestionsStats(user.getId());
+    }
 }

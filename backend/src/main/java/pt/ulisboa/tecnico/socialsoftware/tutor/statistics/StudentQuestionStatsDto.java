@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class StudentQuestionStatsDto implements Serializable {
     private Integer totalQuestionsSubmitted = 0;
     private Integer totalQuestionsApproved = 0;
-    private Integer totalQuestionOnHold = 0;
-    private Integer totalQuestionRejected = 0;
+    private Integer totalQuestionsOnHold = 0;
+    private Integer totalQuestionsRejected = 0;
     private Integer totalQuestionsAvailable = 0;
     private float percentageQuestionsApproved = 0;
     private float percentageQuestionsRejected = 0;
@@ -27,21 +27,15 @@ public class StudentQuestionStatsDto implements Serializable {
         this.totalQuestionsApproved = totalQuestionsApproved;
     }
 
-    public Integer getTotalQuestionOnHold() {
-        return totalQuestionOnHold;
+    public Integer getTotalQuestionsOnHold() {
+        return totalQuestionsOnHold;
     }
 
-    public void setTotalQuestionOnHold(Integer totalQuestionOnHold) {
-        this.totalQuestionOnHold = totalQuestionOnHold;
+    public void setTotalQuestionsOnHold(Integer totalQuestionsOnHold) {
+        this.totalQuestionsOnHold = totalQuestionsOnHold;
     }
 
-    public Integer getTotalQuestionRejected() {
-        return totalQuestionRejected;
-    }
 
-    public void setTotalQuestionRejected(Integer totalQuestionRejected) {
-        this.totalQuestionRejected = totalQuestionRejected;
-    }
 
     public Integer getTotalQuestionsAvailable() {
         return totalQuestionsAvailable;
@@ -67,13 +61,21 @@ public class StudentQuestionStatsDto implements Serializable {
         this.percentageQuestionsRejected = percentageQuestionsRejected;
     }
 
+    public Integer getTotalQuestionsRejected() {
+        return totalQuestionsRejected;
+    }
+
+    public void setTotalQuestionsRejected(Integer totalQuestionsRejected) {
+        this.totalQuestionsRejected = totalQuestionsRejected;
+    }
+
     @Override
     public String toString() {
         return "StudentQuestionStatsDto{" +
                 "totalQuestionsSubmitted=" + totalQuestionsSubmitted +
                 ", totalQuestionsApproved=" + totalQuestionsApproved +
-                ", totalQuestionOnHold=" + totalQuestionOnHold +
-                ", totalQuestionRejected=" + totalQuestionRejected +
+                ", totalQuestionsOnHold=" + totalQuestionsOnHold +
+                ", totalQuestionsRejected=" + totalQuestionsRejected +
                 ", totalQuestionsAvailable=" + totalQuestionsAvailable +
                 ", percentageQuestionsApproved=" + percentageQuestionsApproved +
                 ", percentageQuestionsRejected=" + percentageQuestionsRejected +
