@@ -15,7 +15,12 @@
       <v-card-text class="text-left" v-if="evaluateSubmission">
         <div>
           <span
-            v-html="convertMarkDown(evaluateSubmission.content, evaluateSubmission.image)"
+            v-html="
+              convertMarkDown(
+                evaluateSubmission.content,
+                evaluateSubmission.image
+              )
+            "
           />
           <ul>
             <li v-for="option in evaluateSubmission.options" :key="option.number">

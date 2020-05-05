@@ -1,8 +1,8 @@
 <template>
   <v-dialog
-    v-model="dialog"
-    @input="closeSubmissionDialog"
-    @keydown.esc="closeSubmissionDialog"
+    :value="dialog"
+    @input="$emit('dialog', false)"
+    @keydown.esc="$emit('dialog', false)"
     max-width="75%"
   >
     <v-card>
@@ -16,16 +16,14 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeSubmissionDialog " data-cy = "closeSubmissionButton"
-          >close</v-btn
-        >
+        <v-btn dark color="blue darken-1" @click="$emit('dialog')" data-cy = "closeSubmissionButton">close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+  import { Component, Vue, Prop, Model } from 'vue-property-decorator';
 import Submission from '../../../models/management/Submission';
 import ShowSubmission from '@/views/student/questions/ShowSubmission.vue';
 
@@ -35,11 +33,10 @@ import ShowSubmission from '@/views/student/questions/ShowSubmission.vue';
   }
 })
 export default class ShowSubmissionDialog extends Vue {
+  @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Submission, required: true }) readonly submission!: Submission;
-  @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 
-  closeSubmissionDialog() {
-    this.$emit('close-show-submission-dialog');
-  }
+
+
 }
 </script>

@@ -71,7 +71,6 @@ public class QuestionsByStudentService {
                     submissionRepository.getMaxSubmissionNumber() : 0;
             submissionDto.setKey(maxQuestionNumber + 1);
         }
-
         Submission submission = new Submission(submissionDto, student, course );
         submission.setCreationDate(LocalDateTime.now());
 
@@ -100,7 +99,10 @@ public class QuestionsByStudentService {
 
         if (!submission.getSubmissionStatus().name().equals("APPROVED")) throw new TutorException(QUESTION_CANNOT_BE_AVAILABLE);
 
+        if(submission.isMadeAvailable()) throw new TutorException(QUESTION_ALREADY_AVAILABLE);
+
         Question question = submission.convertToQuestion();
+
         questionRepository.save(question);
 
 
@@ -120,9 +122,7 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void makeSubmissionApproved(SubmissionDto submissionDto, String justification, Submission submission){
-        submissionDto.setStatus("APPROVED");
-        submissionDto.setJustification(justification);
+    public void makeSubmissionApproved( String justification, Submission submission){
         submission.setJustification(justification);
         submission.setSubmissionStatus(Submission.Status.APPROVED);
 
@@ -133,9 +133,8 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void makeSubmissionRejected(SubmissionDto submissionDto,  String justification, Submission submission){
-        submissionDto.setStatus("REJECTED");
-        submissionDto.setJustification(justification);
+    public void makeSubmissionRejected( String justification, Submission submission){
+
         submission.setJustification(justification);
         submission.setSubmissionStatus(Submission.Status.REJECTED);
     }
@@ -144,15 +143,15 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto makeDecision( boolean isApproved, SubmissionDto submissionDto, Submission submission, String justification) {
+    public SubmissionDto makeDecision( boolean isApproved,Submission submission, String justification) {
         if (isApproved) {
-            makeSubmissionApproved(submissionDto, justification, submission);
-            return submissionDto;
+            makeSubmissionApproved(justification, submission);
         }
 
         else {
-            makeSubmissionRejected(submissionDto, justification, submission);
-            return submissionDto; }
+            makeSubmissionRejected(justification, submission);
+        }
+        return new SubmissionDto(submission);
     }
 
     @Retryable(
@@ -167,12 +166,9 @@ public class QuestionsByStudentService {
 
         isSubmitionOnHold(submission);
 
-        SubmissionDto submissionDto = new SubmissionDto(submission);
-        submissionDto.setId(submission.getId());
-        submissionDto.setTeacherDecision(isApproved);
         submission.setTeacherDecision(isApproved);
 
-        return makeDecision( isApproved, submissionDto, submission, justification);
+        return makeDecision( isApproved, submission, justification);
     }
 
     @Retryable(
@@ -232,13 +228,15 @@ public class QuestionsByStudentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto, User user) {
-        if((user.getRole().equals(User.Role.TEACHER) && (!submissionDto.getStatus().equals("APPROVED"))))
-            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
-
-        else if(user.getRole().equals(User.Role.STUDENT) && (!submissionDto.getStatus().equals("ONHOLD")))
-            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
 
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+
+        if((user.getRole().equals(User.Role.TEACHER) && (!submission.getSubmissionStatus().name().equals("APPROVED"))))
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+
+        else if(user.getRole().equals(User.Role.STUDENT) && (!submission.getSubmissionStatus().name().equals("ONHOLD")))
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+
         submission.update(submissionDto);
         return new SubmissionDto(submission);
 

@@ -96,7 +96,6 @@ class SubmissionToAvailableQuestionSpockTest extends Specification {
     def "make approved submission available to be included in quizzes"() {
         given: "an approved submission"
         submission.setSubmissionStatus(Submission.Status.APPROVED)
-        submissionDto.setStatus(Submission.Status.APPROVED.toString())
 
         when:
         submissionService.makeQuestionAvailable(course.getId(),submission.getId())
@@ -121,7 +120,6 @@ class SubmissionToAvailableQuestionSpockTest extends Specification {
     def "tries to turn on hold submission into available question"() {
         given: "an approved submission"
         submission.setSubmissionStatus(Submission.Status.ONHOLD)
-        submissionDto.setStatus(Submission.Status.ONHOLD.toString())
 
         when:
         submissionService.makeQuestionAvailable(course.getId(),submission.getId())
@@ -129,6 +127,19 @@ class SubmissionToAvailableQuestionSpockTest extends Specification {
         then: "throw exception"
         def exception = thrown(TutorException)
         exception.errorMessage == ErrorMessage.QUESTION_CANNOT_BE_AVAILABLE
+    }
+
+    def "tries to turn available question into available question agin"() {
+        given: "an approved submission and already available question"
+        submission.setSubmissionStatus(Submission.Status.APPROVED)
+        submission.setMadeAvailable(true)
+
+        when:
+        submissionService.makeQuestionAvailable(course.getId(),submission.getId())
+
+        then: "throw exception"
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.QUESTION_ALREADY_AVAILABLE
     }
 
 

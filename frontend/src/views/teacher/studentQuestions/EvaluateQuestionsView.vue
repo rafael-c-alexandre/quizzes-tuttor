@@ -20,17 +20,11 @@
           />
         </v-card-title>
       </template>
-      <template v-slot:item.content="{ item }">
-        <p
-          v-html="convertMarkDownNoFigure(item.content, null)"
-          @click="showSubmissionDialog(item)"
-      /></template>
-      <template >
+
+      <template>
         <v-list-item>
           <v-list-item-content>
-            <v-chip   dark>
-              ola
-              </v-chip>
+            <v-chip dark> </v-chip>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -38,6 +32,11 @@
         <v-chip v-if="item.status" :color="getStatusColor(item.status)" dark>{{
           item.status
         }}</v-chip>
+      </template>
+      <template v-slot:item.madeAvailable="{ item }">
+        <v-chip v-if="item.madeAvailable" :color="getAvailableColor()" dark>{{
+          item.madeAvailable
+          }}</v-chip>
       </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
@@ -65,11 +64,24 @@
           </template>
           <span>Evaluate Submission</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="makeQuestionAvailable(item)"
+              data-cy="makeQuestionAvailableButton"
+              >fas fa-arrow-right</v-icon
+            >
+          </template>
+          <span>Make question available</span>
+        </v-tooltip>
       </template>
     </v-data-table>
     <show-submission-dialog
       v-if="currentSubmission"
-      :dialog="submissionDialog"
+      v-model="submissionDialog"
       :submission="currentSubmission"
       v-on:close-show-submission-dialog="onCloseShowSubmissionDialog"
     />
@@ -79,23 +91,30 @@
       :submission="currentSubmission"
       v-on:save-submission="onSaveSubmission"
     />
+    <make-question-available-dialog
+      v-if="currentSubmission"
+      v-model="makeQuestionAvailableDialog"
+      :submission="currentSubmission"
+      v-on:save-submission="onExitQuestionAvailableDialog"
+    />
   </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
 import Submission from '@/models/management/Submission';
 import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
 import Image from '@/models/management/Image';
 import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
 import EvaluateSubmissionDialog from '@/views/teacher/studentQuestions/EvaluateSubmissionDialog.vue';
+import MakeQuestionAvailableDialog from '@/views/teacher/studentQuestions/MakeQuestionAvailableDialog.vue';
 
 @Component({
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
+    'make-question-available-dialog': MakeQuestionAvailableDialog,
     'evaluate-submission-dialog': EvaluateSubmissionDialog
   }
 })
@@ -106,6 +125,7 @@ export default class StudentQuestionsView extends Vue {
   search: string = '';
   submissionDialog: boolean = false;
   evaluateSubmissionDialog: boolean = false;
+  makeQuestionAvailableDialog: boolean = false;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
@@ -122,17 +142,21 @@ export default class StudentQuestionsView extends Vue {
       align: 'center'
     },
     { text: 'Status', value: 'status', align: 'center' },
-
-    {
-      text: 'Creation Date',
-      value: 'creationDate',
-      align: 'center',
-    },
     {
       text: 'Image',
       value: 'imageUrl',
       align: 'center',
       sortable: false
+    },
+    {
+      text: 'Creation Date',
+      value: 'creationDate',
+      align: 'center'
+    },
+    {
+      text: 'Available?',
+      value: 'isAvailable',
+      align: 'center'
     },
     {
       text: 'Actions',
@@ -145,6 +169,13 @@ export default class StudentQuestionsView extends Vue {
   @Watch('evaluateSubmissionDialog')
   closeError() {
     if (!this.evaluateSubmissionDialog) {
+      this.currentSubmission = null;
+    }
+  }
+
+  @Watch('makeQuestionAvailableDialog')
+  closeAvailableDialog() {
+    if (!this.makeQuestionAvailableDialog) {
       this.currentSubmission = null;
     }
   }
@@ -171,10 +202,6 @@ export default class StudentQuestionsView extends Vue {
         .toLowerCase()
         .indexOf(search.toLowerCase()) !== -1
     );
-  }
-
-  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
   }
 
   async handleFileUpload(event: File, submission: Submission) {
@@ -206,6 +233,9 @@ export default class StudentQuestionsView extends Vue {
     else if (status === 'ONHOLD') return 'orange';
     else return 'green';
   }
+  getAvailableColor() {
+    return 'blue';
+  }
 
   evaluateSubmission(submission: Submission) {
     this.currentSubmission = submission;
@@ -217,14 +247,25 @@ export default class StudentQuestionsView extends Vue {
     this.submissions.unshift(submission);
     this.evaluateSubmissionDialog = false;
     this.currentSubmission = null;
-    this.customSorter()
+    this.customSorter();
   }
 
+  async onExitQuestionAvailableDialog() {
+    this.currentSubmission = null;
+    this.makeQuestionAvailableDialog = false;
+    this.submissions = await RemoteServices.getAllSubmissions();
+    this.customSorter();
+  }
+
+  makeQuestionAvailable(submission: Submission) {
+    this.currentSubmission = submission;
+    this.makeQuestionAvailableDialog = true;
+  }
 
   customSorter() {
     let aux, a, b;
     for (let i = 0; i < this.submissions.length - 1; i++) {
-      for (let j = i + 1; j < this.submissions.length ; j++) {
+      for (let j = i + 1; j < this.submissions.length; j++) {
         a = this.submissions[i];
         b = this.submissions[j];
         if (a.status === 'REJECTED') {

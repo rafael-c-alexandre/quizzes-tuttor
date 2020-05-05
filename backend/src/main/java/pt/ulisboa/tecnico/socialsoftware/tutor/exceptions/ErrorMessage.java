@@ -52,7 +52,9 @@ public enum ErrorMessage {
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
     SUBMISSION_ALREADY_EVALUATED("Submission was previously evaluated"),
     SUBMISSION_CANNOT_BE_EDITED("Submission was evaluated and cannot be edited"),
-    QUESTION_CANNOT_BE_AVAILABLE("Question cannot be made availabe"),
+    QUESTION_CANNOT_BE_AVAILABLE("Questions not approved cannot be made available"),
+    QUESTION_ALREADY_AVAILABLE("Question is already available"),
+
 
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),

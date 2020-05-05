@@ -89,6 +89,7 @@ public class QuestionsByStudentController {
     @PostMapping("/courses/{courseId}/submissions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public SubmissionDto createSubmission( Principal principal, @PathVariable int courseId, @Valid @RequestBody SubmissionDto submissionDto) {
+
         User user = (User)((Authentication) principal).getPrincipal();
 
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
@@ -149,7 +150,7 @@ public class QuestionsByStudentController {
 
 
     @PutMapping("/submissions/{submissionId}")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS'))or hasRole('ROLE_TEACHER') ")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS')) or hasRole('ROLE_TEACHER') ")
     public SubmissionDto updateSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
 
         User user = (User)((Authentication) principal).getPrincipal();

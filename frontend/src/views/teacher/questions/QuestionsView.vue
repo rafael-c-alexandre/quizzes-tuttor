@@ -298,6 +298,7 @@ export default class QuestionsView extends Vue {
   showQuestionDialog(question: Question) {
     this.currentQuestion = question;
     this.questionDialog = true;
+
   }
 
   onCloseShowQuestionDialog() {
