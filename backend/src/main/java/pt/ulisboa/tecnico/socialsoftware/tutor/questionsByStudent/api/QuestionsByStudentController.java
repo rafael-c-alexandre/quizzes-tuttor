@@ -18,6 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submiss
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -43,6 +45,9 @@ public class QuestionsByStudentController {
 
     @Autowired
     private QuestionsByStudentService questionsByStudentService;
+
+    @Autowired
+    private UserService userService;
 
     @Value("${figures.dir}")
     private String figuresDir;
@@ -154,7 +159,7 @@ public class QuestionsByStudentController {
 
 
     @PutMapping("/submissions/{submissionId}")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS')) or hasRole('ROLE_TEACHER') ")
+    @PreAuthorize("hasRole('ROLE_TEACHER') ")
     public SubmissionDto updateSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
 
         User user = (User)((Authentication) principal).getPrincipal();
@@ -173,6 +178,29 @@ public class QuestionsByStudentController {
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
 
         return this.questionsByStudentService.reSubmitSubmission(submissionId, submission, user);
+    }
+
+    @GetMapping("/users/public")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<UserDto> getPublicDashboardUsers(Principal principal){
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+        return userService.getPublicDashboardUsers();
+    }
+
+    @PutMapping("users/public")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public ResponseEntity changeUserDashboardPrivacy(Principal principal){
+
+        User user = (User)((Authentication) principal).getPrincipal();
+
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        userService.changeUserDashboardPrivacy(user.getId());
+
+        return ResponseEntity.ok().build();
     }
 
 }

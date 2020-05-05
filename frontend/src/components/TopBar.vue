@@ -128,6 +128,14 @@
                 <v-list-item-title>Manage</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/student/questionDashboard">
+              <v-list-item-action>
+                <v-icon>fas fa-user</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Dashboard</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
         

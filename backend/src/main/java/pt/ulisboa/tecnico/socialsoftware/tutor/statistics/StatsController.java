@@ -19,6 +19,7 @@ public class StatsController {
     @Autowired
     private StatsService statsService;
 
+
     @GetMapping("/executions/{executionId}/stats")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public StatsDto getStats(Principal principal, @PathVariable int executionId) {
@@ -31,15 +32,29 @@ public class StatsController {
         return statsService.getStats(user.getId(), executionId);
     }
 
-    @GetMapping("/stats/submissions")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public StudentQuestionStatsDto getStudentQuestionsStats(Principal principal) {
+    @GetMapping("/courses/{courseId}/stats/submissions")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public StudentQuestionStatsDto getStudentQuestionsStats(Principal principal, @PathVariable int courseId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
+
+
         return statsService.getStudentQuestionsStats(user.getId());
+    }
+
+    @GetMapping("/courses/{courseId}/stats/submissions")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public StudentQuestionStatsDto getOtherStudentQuestionsStats(Principal principal, @PathVariable int courseId,@PathVariable Integer userId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return statsService.getStudentQuestionsStats(userId);
     }
 }
