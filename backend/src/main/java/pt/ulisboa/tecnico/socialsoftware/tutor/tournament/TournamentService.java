@@ -140,10 +140,6 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_CANCELER_IS_NOT_CREATOR);
         }
 
-        if(!tournament.getSignedUsers().isEmpty()){
-            throw new TutorException(TOURNAMENT_ALREADY_ENROLLED);
-        }
-
         tournamentRepository.delete(tournament);
 
 
