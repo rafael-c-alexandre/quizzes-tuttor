@@ -79,7 +79,7 @@ public class Quiz implements DomainEntity {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     private Tournament associatedTournament;
 
     public Quiz() {}
