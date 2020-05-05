@@ -113,9 +113,13 @@ public class QuestionsByStudentController {
 
     @PutMapping("/submissions/{submissionId}/topics")
     @PreAuthorize("hasRole('ROLE_STUDENT')  and hasPermission(#submissionId, 'SUBMISSION.ACCESS')")
-    public ResponseEntity updateSubmissionTopics(@PathVariable Integer submissionId, @RequestBody TopicDto[] topics) {
+    public ResponseEntity updateSubmissionTopics(Principal principal, @PathVariable Integer submissionId, @RequestBody TopicDto[] topics) {
 
-        questionsByStudentService.updateSubmissionTopics(submissionId, topics);
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        questionsByStudentService.updateSubmissionTopics(submissionId, topics, user);
 
         return ResponseEntity.ok().build();
     }
@@ -158,6 +162,17 @@ public class QuestionsByStudentController {
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
 
         return this.questionsByStudentService.updateSubmission(submissionId, submission, user);
+    }
+
+    @PutMapping("/submissions/rejected/{submissionId}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS'))")
+    public SubmissionDto reSubmitSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
+
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        return this.questionsByStudentService.reSubmitSubmission(submissionId, submission, user);
     }
 
 }

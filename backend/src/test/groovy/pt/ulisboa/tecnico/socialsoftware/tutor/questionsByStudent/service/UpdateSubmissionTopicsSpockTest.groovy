@@ -38,6 +38,7 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
     public static final String TOPIC_THREE = 'nameThree'
     static final String NAME = "Rito"
     static final String USERNAME = "Silva"
+    static final String USERNAME_TEACHER = "Alexandre"
     static final int KEY = 10
 
     @Autowired
@@ -73,11 +74,13 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
     def topicTwo
     def topicThree
     def submission
-
+    def teacher
 
     def setup() {
         user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
+        teacher = new User(NAME, USERNAME_TEACHER, KEY + 1, User.Role.TEACHER)
+        userRepository.save(teacher)
         course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         submissionDto = new SubmissionDto()
@@ -127,7 +130,28 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
 
 
         when:
-        submissionService.updateSubmissionTopics(submission.getId(), topics)
+        submissionService.updateSubmissionTopics(submission.getId(), topics, user)
+
+        then:
+        submission.getTopics().size() == 3
+        submission.getTopics().contains(topicOne)
+        submission.getTopics().contains(topicTwo)
+        submission.getTopics().contains(topicThree)
+        topicOne.getSubmissions().size() == 1
+        topicTwo.getSubmissions().size() == 1
+        topicThree.getSubmissions().size() == 1
+    }
+
+    def "update topics of APPROVED submission by a Teacher"() {
+        given: "an approved submission"
+        submission.setSubmissionStatus(Submission.Status.APPROVED)
+        submissionRepository.save(submission)
+        and: 'topic list'
+        TopicDto[] topics = [topicDtoOne, topicDtoTwo, topicDtoThree]
+
+
+        when:
+        submissionService.updateSubmissionTopics(submission.getId(), topics, teacher)
 
         then:
         submission.getTopics().size() == 3
@@ -145,7 +169,7 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
 
 
         when:
-        submissionService.updateSubmissionTopics(submission.getId(), topics)
+        submissionService.updateSubmissionTopics(submission.getId(), topics, user)
 
         then:
         submission.getTopics().size() == 1
@@ -166,7 +190,7 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
         TopicDto[] topics = [topicDtoOne, topicDtoTwo, topicDtoThree]
 
         when:
-        submissionService.updateSubmissionTopics(submission2.getId(), topics)
+        submissionService.updateSubmissionTopics(submission2.getId(), topics, user)
 
         then:
         def exception = thrown(TutorException)

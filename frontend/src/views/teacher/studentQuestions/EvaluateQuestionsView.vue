@@ -66,6 +66,12 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmission">edit</v-icon>
+          </template>
+          <span>Edit Submission</span>
+        </v-tooltip>
+            <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
             <v-icon
               small
               class="mr-2"
@@ -76,9 +82,15 @@
             >
           </template>
           <span>Make question available</span>
-        </v-tooltip>
+            </v-tooltip>
       </template>
     </v-data-table>
+    <edit-submission-dialog
+      v-if="currentSubmission"
+      v-model="editSubmissionDialog"
+      :submission="currentSubmission"
+      v-on:save-submission="onSaveSubmission"
+    />
     <show-submission-dialog
       v-if="currentSubmission"
       v-model="submissionDialog"
@@ -125,6 +137,7 @@ export default class StudentQuestionsView extends Vue {
   search: string = '';
   submissionDialog: boolean = false;
   evaluateSubmissionDialog: boolean = false;
+  editSubmissionDialog: boolean = false;
   makeQuestionAvailableDialog: boolean = false;
 
   headers: object = [
@@ -250,6 +263,10 @@ export default class StudentQuestionsView extends Vue {
     this.customSorter();
   }
 
+  editSubmission(submission: Submission) {
+    this.currentSubmission = submission;
+    this.editSubmissionDialog = true;
+  }
   async onExitQuestionAvailableDialog() {
     this.currentSubmission = null;
     this.makeQuestionAvailableDialog = false;
