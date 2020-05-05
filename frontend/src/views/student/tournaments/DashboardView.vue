@@ -68,13 +68,13 @@ import { Component, Vue } from 'vue-property-decorator';
 import StudentStats from '@/models/statement/StudentStats';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
-import TournamentUser from '@/models/user/TournamentUser';
+import UserStats from '@/models/user/UserStats';
 @Component({
   components: { AnimatedNumber }
 })
 export default class DashboardView extends Vue {
   stats: StudentStats | null = null;
-  users: TournamentUser[] = [];
+  users: UserStats[] = [];
   names: string[] = [];
   user: string | null = null;
 

@@ -13,12 +13,10 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
-import User from '@/models/user/User';
-import store from '@/store';
 import Submission from '@/models/management/Submission';
 
 import Tournament from '@/models/management/Tournament';
-import TournamentUser from '@/models/user/TournamentUser';
+import UserStats from '@/models/user/UserStats';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -623,18 +621,24 @@ export default class RemoteServices {
       });
   }
 
-  static async getPublicDashboardUsers(): Promise<TournamentUser[]> {
+  static async getPublicDashboardUsers(): Promise<UserStats[]> {
     return httpClient
-      .get('/tournaments/public')
+      .get('/users/public')
       .then(response => {
         console.log(response);
         return response.data.map((user: any) => {
-          return new TournamentUser(user);
+          return new UserStats(user);
         });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  static async changeUserDashboardPrivacy() {
+    return httpClient.put('/users/privacy').catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static async cancelTournament(tournamentId: number) {
