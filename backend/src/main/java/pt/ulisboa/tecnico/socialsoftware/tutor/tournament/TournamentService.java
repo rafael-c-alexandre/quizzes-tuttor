@@ -147,23 +147,6 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<UserDto> getPublicDashboardUsersNames(){
-
-        userRepository.findAll().stream()
-                .filter(user -> user.getPublicTournamentDashboard() == null)
-                .forEach(user -> user.setPublicTournamentDashboard(true));
-
-        return userRepository.findAll().stream()
-                .filter(user -> user.getRole() == User.Role.STUDENT)
-                .filter(User::getPublicTournamentDashboard)
-                .map(UserDto::new)
-                .collect(Collectors.toList());
-    }
-
 
     @Retryable(
             value = {SQLException.class},
@@ -271,18 +254,6 @@ public class TournamentService {
         }
 
         return new TournamentDto(tournament);
-    }
-
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void changeUserDashboardPrivacy(int userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        if(user.getPublicTournamentDashboard() != null)
-            user.setPublicTournamentDashboard(!user.getPublicTournamentDashboard());
-        else
-            user.setPublicTournamentDashboard(false);
     }
 
     public Integer getMaxQuizKey() {

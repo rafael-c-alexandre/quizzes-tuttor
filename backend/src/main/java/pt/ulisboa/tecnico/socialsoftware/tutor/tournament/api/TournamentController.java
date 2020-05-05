@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.security.Principal;
@@ -25,6 +27,9 @@ public class TournamentController {
 
     @Autowired
     private TournamentService tournamentService;
+
+    @Autowired
+    private UserService userService;
 
 
     //createTournament
@@ -93,20 +98,22 @@ public class TournamentController {
         return tournamentService.enrollInTournament(tournamentId, user.getId());
     }
 
-    @PutMapping("/tournaments/privacy")
+    @PutMapping("/users/privacy")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public void changeDashboardPrivacy(Principal principal){
+    public ResponseEntity changeUserDashboardPrivacy(Principal principal){
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) throw new TutorException(AUTHENTICATION_ERROR);
 
-        tournamentService.changeUserDashboardPrivacy(user.getId());
+        userService.changeUserDashboardPrivacy(user.getId());
+
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/tournaments/public")
+    @GetMapping("/users/public")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<UserDto> getPublicDashboardUsersNames(){
-        return tournamentService.getPublicDashboardUsersNames();
+    public List<UserDto> getPublicDashboardUsers(){
+        return userService.getPublicDashboardUsers();
     }
 
 

@@ -52,7 +52,7 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
 
-    private Boolean publicTournamentDashboard = true;
+    private Boolean publicDashboards = true;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -112,12 +112,12 @@ public class User implements UserDetails, DomainEntity {
         this.key = key;
     }
 
-    public Boolean getPublicTournamentDashboard() {
-        return publicTournamentDashboard;
+    public Boolean getPublicDashboards() {
+        return this.publicDashboards;
     }
 
-    public void setPublicTournamentDashboard(Boolean publicTournamentDashboard) {
-        this.publicTournamentDashboard = publicTournamentDashboard;
+    public void setPublicDashboards(Boolean publicDashboards) {
+        this.publicDashboards = publicDashboards;
     }
 
     @Override

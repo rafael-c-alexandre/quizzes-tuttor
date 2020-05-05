@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -133,5 +134,34 @@ public class UserService {
         }
 
         return newDemoUser;
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<UserDto> getPublicDashboardUsers(){
+
+        userRepository.findAll().stream()
+                .filter(user -> user.getPublicDashboards() == null)
+                .forEach(user -> user.setPublicDashboards(true));
+
+        return userRepository.findAll().stream()
+                .filter(user -> user.getRole() == User.Role.STUDENT)
+                .filter(User::getPublicDashboards)
+                .map(UserDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void changeUserDashboardPrivacy(int userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        if(user.getPublicDashboards() != null)
+            user.setPublicDashboards(!user.getPublicDashboards());
+        else
+            user.setPublicDashboards(false);
     }
 }
