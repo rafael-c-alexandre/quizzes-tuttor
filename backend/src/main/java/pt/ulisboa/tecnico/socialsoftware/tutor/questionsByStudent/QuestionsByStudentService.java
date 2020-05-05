@@ -10,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -72,7 +71,6 @@ public class QuestionsByStudentService {
                     submissionRepository.getMaxSubmissionNumber() : 0;
             submissionDto.setKey(maxQuestionNumber + 1);
         }
-
         Submission submission = new Submission(submissionDto, student, course );
         submission.setCreationDate(LocalDateTime.now());
 
@@ -101,7 +99,10 @@ public class QuestionsByStudentService {
 
         if (!submission.getSubmissionStatus().name().equals("APPROVED")) throw new TutorException(QUESTION_CANNOT_BE_AVAILABLE);
 
+        if(submission.isMadeAvailable()) throw new TutorException(QUESTION_ALREADY_AVAILABLE);
+
         Question question = submission.convertToQuestion();
+
         questionRepository.save(question);
 
 
@@ -121,9 +122,7 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void makeSubmissionApproved(SubmissionDto submissionDto, String justification, Submission submission){
-        submissionDto.setStatus("APPROVED");
-        submissionDto.setJustification(justification);
+    public void makeSubmissionApproved( String justification, Submission submission){
         submission.setJustification(justification);
         submission.setSubmissionStatus(Submission.Status.APPROVED);
 
@@ -134,9 +133,8 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void makeSubmissionRejected(SubmissionDto submissionDto,  String justification, Submission submission){
-        submissionDto.setStatus("REJECTED");
-        submissionDto.setJustification(justification);
+    public void makeSubmissionRejected( String justification, Submission submission){
+
         submission.setJustification(justification);
         submission.setSubmissionStatus(Submission.Status.REJECTED);
     }
@@ -145,17 +143,16 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto makeDecision( boolean isApproved, SubmissionDto submissionDto, Submission submission, String justification) {
+    public SubmissionDto makeDecision( boolean isApproved,Submission submission, String justification) {
         if (isApproved) {
-            makeSubmissionApproved(submissionDto, justification, submission);
-            return submissionDto;
+            makeSubmissionApproved(justification, submission);
         }
 
         else {
-            System.out.println("Prof rejeitou");
-            System.out.println("Prof rejeitou");
-            makeSubmissionRejected(submissionDto, justification, submission);
-            return submissionDto; }
+
+            makeSubmissionRejected(justification, submission);
+        }
+        return new SubmissionDto(submission);
     }
 
     @Retryable(
@@ -170,12 +167,9 @@ public class QuestionsByStudentService {
 
         isSubmitionOnHold(submission);
 
-        SubmissionDto submissionDto = new SubmissionDto(submission);
-        submissionDto.setId(submission.getId());
-        submissionDto.setTeacherDecision(isApproved);
         submission.setTeacherDecision(isApproved);
 
-        return makeDecision( isApproved, submissionDto, submission, justification);
+        return makeDecision( isApproved, submission, justification);
     }
 
     @Retryable(
@@ -242,11 +236,9 @@ public class QuestionsByStudentService {
             submission.setSubmissionStatus(Submission.Status.ONHOLD);
             return new SubmissionDto(submission);
         } else{
-            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+            throw new TutorException(SUBMISSION_CANNOT_BE_RESUBMITED);
         }
     }
-//fazer testes -> aluno cria submissao, prof rejeita, aluno resubmete
-    //jmeter vai ser igual ao
 
     @Retryable(
             value = { SQLException.class },
@@ -258,6 +250,9 @@ public class QuestionsByStudentService {
             submission.update(submissionDto);
             return new SubmissionDto(submission);
         } else{
+            System.out.println(user.getId());
+            System.out.println(submission.getSubmissionStatus());
+
             throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
         }
     }
