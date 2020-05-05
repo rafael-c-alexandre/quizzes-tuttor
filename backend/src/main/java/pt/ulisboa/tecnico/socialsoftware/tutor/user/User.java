@@ -142,7 +142,10 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public Set<Tournament> getSignedTournaments() { return signedTournaments;}
+    public void addSignedTournament(Tournament t) { signedTournaments.add(t);}
+
     public int getNumberCreatedTournaments() { return createdTournaments.size();}
+    public void addCreatedTournaments(Tournament t) { createdTournaments.add(t);}
 
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;

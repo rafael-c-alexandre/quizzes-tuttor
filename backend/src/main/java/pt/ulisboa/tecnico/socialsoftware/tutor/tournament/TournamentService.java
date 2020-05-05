@@ -169,6 +169,7 @@ public class TournamentService {
 
         Tournament tournament = new Tournament(tournamentDto);
         tournament.setTournamentCreator(user);
+        user.addCreatedTournaments(tournament);
         tournament.setCourseExecution(courseExecution);
 
 
@@ -235,6 +236,7 @@ public class TournamentService {
                     }
                 }
                 tournament.addUser(user);
+                user.addSignedTournament(tournament);
             } else {
                 throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
             }

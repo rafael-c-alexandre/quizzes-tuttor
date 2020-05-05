@@ -126,10 +126,13 @@ public class StatsService {
         Set<Tournament> signedTournaments = user.getSignedTournaments();
 
         int correctAnswers = (int) signedTournaments.stream()
+                .filter(Objects::nonNull)
                 .map(Tournament::getAssociatedQuiz)
+                .filter(Objects::nonNull)
                 .map(Quiz::getQuizAnswers)
                 .flatMap(Collection::stream)
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.getUser().equals(user))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getOption)
@@ -138,19 +141,25 @@ public class StatsService {
 
 
         int totalAnswers = (int) signedTournaments.stream()
+                .filter(Objects::nonNull)
                 .map(Tournament::getAssociatedQuiz)
+                .filter(Objects::nonNull)
                 .map(Quiz::getQuizAnswers)
                 .flatMap(Collection::stream)
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.getUser().equals(user))
                 .map(QuizAnswer::getQuestionAnswers)
-                .flatMap(Collection::stream)
-                .count();
+                .filter(Objects::nonNull)
+                .mapToLong(Collection::size)
+                .sum();
 
         float averageScore = ((float)correctAnswers)*100/totalAnswers;
 
         //signed tournaments in which answered at least 1 question
         int attendedTournaments = (int) signedTournaments.stream()
+                .filter(Objects::nonNull)
                 .map(Tournament::getAssociatedQuiz)
+                .filter(Objects::nonNull)
                 .map(Quiz::getQuizAnswers)
                 .flatMap(Collection::stream)
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
@@ -159,10 +168,13 @@ public class StatsService {
                 .count();
 
         int uniqueCorrectAnswers = (int) signedTournaments.stream()
+                .filter(Objects::nonNull)
                 .map(Tournament::getAssociatedQuiz)
+                .filter(Objects::nonNull)
                 .map(Quiz::getQuizAnswers)
                 .flatMap(Collection::stream)
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.getUser().equals(user))
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
