@@ -34,6 +34,7 @@ public class SubmissionDto implements Serializable{
     private String justification;
     private Integer courseId;
     private boolean teacherDecision;
+    private boolean madeAvailable;
 
     public SubmissionDto() {
 
@@ -57,6 +58,7 @@ public class SubmissionDto implements Serializable{
         this.justification = submission.getJustification();
         this.courseId = submission.getCourse().getId();
         this.teacherDecision = submission.getTeacherDecision();
+        this.madeAvailable = submission.isMadeAvailable();
     }
 
     public Integer getId() {
@@ -172,6 +174,14 @@ public class SubmissionDto implements Serializable{
         this.key = key;
     }
 
+    public boolean isMadeAvailable() {
+        return madeAvailable;
+    }
+
+    public void setMadeAvailable(boolean madeAvailable) {
+        this.madeAvailable = madeAvailable;
+    }
+
     @Override
     public String toString() {
         return "SubmissionDto{" +
@@ -188,6 +198,7 @@ public class SubmissionDto implements Serializable{
                 ", justification='" + justification + '\'' +
                 ", courseId=" + courseId +
                 ", teacherDecision=" + teacherDecision +
+                ", madeAvailable=" + madeAvailable +
                 '}';
     }
 }

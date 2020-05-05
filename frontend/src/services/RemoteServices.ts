@@ -729,6 +729,17 @@ export default class RemoteServices {
       });
   }
 
+  static makeSubmissionAvailable(submission: Submission): Promise<Question> {
+    return httpClient
+      .put(`/courses/${Store.getters.getCurrentCourse.courseId}/submissions/${submission.id}`, submission)
+      .then(response => {
+        return new Question(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
 
 
   static async exportAll() {

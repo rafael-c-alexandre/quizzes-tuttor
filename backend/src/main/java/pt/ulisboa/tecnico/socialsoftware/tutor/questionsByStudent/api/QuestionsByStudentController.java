@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
@@ -43,9 +44,6 @@ public class QuestionsByStudentController {
     @Autowired
     private QuestionsByStudentService questionsByStudentService;
 
-    @Autowired
-    private QuestionService questionService;
-
     @Value("${figures.dir}")
     private String figuresDir;
 
@@ -73,10 +71,25 @@ public class QuestionsByStudentController {
         return questionsByStudentService.findCourseSubmissions(courseId);
     }
 
+    @PutMapping("/courses/{courseId}/submissions/{submissionId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public QuestionDto makeQuestionAvailable(Principal principal, @PathVariable int courseId, @PathVariable int submissionId ) {
+
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        return questionsByStudentService.makeQuestionAvailable(courseId, submissionId);
+    }
+
+
+
+
 
     @PostMapping("/courses/{courseId}/submissions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public SubmissionDto createSubmission( Principal principal, @PathVariable int courseId, @Valid @RequestBody SubmissionDto submissionDto) {
+
         User user = (User)((Authentication) principal).getPrincipal();
 
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
@@ -141,7 +154,7 @@ public class QuestionsByStudentController {
 
 
     @PutMapping("/submissions/{submissionId}")
-    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS'))or hasRole('ROLE_TEACHER') ")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS')) or hasRole('ROLE_TEACHER') ")
     public SubmissionDto updateSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
 
         User user = (User)((Authentication) principal).getPrincipal();

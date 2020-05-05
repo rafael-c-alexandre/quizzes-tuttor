@@ -29,11 +29,7 @@
           >
         </v-card-title>
       </template>
-      <template v-slot:item.content="{ item }">
-        <p
-          v-html="convertMarkDownNoFigure(item.content, null)"
-          @click="showSubmissionDialog(item)"
-      /></template>
+
       <template v-slot:item.status="{ item }">
         <v-chip v-if="item.status" :color="getStatusColor(item.status)" dark>{{
           item.status
@@ -73,7 +69,12 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmission"
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="editSubmission(item)"
+              data-cy="editSubmission"
               >edit</v-icon
             >
           </template>
@@ -81,6 +82,7 @@
         </v-tooltip>
       </template>
     </v-data-table>
+
     <edit-submission-dialog
       v-if="currentSubmission"
       v-model="editSubmissionDialog"
@@ -89,7 +91,7 @@
     />
     <show-submission-dialog
       v-if="currentSubmission"
-      :dialog="submissionDialog"
+      v-model="submissionDialog"
       :submission="currentSubmission"
       v-on:close-show-submission-dialog="onCloseShowSubmissionDialog"
     />
@@ -98,7 +100,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
 import Submission from '@/models/management/Submission';
 import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
@@ -198,10 +199,6 @@ export default class QuestionSubmissionView extends Vue {
     }
   }
 
-  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
-  }
-
   async handleFileUpload(event: File, submission: Submission) {
     if (submission.id) {
       try {
@@ -220,6 +217,7 @@ export default class QuestionSubmissionView extends Vue {
   }
 
   onCloseShowSubmissionDialog() {
+    this.currentSubmission = null;
     this.submissionDialog = false;
   }
 
@@ -234,7 +232,8 @@ export default class QuestionSubmissionView extends Vue {
     else return 'green';
   }
 
-  editSubmission(submission: Submission) {
+  editSubmission(submission: Submission, e?: Event) {
+    if (e) e.preventDefault();
     this.currentSubmission = submission;
     this.editSubmissionDialog = true;
   }

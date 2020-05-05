@@ -68,6 +68,8 @@ public class Submission {
 
     private boolean teacherDecision;
 
+    private boolean madeAvailable;
+
     @Enumerated(EnumType.STRING)
     private Status submissionStatus = Status.ONHOLD;
 
@@ -93,6 +95,7 @@ public class Submission {
         setUser(user);
         setJustification("");
         setTeacherDecision(false);
+        setMadeAvailable(false);
     }
 
 
@@ -149,6 +152,14 @@ public class Submission {
 
     public String getContent() {
         return content;
+    }
+
+    public boolean isMadeAvailable() {
+        return madeAvailable;
+    }
+
+    public void setMadeAvailable(boolean madeAvailable) {
+        this.madeAvailable = madeAvailable;
     }
 
     public void setContent(String content) {
@@ -277,14 +288,16 @@ public class Submission {
         question.setCreationDate(DateHandler.toLocalDateTime(this.getCreationDate().toString()));
         question.setCourse(this.course);
 
+        int index = 0;
         for (Option option : getOptions()) {
+            option.setSequence(index++);
             option.setQuestion(question);
         }
 
         if (this.getImage() != null)
             question.setImage(new Image(new ImageDto(this.getImage())));
 
-
+        setMadeAvailable(true);
         return question;
     }
 

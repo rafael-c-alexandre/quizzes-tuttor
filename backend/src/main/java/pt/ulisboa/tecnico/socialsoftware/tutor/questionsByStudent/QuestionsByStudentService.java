@@ -153,7 +153,7 @@ public class QuestionsByStudentService {
 
         else {
             System.out.println("Prof rejeitou");
-            System.out.println(isApproved);
+            System.out.println("Prof rejeitou");
             makeSubmissionRejected(submissionDto, justification, submission);
             return submissionDto; }
     }
