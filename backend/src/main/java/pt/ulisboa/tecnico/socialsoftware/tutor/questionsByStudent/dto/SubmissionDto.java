@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto;
 
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
@@ -33,6 +34,7 @@ public class SubmissionDto implements Serializable{
     private String justification;
     private Integer courseId;
     private boolean teacherDecision;
+    private boolean madeAvailable;
 
     public SubmissionDto() {
 
@@ -50,12 +52,13 @@ public class SubmissionDto implements Serializable{
 
         if (submission.getImage() != null)
             this.image = new ImageDto(submission.getImage());
-        if (submission.getCreationDate() != null)
-            this.creationDate = submission.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.creationDate = DateHandler.toISOString(submission.getCreationDate());
+
 
         this.justification = submission.getJustification();
         this.courseId = submission.getCourse().getId();
         this.teacherDecision = submission.getTeacherDecision();
+        this.madeAvailable = submission.isMadeAvailable();
     }
 
     public Integer getId() {
@@ -171,6 +174,14 @@ public class SubmissionDto implements Serializable{
         this.key = key;
     }
 
+    public boolean isMadeAvailable() {
+        return madeAvailable;
+    }
+
+    public void setMadeAvailable(boolean madeAvailable) {
+        this.madeAvailable = madeAvailable;
+    }
+
     @Override
     public String toString() {
         return "SubmissionDto{" +
@@ -187,6 +198,7 @@ public class SubmissionDto implements Serializable{
                 ", justification='" + justification + '\'' +
                 ", courseId=" + courseId +
                 ", teacherDecision=" + teacherDecision +
+                ", madeAvailable=" + madeAvailable +
                 '}';
     }
 }

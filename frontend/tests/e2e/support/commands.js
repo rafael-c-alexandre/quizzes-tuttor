@@ -25,6 +25,8 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 /// <reference types="Cypress" />
 
+import MakeQuestionAvailableDialog from '../../../src/views/teacher/studentQuestions/MakeQuestionAvailableDialog';
+
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
     cy.get('[data-cy="createButton"]').click()
     cy.get('[data-cy="Name"]').type(name)
@@ -174,7 +176,7 @@ Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) =>
         .parent()
         .should('have.length', 1)
         .children()
-        .should('have.length', 8)
+        .should('have.length', 9)
         .find('[data-cy="evaluateSubmissionButton"]')
         .click()
 
@@ -182,4 +184,36 @@ Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) =>
     if (justification !== '') cy.get('[data-cy="justification"]').type(justification)
     cy.get('[data-cy="saveEvaluationButton"]').click()
 })
+
+Cypress.Commands.add('makeQuestionAvailable', (title,makeAvailable) => {
+
+    cy.contains(title)
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 9)
+      .find('[data-cy="makeQuestionAvailableButton"]')
+      .click()
+
+    if (makeAvailable) cy.get('[data-cy="yesButton"]').click()
+    else cy.get('[data-cy="notButton"]').click()
+})
+
+Cypress.Commands.add('assertQuestionOnAvailable', (title) => {
+
+    cy.get('[data-cy="managementButton"]').click()
+    cy.contains('Questions').click()
+
+    //assert
+    cy.contains(title)
+      .parent()
+      .should('have.length', 1)
+      .click()
+    cy.get('[data-cy="closeQuestionButton"]').click()
+
+})
+
+
+
+
 

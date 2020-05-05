@@ -9,9 +9,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService
@@ -21,8 +21,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.Sub
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
-
-
 
 @DataJpaTest
 class UpdateSubmissionSpockTest extends Specification{
@@ -37,6 +35,7 @@ class UpdateSubmissionSpockTest extends Specification{
         public static final String OPTION_CONTENT2 = "optionId content2"
         static final String NAME = "Rito"
         static final String USERNAME = "Silva"
+        static final String USERNAME2 = "Alexandre"
         static final int KEY = 10
 
         @Autowired
@@ -60,43 +59,80 @@ class UpdateSubmissionSpockTest extends Specification{
         @Autowired
         UserRepository userRepository;
 
+       @Autowired
+       OptionRepository optionRepository
+
+
         def user
+        def teacher
         def course
-        def submissionDto
-        def optionDto
-        def options
+
+        def optionOK
         def submission
+        def submissionTeacher
+        def submissionDtoTeacher2
+        def submissionTeacher2
 
 
         def setup() {
-            given: "a user"
+            given: "create a question"
+            submission = new Submission()
+            submission.setKey(1)
+            submission.setTitle(QUESTION_TITLE)
+            submission.setContent(QUESTION_CONTENT)
+            and: "a user"
             user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
             userRepository.save(user)
             and: "a course"
             course = new Course(COURSE_ONE, Course.Type.TECNICO)
             courseRepository.save(course)
-            and: " a submissionDto"
-            submissionDto = new SubmissionDto()
-            submissionDto.setId(1)
-            submissionDto.setKey(1)
-            submissionDto.setStatus("ONHOLD")
-            submissionDto.setCourseId(COURSE_ID)
-            submissionDto.setJustification("")
-            submissionDto.setTitle(QUESTION_TITLE)
-            submissionDto.setContent(QUESTION_CONTENT)
-            optionDto = new OptionDto()
-            optionDto.setContent(OPTION_CONTENT)
-            optionDto.setCorrect(true)
-            options = new ArrayList<OptionDto>()
-            options.add(optionDto)
-            submissionDto.setOptions(options)
-            submissionDto.setUser(user.getId())
-            submissionDto.setCourseId(course.getId())
-            submission = new Submission(submissionDto,user, course)
-            submissionRepository.save(submission)
-        }
 
-    def "update topics of onHold submission"() {
+            and: " a submissionDto"
+            submission.setCourse(course)
+            submission.setUser(user)
+            optionOK = new Option()
+            optionOK.setContent(OPTION_CONTENT)
+            optionOK.setCorrect(true)
+            optionOK.setSequence(0)
+            optionOK.setSubmission(submission)
+            optionRepository.save(optionOK)
+            submissionRepository.save(submission)
+
+        }
+    //tests for F1
+    def "update options of onHold submission"() {
+        given: 'another submissionDto'
+        def submissionDto2 = new SubmissionDto()
+        submissionDto2.setId(1)
+        submissionDto2.setKey(1)
+        submissionDto2.setStatus("ONHOLD")
+        submissionDto2.setCourseId(COURSE_ID)
+        submissionDto2.setJustification("")
+        submissionDto2.setTitle(QUESTION_TITLE_2)
+        submissionDto2.setContent(QUESTION_CONTENT2)
+
+        and: 'a option'
+        def options = new ArrayList<OptionDto>()
+        def optionDto2 = new OptionDto(optionOK)
+
+        optionDto2.setContent(OPTION_CONTENT2)
+        optionDto2.setCorrect(true)
+        options.add(optionDto2)
+        submissionDto2.setOptions(options)
+
+        when:
+
+        def result = submissionService.updateSubmission(submission.getId(), submissionDto2, user)
+
+        then:
+        result.getTitle() == QUESTION_TITLE_2
+        result.getContent() == QUESTION_CONTENT2
+        result.getStatus() == "ONHOLD"
+        result.getOptions().size() == 1
+        result.getOptions().get(0).getContent() == OPTION_CONTENT2
+    }
+
+    def "tries to update non-pending submission"() {
         given: 'another submissionDto'
         def submissionDto2 = new SubmissionDto()
         submissionDto2.setId(1)
@@ -108,7 +144,6 @@ class UpdateSubmissionSpockTest extends Specification{
         submissionDto2.setContent(QUESTION_CONTENT2)
         and: 'a optionId'
         def optionDto2 = new OptionDto()
-        optionDto2.setId(1)
         optionDto2.setContent(OPTION_CONTENT2)
         optionDto2.setCorrect(true)
         def options2 = new ArrayList<OptionDto>()
@@ -116,18 +151,24 @@ class UpdateSubmissionSpockTest extends Specification{
         submissionDto2.setOptions(options2)
         submissionDto2.setUser(user.getId())
         submissionDto2.setCourseId(course.getId())
+        and: "a teacher"
+        teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
+        userRepository.save(teacher)
+        and: 'a submission acception'
+        submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), true,"like it")
+
 
         when:
-        def result = submissionService.updateSubmission(submissionDto2.getId(), submissionDto2)
+        submissionService.updateSubmission(submission.getId(), submissionDto2, user)
 
         then:
-        result.getTitle() == QUESTION_TITLE_2
-        result.getContent() == QUESTION_CONTENT2
-        result.getOptions().size() == 1
-        result.getOptions().get(0).getContent() == OPTION_CONTENT2
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.SUBMISSION_CANNOT_BE_EDITED
     }
 
-    def "tries to update non-pending submission"() {
+
+    //tests for F4
+    def "update options of APPROVED submission by a teacher"() {
         given: 'another submissionDto'
         def submissionDto2 = new SubmissionDto()
         submissionDto2.setId(1)
@@ -137,27 +178,128 @@ class UpdateSubmissionSpockTest extends Specification{
         submissionDto2.setJustification("")
         submissionDto2.setTitle(QUESTION_TITLE_2)
         submissionDto2.setContent(QUESTION_CONTENT2)
-        and: 'a optionId'
-        def optionDto2 = new OptionDto()
-        optionDto2.setId(1)
+        and: 'a option'
+        def options = new ArrayList<OptionDto>()
+        def optionDto2 = new OptionDto(optionOK)
         optionDto2.setContent(OPTION_CONTENT2)
         optionDto2.setCorrect(true)
-        def options2 = new ArrayList<OptionDto>()
-        options2.add(optionDto2)
-        submissionDto2.setOptions(options2)
-        submissionDto2.setUser(user.getId())
-        submissionDto2.setCourseId(course.getId())
+        options.add(optionDto2)
+        submissionDto2.setOptions(options)
+        and: "a teacher"
+        teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
+        userRepository.save(teacher)
+        and: 'a submission acception'
+        submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), true,"like it")
+
 
         when:
-        submissionService.updateSubmission(submissionDto2.getId(), submissionDto2)
+        def result = submissionService.updateSubmission(submission.getId(), submissionDto2, teacher)
+
+        then:
+        result.getTitle() == QUESTION_TITLE_2
+        result.getContent() == QUESTION_CONTENT2
+        result.getOptions().size() == 1
+        result.getOptions().get(0).getContent() == OPTION_CONTENT2
+    }
+
+    def "try to update topics of ONHOLD submission by a teacher"() {
+        given: 'another submissionDto'
+        def submissionDto2 = new SubmissionDto()
+        submissionDto2.setId(1)
+        submissionDto2.setKey(1)
+        submissionDto2.setStatus("ONHOLD")
+        submissionDto2.setCourseId(COURSE_ID)
+        submissionDto2.setJustification("")
+        submissionDto2.setTitle(QUESTION_TITLE_2)
+        submissionDto2.setContent(QUESTION_CONTENT2)
+        and: 'a option'
+        def options = new ArrayList<OptionDto>()
+        def optionDto2 = new OptionDto(optionOK)
+        optionDto2.setContent(OPTION_CONTENT2)
+        optionDto2.setCorrect(true)
+        options.add(optionDto2)
+        submissionDto2.setOptions(options)
+        and: "a user"
+        teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
+        userRepository.save(teacher)
+
+        when:
+        submissionService.updateSubmission(submission.getId(), submissionDto2, teacher)
 
         then:
         def exception = thrown(TutorException)
         exception.errorMessage == ErrorMessage.SUBMISSION_CANNOT_BE_EDITED
     }
 
+    //tests for F6
+    def "student updates and resubmits rejected submission"() {
+        given: "a teacher"
+        teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
+        userRepository.save(teacher)
+        and: 'a submission rejection'
+        submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), false,"don't like it")
 
+        and: 'anthoer  submisionDto'
+        def submissionDto2 = new SubmissionDto()
+        submissionDto2.setId(1)
+        submissionDto2.setKey(1)
+        submissionDto2.setStatus("ONHOLD")
+        submissionDto2.setCourseId(COURSE_ID)
+        submissionDto2.setJustification("")
+        submissionDto2.setTitle(QUESTION_TITLE_2)
+        submissionDto2.setContent(QUESTION_CONTENT2)
+        and: 'a option'
+        def options = new ArrayList<OptionDto>()
+        def optionDto2 = new OptionDto(optionOK)
+        optionDto2.setContent(OPTION_CONTENT2)
+        optionDto2.setCorrect(true)
+        options.add(optionDto2)
+        submissionDto2.setOptions(options)
 
+        when:
+
+        def result = submissionService.reSubmitSubmission(submission.getId(), submissionDto2, user)
+
+        then:
+        result.getTitle() == QUESTION_TITLE_2
+        result.getContent() == QUESTION_CONTENT2
+        result.getStatus() == "ONHOLD"
+        result.getOptions().size() == 1
+        result.getOptions().get(0).getContent() == OPTION_CONTENT2
+    }
+
+    def "student tries to resubmit approved submission"() {
+        given: "a teacher"
+        teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
+        userRepository.save(teacher)
+        and: 'a submission acception'
+        submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), true,"like it")
+
+        and: 'anthoer  submisionDto'
+        def submissionDto2 = new SubmissionDto()
+        submissionDto2.setId(1)
+        submissionDto2.setKey(1)
+        submissionDto2.setStatus("ONHOLD")
+        submissionDto2.setCourseId(COURSE_ID)
+        submissionDto2.setJustification("")
+        submissionDto2.setTitle(QUESTION_TITLE_2)
+        submissionDto2.setContent(QUESTION_CONTENT2)
+        and: 'a option'
+        def options = new ArrayList<OptionDto>()
+        def optionDto2 = new OptionDto(optionOK)
+        optionDto2.setContent(OPTION_CONTENT2)
+        optionDto2.setCorrect(true)
+        options.add(optionDto2)
+        submissionDto2.setOptions(options)
+
+        when:
+
+        submissionService.reSubmitSubmission(submission.getId(), submissionDto2, user)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.SUBMISSION_CANNOT_BE_RESUBMITED
+    }
 
     @TestConfiguration
     static class ServiceImplTestContextConfiguration {

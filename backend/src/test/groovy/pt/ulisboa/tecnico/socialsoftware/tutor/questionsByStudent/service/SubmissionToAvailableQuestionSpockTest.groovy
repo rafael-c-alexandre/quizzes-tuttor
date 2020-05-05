@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
@@ -22,23 +23,19 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-
+import java.util.ArrayList;
 
 
 @DataJpaTest
-class UpdateSubmissionTopicsSpockTest extends Specification {
+class SubmissionToAvailableQuestionSpockTest extends Specification {
 
     static final String COURSE_ONE ="CourseOne"
     static final int COURSE_ID = 14
     static final String QUESTION_TITLE = "QUESTION_ONE"
     static final String QUESTION_CONTENT = "CONTENT_ONE"
     public static final String OPTION_CONTENT = "optionId content"
-    public static final String TOPIC_ONE = 'nameOne'
-    public static final String TOPIC_TWO = 'nameTwo'
-    public static final String TOPIC_THREE = 'nameThree'
     static final String NAME = "Rito"
     static final String USERNAME = "Silva"
-    static final String USERNAME_TEACHER = "Alexandre"
     static final int KEY = 10
 
     @Autowired
@@ -67,26 +64,17 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
     def submissionDto
     def options
     def optionDto
-    def topicDtoOne
-    def topicDtoTwo
-    def topicDtoThree
-    def topicOne
-    def topicTwo
-    def topicThree
     def submission
-    def teacher
+
 
     def setup() {
         user = new User(NAME, USERNAME, KEY, User.Role.STUDENT)
         userRepository.save(user)
-        teacher = new User(NAME, USERNAME_TEACHER, KEY + 1, User.Role.TEACHER)
-        userRepository.save(teacher)
         course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         submissionDto = new SubmissionDto()
-        submissionDto.setId(1)
         submissionDto.setKey(1)
-        submissionDto.setStatus("ONHOLD")
+        submissionDto.setStatus(Submission.Status.ONHOLD.toString())
         submissionDto.setCourseId(COURSE_ID)
         submissionDto.setJustification("")
         submissionDto.setTitle(QUESTION_TITLE)
@@ -100,101 +88,58 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
         submissionDto.setUser(user.getId())
         submissionDto.setCourseId(course.getId())
         submission = new Submission(submissionDto,user, course)
-
-        topicDtoOne = new TopicDto()
-        topicDtoOne.setName(TOPIC_ONE)
-        topicDtoTwo = new TopicDto()
-        topicDtoTwo.setName(TOPIC_TWO)
-        topicDtoThree = new TopicDto()
-        topicDtoThree.setName(TOPIC_THREE)
-
-        topicOne = new Topic(course, topicDtoOne)
-        topicTwo = new Topic(course, topicDtoTwo)
-        submission.getTopics().add(topicOne)
-        topicOne.getSubmissions().add(submission)
-        submission.getTopics().add(topicTwo)
-        topicTwo.getSubmissions().add(submission)
         submissionRepository.save(submission)
-        topicRepository.save(topicOne)
-        topicRepository.save(topicTwo)
-
-        topicThree = new Topic(course, topicDtoThree)
-        topicRepository.save(topicThree)
 
     }
 
 
-    def "update topics of onHold submission"() {
-        given: 'topic list'
-        TopicDto[] topics = [topicDtoOne, topicDtoTwo, topicDtoThree]
-
-
-        when:
-        submissionService.updateSubmissionTopics(submission.getId(), topics, user)
-
-        then:
-        submission.getTopics().size() == 3
-        submission.getTopics().contains(topicOne)
-        submission.getTopics().contains(topicTwo)
-        submission.getTopics().contains(topicThree)
-        topicOne.getSubmissions().size() == 1
-        topicTwo.getSubmissions().size() == 1
-        topicThree.getSubmissions().size() == 1
-    }
-
-    def "update topics of APPROVED submission by a Teacher"() {
+    def "make approved submission available to be included in quizzes"() {
         given: "an approved submission"
         submission.setSubmissionStatus(Submission.Status.APPROVED)
-        submissionRepository.save(submission)
-        and: 'topic list'
-        TopicDto[] topics = [topicDtoOne, topicDtoTwo, topicDtoThree]
-
 
         when:
-        submissionService.updateSubmissionTopics(submission.getId(), topics, teacher)
+        submissionService.makeQuestionAvailable(course.getId(),submission.getId())
 
-        then:
-        submission.getTopics().size() == 3
-        submission.getTopics().contains(topicOne)
-        submission.getTopics().contains(topicTwo)
-        submission.getTopics().contains(topicThree)
-        topicOne.getSubmissions().size() == 1
-        topicTwo.getSubmissions().size() == 1
-        topicThree.getSubmissions().size() == 1
+        then: "the correct question is inside the repository"
+        questionRepository.count() == 1L
+        def result = questionRepository.findAll().get(0)
+        result.getStatus() == Question.Status.AVAILABLE
+        result.getId() != null
+        result.getKey() == 1
+        result.getTitle() == QUESTION_TITLE
+        result.getContent() == QUESTION_CONTENT
+        result.getImage() == null
+        result.getOptions().size() == 1
+        result.getCourse().getName() == COURSE_ONE
+        course.getQuestions().contains(result)
+        def resOption = result.getOptions().get(0)
+        resOption.getContent() == OPTION_CONTENT
+
     }
 
-    def "remove one topic of onHold submission"() {
-        given: 'topic list'
-        TopicDto[] topics = [topicDtoOne]
-
-
-        when:
-        submissionService.updateSubmissionTopics(submission.getId(), topics, user)
-
-        then:
-        submission.getTopics().size() == 1
-        submission.getTopics().contains(topicOne)
-        topicOne.getSubmissions().size() == 1
-    }
-
-    def "tries to update topics of non-pending submission"() {
-        given: "a submissionDto"
-        submissionDto.setStatus("APPROVED")
-        submissionDto.setKey(KEY)
-        and: "another submission"
-        def submission2 = new Submission(submissionDto, user, course)
-        submission2.setSubmissionStatus(Submission.Status.APPROVED)
-        submissionRepository.save(submission2)
-
-        and: "a topics list"
-        TopicDto[] topics = [topicDtoOne, topicDtoTwo, topicDtoThree]
+    def "tries to turn on hold submission into available question"() {
+        given: "an approved submission"
+        submission.setSubmissionStatus(Submission.Status.ONHOLD)
 
         when:
-        submissionService.updateSubmissionTopics(submission2.getId(), topics, user)
+        submissionService.makeQuestionAvailable(course.getId(),submission.getId())
 
-        then:
+        then: "throw exception"
         def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.SUBMISSION_CANNOT_BE_EDITED
+        exception.errorMessage == ErrorMessage.QUESTION_CANNOT_BE_AVAILABLE
+    }
+
+    def "tries to turn available question into available question agin"() {
+        given: "an approved submission and already available question"
+        submission.setSubmissionStatus(Submission.Status.APPROVED)
+        submission.setMadeAvailable(true)
+
+        when:
+        submissionService.makeQuestionAvailable(course.getId(),submission.getId())
+
+        then: "throw exception"
+        def exception = thrown(TutorException)
+        exception.errorMessage == ErrorMessage.QUESTION_ALREADY_AVAILABLE
     }
 
 

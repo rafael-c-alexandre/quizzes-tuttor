@@ -88,6 +88,7 @@ public class Question implements DomainEntity {
     }
 
 
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestion(this);
@@ -133,6 +134,7 @@ public class Question implements DomainEntity {
     }
 
     public void setOptions(List<OptionDto> options) {
+
         if (options.stream().filter(OptionDto::getCorrect).count() != 1) {
             throw new TutorException(ONE_CORRECT_OPTION_NEEDED);
         }
@@ -153,6 +155,8 @@ public class Question implements DomainEntity {
                 option.setCorrect(optionDto.getCorrect());
             }
         }
+
+
     }
 
     public void addOption(Option option) {

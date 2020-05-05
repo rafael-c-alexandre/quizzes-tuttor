@@ -11,8 +11,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto;
@@ -48,6 +51,9 @@ public class QuestionsByStudentService {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private QuestionRepository questionRepository;
+
 
 
     @Retryable(
@@ -65,11 +71,8 @@ public class QuestionsByStudentService {
                     submissionRepository.getMaxSubmissionNumber() : 0;
             submissionDto.setKey(maxQuestionNumber + 1);
         }
-
         Submission submission = new Submission(submissionDto, student, course );
         submission.setCreationDate(LocalDateTime.now());
-        student.addSubmission(submission);
-        course.addSubmission(submission);
 
         submissionRepository.save(submission);
         return new SubmissionDto(submission);
@@ -88,6 +91,29 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuestionDto makeQuestionAvailable(Integer courseId, Integer submissionId) {
+
+        courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND,courseId));
+
+        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND,submissionId));
+
+        if (!submission.getSubmissionStatus().name().equals("APPROVED")) throw new TutorException(QUESTION_CANNOT_BE_AVAILABLE);
+
+        if(submission.isMadeAvailable()) throw new TutorException(QUESTION_ALREADY_AVAILABLE);
+
+        Question question = submission.convertToQuestion();
+
+        questionRepository.save(question);
+
+
+
+        return new QuestionDto(question);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<SubmissionDto> findCourseSubmissions(Integer courseId) {
         return submissionRepository.findSubmissionsByCourse(courseId).stream().map(SubmissionDto::new).collect(Collectors.toList());
     }
@@ -96,9 +122,7 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void makeSubmissionApproved(SubmissionDto submissionDto, String justification, Submission submission){
-        submissionDto.setStatus("APPROVED");
-        submissionDto.setJustification(justification);
+    public void makeSubmissionApproved( String justification, Submission submission){
         submission.setJustification(justification);
         submission.setSubmissionStatus(Submission.Status.APPROVED);
 
@@ -109,9 +133,8 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void makeSubmissionRejected(SubmissionDto submissionDto,  String justification, Submission submission){
-        submissionDto.setStatus("REJECTED");
-        submissionDto.setJustification(justification);
+    public void makeSubmissionRejected( String justification, Submission submission){
+
         submission.setJustification(justification);
         submission.setSubmissionStatus(Submission.Status.REJECTED);
     }
@@ -120,15 +143,16 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto makeDecision( boolean isApproved, SubmissionDto submissionDto, Submission submission, String justification) {
+    public SubmissionDto makeDecision( boolean isApproved,Submission submission, String justification) {
         if (isApproved) {
-            makeSubmissionApproved(submissionDto, justification, submission);
-            return submissionDto;
+            makeSubmissionApproved(justification, submission);
         }
 
         else {
-            makeSubmissionRejected(submissionDto, justification, submission);
-            return submissionDto; }
+
+            makeSubmissionRejected(justification, submission);
+        }
+        return new SubmissionDto(submission);
     }
 
     @Retryable(
@@ -143,12 +167,9 @@ public class QuestionsByStudentService {
 
         isSubmitionOnHold(submission);
 
-        SubmissionDto submissionDto = new SubmissionDto(submission);
-        submissionDto.setId(submission.getId());
-        submissionDto.setTeacherDecision(isApproved);
         submission.setTeacherDecision(isApproved);
 
-        return makeDecision( isApproved, submissionDto, submission, justification);
+        return makeDecision( isApproved, submission, justification);
     }
 
     @Retryable(
@@ -172,12 +193,13 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void updateSubmissionTopics(Integer submissionId, TopicDto[] topics) {
+    public void updateSubmissionTopics(Integer submissionId, TopicDto[] topics, User user) {
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
-
-        if (!submission.getSubmissionStatus().toString().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
-
-        submission.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(submission.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
+        if(hasPermissionToEdit(submission, user)) {
+            submission.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(submission.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
+        } else{
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+        }
     }
 
     @Retryable(
@@ -207,14 +229,43 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto) {
-
-        if (!submissionDto.getStatus().equals("ONHOLD")) throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+    public SubmissionDto reSubmitSubmission(Integer submissionId, SubmissionDto submissionDto, User user) {
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
-        submission.update(submissionDto);
-        return new SubmissionDto(submission);
+        if(user.getRole().equals(User.Role.STUDENT) && (submission.getSubmissionStatus().name().equals("REJECTED"))){
+            submission.update(submissionDto);
+            submission.setSubmissionStatus(Submission.Status.ONHOLD);
+            return new SubmissionDto(submission);
+        } else{
+            throw new TutorException(SUBMISSION_CANNOT_BE_RESUBMITED);
+        }
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto, User user) {
+        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+        if(hasPermissionToEdit(submission, user)) {
+            submission.update(submissionDto);
+            return new SubmissionDto(submission);
+        } else{
+            System.out.println(user.getId());
+            System.out.println(submission.getSubmissionStatus());
+
+            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+        }
+    }
+
+    private boolean hasPermissionToEdit(Submission submission,  User user){
+        if((user.getRole().equals(User.Role.TEACHER) && (submission.getSubmissionStatus().name().equals("APPROVED"))))
+            return true;
+        else if(user.getRole().equals(User.Role.STUDENT) && (submission.getSubmissionStatus().name().equals("ONHOLD")))
+            return true;
+        else{
+            return false;
+        }
+    }
 
     private void isSubmitionOnHold(Submission submission) {
         if(!submission.getSubmissionStatus().toString().equals("ONHOLD")){
@@ -224,18 +275,31 @@ public class QuestionsByStudentService {
 
 
 
-    private void isTeacher(Integer userId) {
+    private boolean isTeacher(Integer userId) {
         User teacher = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
         if (!teacher.getRole().toString().equals("TEACHER")) {
             throw new TutorException(NOT_TEACHER_ERROR);
         }
+        return true;
     }
 
-    private void isStudent(Integer userId) {
+    private boolean isStudent(Integer userId) {
         User teacher = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND,userId));
         if (!teacher.getRole().toString().equals("STUDENT")) {
             throw new TutorException(NOT_STUDENT_ERROR);
         }
+        return true;
+    }
+
+    private QuestionDto generateQuestionDto(SubmissionDto submissionDto) {
+        QuestionDto questionDto = new QuestionDto();
+        questionDto.setTitle(submissionDto.getTitle());
+        questionDto.setContent(submissionDto.getContent());
+        questionDto.setOptions(submissionDto.getOptions());
+        questionDto.setImage(submissionDto.getImage());
+        questionDto.setTopics(submissionDto.getTopics());
+        questionDto.setStatus("AVAILABLE");;
+        return questionDto;
     }
 
 }

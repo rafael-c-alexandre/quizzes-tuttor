@@ -64,6 +64,7 @@ export default class EditQuestionDialog extends Vue {
   editQuestion!: Question;
 
   created() {
+
     this.updateQuestion();
   }
 
