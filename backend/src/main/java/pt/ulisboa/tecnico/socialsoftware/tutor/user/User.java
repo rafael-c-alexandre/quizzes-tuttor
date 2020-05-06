@@ -58,6 +58,8 @@ public class User implements UserDetails, DomainEntity {
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
+    private Boolean publicDashboards = true;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
@@ -473,5 +475,13 @@ public class User implements UserDetails, DomainEntity {
         }
 
         return result;
+    }
+
+    public Boolean getPublicDashboards() {
+        return publicDashboards;
+    }
+
+    public void setPublicDashboards(Boolean publicDashboards) {
+        this.publicDashboards = publicDashboards;
     }
 }

@@ -69,9 +69,7 @@ class UpdateSubmissionSpockTest extends Specification{
 
         def optionOK
         def submission
-        def submissionTeacher
-        def submissionDtoTeacher2
-        def submissionTeacher2
+
 
 
         def setup() {
@@ -137,7 +135,8 @@ class UpdateSubmissionSpockTest extends Specification{
         def submissionDto2 = new SubmissionDto()
         submissionDto2.setId(1)
         submissionDto2.setKey(1)
-        submissionDto2.setStatus("ONHOLD")
+        submissionDto2.setStatus("APPROVED")
+        submission.setSubmissionStatus(Submission.Status.APPROVED)
         submissionDto2.setCourseId(COURSE_ID)
         submissionDto2.setJustification("")
         submissionDto2.setTitle(QUESTION_TITLE_2)
@@ -154,10 +153,6 @@ class UpdateSubmissionSpockTest extends Specification{
         and: "a teacher"
         teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
         userRepository.save(teacher)
-        and: 'a submission acception'
-        submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), true,"like it")
-
-
         when:
         submissionService.updateSubmission(submission.getId(), submissionDto2, user)
 
@@ -174,6 +169,7 @@ class UpdateSubmissionSpockTest extends Specification{
         submissionDto2.setId(1)
         submissionDto2.setKey(1)
         submissionDto2.setStatus("APPROVED")
+        submission.setSubmissionStatus(Submission.Status.APPROVED)
         submissionDto2.setCourseId(COURSE_ID)
         submissionDto2.setJustification("")
         submissionDto2.setTitle(QUESTION_TITLE_2)
@@ -188,9 +184,6 @@ class UpdateSubmissionSpockTest extends Specification{
         and: "a teacher"
         teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
         userRepository.save(teacher)
-        and: 'a submission acception'
-        submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), true,"like it")
-
 
         when:
         def result = submissionService.updateSubmission(submission.getId(), submissionDto2, teacher)

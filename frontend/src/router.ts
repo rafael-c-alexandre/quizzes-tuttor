@@ -34,6 +34,7 @@ import OpenTournamentsView from '@/views/student/tournaments/OpenTournamentsView
 import AllTournamentsView from '@/views/student/tournaments/AllTournamentsView.vue';
 import ClosedTournamentsView from '@/views/student/tournaments/ClosedTournamentsView.vue';
 import SignableTournamentsView from '@/views/student/tournaments/SignableTournamentsView.vue';
+import StudentDashboardView from '@/views/student/questions/StudentDashboardView.vue';
 
 Vue.use(Router);
 
@@ -263,7 +264,16 @@ let router = new Router({
             title: process.env.VUE_APP_NAME + '- Submit Questions',
             requiredAuth: 'Student'
           }
-        }
+        },
+        {
+          path: 'questionDashboard',
+          name: 'student-question-dashboard',
+          component: StudentDashboardView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Questions Dashboard',
+            requiredAuth: 'Student'
+          }
+        },
       ]
     },
     {

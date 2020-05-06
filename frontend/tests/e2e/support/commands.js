@@ -176,6 +176,7 @@ Cypress.Commands.add('editSubmission', (oldTitle,newTitle, content) => {
     if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
     if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
 
+
     cy.get('[data-cy="saveSubmissionButton"]').click()
 })
 
