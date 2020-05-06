@@ -124,6 +124,7 @@ public class QuestionsByStudentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void makeSubmissionApproved( String justification, Submission submission){
+
         submission.setJustification(justification);
         submission.setSubmissionStatus(Submission.Status.APPROVED);
 
@@ -153,6 +154,7 @@ public class QuestionsByStudentService {
 
             makeSubmissionRejected(justification, submission);
         }
+
         return new SubmissionDto(submission);
     }
 
@@ -160,15 +162,24 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto teacherEvaluatesQuestion(int userId, int submissionId, boolean isApproved, String justification) {
+    public SubmissionDto teacherEvaluatesQuestion(int userId, SubmissionDto submissionDto, boolean isApproved, String justification) {
 
         isTeacher(userId);
 
-        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+        Submission submission = submissionRepository.findById(submissionDto.getId()).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionDto.getId()));
 
         isSubmitionOnHold(submission);
 
         submission.setTeacherDecision(isApproved);
+
+
+        //clear input fields
+        submission.setChangeTitle(false);
+        submission.setChangeContent(false);
+        submission.setChangeOptions(false);
+        submission.setChangeCorrect(false);
+
+        submission.checkImproveFields(submissionDto);
 
         return makeDecision( isApproved, submission, justification);
     }

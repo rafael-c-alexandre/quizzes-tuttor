@@ -112,7 +112,7 @@ public class QuestionsByStudentController {
 
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
 
-        return questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId(), submissionDto.getTeacherDecision(), submissionDto.getJustification());
+        return questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto, submissionDto.getTeacherDecision(), submissionDto.getJustification());
 
     }
 

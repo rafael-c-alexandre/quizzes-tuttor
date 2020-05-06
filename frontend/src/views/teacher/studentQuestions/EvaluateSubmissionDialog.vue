@@ -42,20 +42,23 @@
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
               <v-row>
-                <v-col cols="6">
                   <v-subheader> *Approve? </v-subheader>
-                </v-col>
-                <v-col cols="6">
-                  <v-switch
-                    class="ma-4"
-                    hint="Pick your decision here"
-                    v-model="evaluateSubmission.teacherDecision"
-                    data-cy="status"
-                    persistent-hint
-                    color="success"
-                    single-line
-                  />
-                </v-col>
+
+                  <v-btn v-if='hasDecided && hasApproved' color="blue darken-1"  @click="approve" data-cy="approve">
+                      Yes
+                  </v-btn>
+                  <v-btn v-if='!hasApproved' @click="approve" data-cy="approve">
+                    Yes
+                  </v-btn>
+
+
+                  <v-btn v-if='hasDecided && !hasApproved' color="blue darken-1" @click="reject" data-cy="reject">
+                    No
+                  </v-btn>
+
+                  <v-btn v-if='!hasDecided || hasApproved' @click="reject" data-cy="reject">
+                    No
+                  </v-btn>
               </v-row>
             </v-flex>
             <v-flex xs24 sm12 md12>
@@ -124,6 +127,7 @@ export default class submissionDialog extends Vue {
   @Prop({ type: Submission, required: true }) readonly submission!: Submission;
 
   evaluateSubmission!: Submission;
+
   titleInput: string | null = null;
   contentInput: string | null = null;
   optionsInput: string | null = null;
@@ -134,25 +138,50 @@ export default class submissionDialog extends Vue {
   changeOptions: boolean = false;
   changeCorrect: boolean = false;
 
+  hasDecided : boolean = false;
+  hasApproved: boolean = false;
+
   created() {
     this.evaluateSubmission = new Submission(this.submission);
   }
+  async approve(){
+    this.hasDecided = true;
+    this.hasApproved=true;
+    this.evaluateSubmission.status = 'APPROVED';
+    this.evaluateSubmission.teacherDecision = true;
+  }
 
+
+  async reject(){
+    this.hasDecided = true;
+    this.hasApproved=false;
+    this.evaluateSubmission.status = 'REJECTED';
+    this.evaluateSubmission.teacherDecision = false;
+  }
 
   async saveSubmission() {
 
-    this.getSuggestions();
-
-    console.log(this.changeCorrect);
-
-    if (this.evaluateSubmission.teacherDecision == true) {
-    } else if (this.evaluateSubmission.status == 'Reject') {
-      this.evaluateSubmission.status = 'REJECTED';
-    }
-    if (this.evaluateSubmission && !this.evaluateSubmission.justification) {
-      await this.$store.dispatch('error', 'Evaluation must have justification');
+    if(this.evaluateSubmission && !this.hasDecided && !this.evaluateSubmission.justification) {
+      await this.$store.dispatch('error', 'Error: Evaluation must have a decision and justification');
       return;
     }
+
+    if(this.evaluateSubmission && !this.hasDecided) {
+      await this.$store.dispatch('error', 'Error: Evaluation must have a decision');
+      return;
+    }
+
+    if (this.evaluateSubmission && !this.evaluateSubmission.justification) {
+      await this.$store.dispatch('error', 'Error: Evaluation must have justification');
+      return;
+    }
+
+    if(this.evaluateSubmission && this.hasApproved && (this.correctInput || this.titleInput || this.contentInput || this.optionsInput)) {
+      await this.$store.dispatch('error', 'Error: Evaluation cannot have suggestions when submission is approved');
+      return;
+    }
+
+    this.getSuggestions()
 
     if (this.evaluateSubmission && this.evaluateSubmission.id != null) {
       try {
@@ -160,7 +189,7 @@ export default class submissionDialog extends Vue {
           this.evaluateSubmission
         );
         this.$emit('save-submission', result);
-        confirm(
+        alert(
           'Question "' +
             this.evaluateSubmission.title +
             '" successfully marked!'
@@ -172,10 +201,28 @@ export default class submissionDialog extends Vue {
   }
 
   getSuggestions() {
-    if (this.titleInput == 'yes') this.changeTitle = true;
-    if (this.contentInput == 'yes') this.changeContent = true;
-    if (this.optionsInput == 'yes') this.changeOptions = true;
-    if (this.correctInput == 'yes') this.changeCorrect = true;
+    this.evaluateSubmission.fieldsToImprove = [];
+
+    if (this.titleInput == 'yes') {
+      this.changeTitle = true;
+      this.evaluateSubmission.fieldsToImprove.push('title');
+    }
+    if (this.contentInput == 'yes') {
+      this.changeContent = true;
+      this.evaluateSubmission.fieldsToImprove.push('content');
+
+    }
+    if (this.optionsInput == 'yes') {
+      this.changeOptions = true;
+      this.evaluateSubmission.fieldsToImprove.push('options');
+
+    }
+    if (this.correctInput == 'yes') {
+      this.changeCorrect = true;
+      this.evaluateSubmission.fieldsToImprove.push('correct option');
+
+
+    }
 
 
   }

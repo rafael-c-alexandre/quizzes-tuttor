@@ -47,6 +47,7 @@
       </template>
 
       <template v-slot:item.action="{ item }">
+          <v-row>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -59,6 +60,7 @@
           </template>
           <span>Show Submission</span>
         </v-tooltip>
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -72,25 +74,28 @@
           </template>
           <span>Evaluate Submission</span>
         </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmissionTeacher">edit</v-icon>
-          </template>
-          <span>Edit Submission</span>
-        </v-tooltip>
+          </v-row>
+          <p></p>
+          <v-row>
             <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-            <v-icon
-              small
-              class="mr-2"
-              v-on="on"
-              @click="makeQuestionAvailable(item)"
-              data-cy="makeQuestionAvailableButton"
-              >open_in_browser</v-icon
-            >
-          </template>
+              <template v-slot:activator="{ on }">
+                <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmissionTeacher">edit</v-icon>
+              </template>
+              <span>Edit Submission</span>
+            </v-tooltip>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                <v-icon
+                  small
+                  class="mr-2"
+                  v-on="on"
+                  @click="makeQuestionAvailable(item)"
+                  data-cy="makeQuestionAvailableButton"
+                  >fas fa-external-link-square-alt</v-icon>
+              </template>
           <span>Make question available</span>
             </v-tooltip>
+          </v-row>
       </template>
     </v-data-table>
     <edit-submission-by-teacher-dialog

@@ -16,6 +16,25 @@
           }}
         </span>
       </v-card-title>
+      <v-sheet color="grey lighten-3">
+      <v-card-text class="text-left" v-if="editSubmission && editSubmission.id !== null && editSubmission.fieldsToImprove.length !== 0">
+        <v-icon>fas fa-exclamation-triangle</v-icon>
+        <p></p>
+        <div>
+          <span >The teacher suggested you to change:</span>
+          <p></p>
+          <ul>
+            <li v-for="field in editSubmission.fieldsToImprove" :key="field.number">
+              <span
+                      v-html="convertMarkDown(field, null)"
+                      v-bind:class="[field ? 'font-weight-bold' : '']"
+              />
+            </li>
+          </ul>
+          <br />
+        </div>
+      </v-card-text>
+      </v-sheet>
 
       <v-card-text class="text-left" v-if="editSubmission">
         <v-container grid-list-md fluid>
@@ -64,7 +83,6 @@
       <v-card-actions>
         <v-spacer/>
         <v-btn
-          color="blue darken-1"
           @click="$emit('dialog', false)"
           data-cy="cancelSubmissionButton">Cancel
         </v-btn>
@@ -83,6 +101,8 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Submission from '../../../models/management/Submission';
+import Image from '@/models/management/Image';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 
 @Component
 export default class EditSubmissionDialog extends Vue {
@@ -92,6 +112,7 @@ export default class EditSubmissionDialog extends Vue {
   editSubmission!: Submission;
 
   created() {
+    console.log(this.submission.fieldsToImprove);
    this.updateSubmission();
 
   }
@@ -99,6 +120,10 @@ export default class EditSubmissionDialog extends Vue {
   @Watch('submission', { immediate: true, deep: true })
   updateSubmission() {
     this.editSubmission = new Submission(this.submission);
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 
   async saveSubmission() {
@@ -111,13 +136,13 @@ export default class EditSubmissionDialog extends Vue {
       try {
         const result = await RemoteServices.reSubmitSubmission(this.editSubmission);
         this.$emit('save-submission', result);
-        confirm('Question "' + this.editSubmission.title + '" re-submitted successfully!');
+        alert('Question "' + this.editSubmission.title + '" re-submitted successfully!');
       } catch (error) {await this.$store.dispatch('error', error);}
     } else if (this.editSubmission) {
       try {
         const result = await RemoteServices.createSubmission(this.editSubmission);
         this.$emit('save-submission', result);
-        confirm('Question "' + this.editSubmission.title + '" submitted successfully!');
+        alert('Question "' + this.editSubmission.title + '" submitted successfully!');
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

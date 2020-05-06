@@ -91,7 +91,6 @@ export default class EditSubmissionDialog extends Vue {
 
   created() {
    this.updateSubmission();
-
   }
 
   @Watch('submission', { immediate: true, deep: true })
@@ -100,14 +99,8 @@ export default class EditSubmissionDialog extends Vue {
   }
 
   async saveSubmission() {
-    if (
-      this.editSubmission &&
-      (!this.editSubmission.title || !this.editSubmission.content)
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Question must have title and content'
-      );
+    if (this.editSubmission && (!this.editSubmission.title || !this.editSubmission.content)) {
+      await this.$store.dispatch('error','Question must have title and content');
       return;
     }
 
@@ -115,9 +108,7 @@ export default class EditSubmissionDialog extends Vue {
       try {
         const result = await RemoteServices.updateSubmission(this.editSubmission);
         this.$emit('save-submission', result);
-        confirm(
-          'Question "' + this.editSubmission.title + '" edited successfully!'
-        );
+        confirm('Question "' + this.editSubmission.title + '" edited successfully!');
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

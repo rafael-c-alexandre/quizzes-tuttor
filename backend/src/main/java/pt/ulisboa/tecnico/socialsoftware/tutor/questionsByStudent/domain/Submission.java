@@ -63,12 +63,19 @@ public class Submission {
     @JoinColumn(name = "user_id")
     private User user;
 
-
     private String justification;
 
     private boolean teacherDecision;
 
     private boolean madeAvailable;
+
+    private boolean changeTitle;
+
+    private boolean changeContent;
+
+    private boolean changeOptions;
+
+    private boolean changeCorrect;
 
     @Enumerated(EnumType.STRING)
     private Status submissionStatus = Status.ONHOLD;
@@ -96,6 +103,9 @@ public class Submission {
         setJustification("");
         setTeacherDecision(false);
         setMadeAvailable(false);
+
+        checkImproveFields(submissionDto);
+
     }
 
 
@@ -272,6 +282,39 @@ public class Submission {
         return getOptions().stream().filter(option -> option.getId().equals(id)).findAny().orElse(null);
     }
 
+
+    public boolean isChangeTitle() {
+        return changeTitle;
+    }
+
+    public void setChangeTitle(boolean changeTitle) {
+        this.changeTitle = changeTitle;
+    }
+
+    public boolean isChangeContent() {
+        return changeContent;
+    }
+
+    public void setChangeContent(boolean changeContent) {
+        this.changeContent = changeContent;
+    }
+
+    public boolean isChangeOptions() {
+        return changeOptions;
+    }
+
+    public void setChangeOptions(boolean changeOptions) {
+        this.changeOptions = changeOptions;
+    }
+
+    public boolean isChangeCorrect() {
+        return changeCorrect;
+    }
+
+    public void setChangeCorrect(boolean changeCorrect) {
+        this.changeCorrect = changeCorrect;
+    }
+
     public void update(SubmissionDto submissionDto) {
 
         setTitle(submissionDto.getTitle());
@@ -299,6 +342,14 @@ public class Submission {
 
         setMadeAvailable(true);
         return question;
+
+    }
+
+    public void checkImproveFields(SubmissionDto submissionDto) {
+        if (submissionDto.getFieldsToImprove().contains("title")) this.changeTitle = true;
+        if (submissionDto.getFieldsToImprove().contains("content")) this.changeContent = true;
+        if (submissionDto.getFieldsToImprove().contains("options")) this.changeOptions = true;
+        if (submissionDto.getFieldsToImprove().contains("correct option")) this.changeCorrect = true;
     }
 
 }

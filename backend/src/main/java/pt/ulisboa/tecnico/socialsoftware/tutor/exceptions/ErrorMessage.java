@@ -51,6 +51,7 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
     SUBMISSION_ALREADY_EVALUATED("Submission was previously evaluated"),
+
     SUBMISSION_CANNOT_BE_EDITED("Submission was not approved and cannot be edited"),
     SUBMISSION_CANNOT_BE_RESUBMITED("Submission is approved and cannot be re-submitted"),
     QUESTION_CANNOT_BE_AVAILABLE("Questions not approved cannot be made available"),

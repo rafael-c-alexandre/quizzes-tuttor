@@ -35,6 +35,7 @@ public class SubmissionDto implements Serializable{
     private Integer courseId;
     private boolean teacherDecision;
     private boolean madeAvailable;
+    private List<String> fieldsToImprove = new ArrayList<>();
 
     public SubmissionDto() {
 
@@ -59,6 +60,12 @@ public class SubmissionDto implements Serializable{
         this.courseId = submission.getCourse().getId();
         this.teacherDecision = submission.getTeacherDecision();
         this.madeAvailable = submission.isMadeAvailable();
+
+        if (submission.isChangeTitle()) fieldsToImprove.add("title");
+        if (submission.isChangeContent()) fieldsToImprove.add("content");
+        if (submission.isChangeOptions()) fieldsToImprove.add("options");
+        if (submission.isChangeCorrect()) fieldsToImprove.add("correct option");
+
     }
 
     public Integer getId() {
@@ -180,6 +187,14 @@ public class SubmissionDto implements Serializable{
 
     public void setMadeAvailable(boolean madeAvailable) {
         this.madeAvailable = madeAvailable;
+    }
+
+    public List<String> getFieldsToImprove() {
+        return fieldsToImprove;
+    }
+
+    public void setFieldsToImprove(List<String> fieldsToImprove) {
+        this.fieldsToImprove = fieldsToImprove;
     }
 
     @Override

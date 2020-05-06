@@ -20,6 +20,7 @@ export default class Submission {
   topics: Topic[] = [];
   topicNames: string[] = [];
   imageUrl: string = '';
+  fieldsToImprove: string[] = [];
 
   constructor(jsonObj?: Submission) {
     if (jsonObj) {
@@ -46,6 +47,9 @@ export default class Submission {
 
       for (let i = 0; i < this.topics.length; i++)
         this.topicNames[i] = ' ' + this.topics[i].name;
+
+      for (let i = 0; i < jsonObj.fieldsToImprove.length; i++)
+        this.fieldsToImprove[i] = jsonObj.fieldsToImprove[i];
 
       if (jsonObj.image != null) {
         this.image = new Image(jsonObj.image);
