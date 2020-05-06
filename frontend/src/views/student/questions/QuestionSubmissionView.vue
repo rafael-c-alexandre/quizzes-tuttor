@@ -74,11 +74,11 @@
               class="mr-2"
               v-on="on"
               @click="editSubmission(item)"
-              data-cy="editSubmission"
-              >edit</v-icon
+              data-cy="reSubmitSubmission"
+              >fas fa-redo</v-icon
             >
           </template>
-          <span>Edit Question</span>
+          <span>Re-Submit Question</span>
         </v-tooltip>
       </template>
     </v-data-table>
@@ -113,7 +113,8 @@ import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
     'edit-submission-dialog': EditSubmissionDialog,
-    'edit-submission-topics': EditSubmissionTopics
+    'edit-submission-topics': EditSubmissionTopics,
+
   }
 })
 export default class QuestionSubmissionView extends Vue {

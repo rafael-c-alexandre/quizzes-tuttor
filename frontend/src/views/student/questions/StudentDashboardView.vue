@@ -101,7 +101,6 @@ export default class DashboardView extends Vue {
       this.users = await RemoteServices.getPublicQuestionDashboardUsers();
       for (let u of this.users) this.names.push(u.name);
       this.stats = await RemoteServices.getStudentQuestionStats();
-      console.log(this.stats.percentageQuestionsRejected);
       this.names.sort();
     } catch (error) {
       await this.$store.dispatch('error', error);
