@@ -72,7 +72,7 @@ class CancelTournamentPerformanceTest extends Specification {
             topiclist.add(new TopicDto(topic))
 
             def tournamentDto = new TournamentDto()
-            tournamentDto.setTitle(TOURNAMENT_TITLE)
+            tournamentDto.setTitle(TOURNAMENT_TITLE + it.intValue())
             tournamentDto.setCreationDate(CREATION_DATE)
             tournamentDto.setAvailableDate(AVAILABLE_DATE)
             tournamentDto.setConclusionDate(CONCLUSION_DATE)

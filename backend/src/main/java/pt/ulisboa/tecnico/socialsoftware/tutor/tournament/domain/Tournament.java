@@ -67,7 +67,6 @@ public class Tournament {
 
     public Tournament(TournamentDto tournamentDto) {
 
-        this.id = tournamentDto.getId();
         this.availableDate = tournamentDto.getAvailableDateDate();
         this.conclusionDate = tournamentDto.getConclusionDateDate();
         this.creationDate = tournamentDto.getCreationDateDate();
@@ -142,8 +141,17 @@ public class Tournament {
     }
 
     public void setTournamentCreator(User tournamentCreator) {
-        this.tournamentCreator = tournamentCreator;
         tournamentCreator.addCreatedTournaments(this);
+        this.tournamentCreator = tournamentCreator;
+    }
+
+    public void setCourseExecution(CourseExecution courseExecution) {
+        courseExecution.addTournament(this);
+        this.courseExecution = courseExecution;
+    }
+
+    public void setAssociatedQuiz(Quiz associatedQuiz) {
+        this.associatedQuiz = associatedQuiz;
     }
 
     public Set<Question> getQuestions() {
@@ -156,7 +164,6 @@ public class Tournament {
 
     public void addUser(User user) {
         this.signedUsers.add(user);
-        user.addSignedTournament(this);
     }
 
     public void addQuestion(Question question) {
@@ -213,16 +220,8 @@ public class Tournament {
         return courseExecution;
     }
 
-    public void setCourseExecution(CourseExecution courseExecution) {
-        this.courseExecution = courseExecution;
-    }
-
     public Quiz getAssociatedQuiz() {
         return associatedQuiz;
-    }
-
-    public void setAssociatedQuiz(Quiz associatedQuiz) {
-        this.associatedQuiz = associatedQuiz;
     }
 
     public boolean openForSignings() {
