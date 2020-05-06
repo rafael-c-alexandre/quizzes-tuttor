@@ -1,19 +1,20 @@
 export default class UserTournamentStats {
-  numberOfSignedTournaments!: number;
-  numberOfCreatedTournaments!: number;
-  numberOfAtendedTournaments!: number;
-  averageScore!: number;
-  numberOfTotalAnswers!: number;
-  numberOfUniqueCorrectAnswers!: number;
+  totalSignedTournaments!: number;
+  totalCreatedTournaments!: number;
+  attendedTournaments!: number;
+  uniqueCorrectAnswersInTournaments!: number;
+  answersInTournaments!: number;
 
   constructor(jsonObj?: UserTournamentStats) {
     if (jsonObj) {
-      this.numberOfSignedTournaments = jsonObj.numberOfSignedTournaments;
-      this.numberOfCreatedTournaments = jsonObj.numberOfCreatedTournaments;
-      this.numberOfAtendedTournaments = jsonObj.numberOfAtendedTournaments;
-      this.averageScore = jsonObj.averageScore;
-      this.numberOfTotalAnswers = jsonObj.numberOfTotalAnswers;
-      this.numberOfUniqueCorrectAnswers = jsonObj.numberOfUniqueCorrectAnswers;
+      console.log(jsonObj);
+      this.totalSignedTournaments = jsonObj.totalSignedTournaments;
+      this.totalCreatedTournaments = jsonObj.totalCreatedTournaments;
+      this.attendedTournaments = jsonObj.attendedTournaments;
+      this.uniqueCorrectAnswersInTournaments =
+        jsonObj.uniqueCorrectAnswersInTournaments;
+      this.answersInTournaments = jsonObj.answersInTournaments;
+      console.log(this);
     }
   }
 }

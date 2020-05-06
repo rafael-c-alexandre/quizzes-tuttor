@@ -1,62 +1,73 @@
 <template>
   <div class="container">
-    <v-select :items="names" v-model="user" dense @change="changeUser(user)">
+    <v-select
+      filled
+      background-color="#FFFFFF"
+      label="Search student"
+      :items="names"
+      v-model="selected"
+      dense
+      @change="changeUser()"
+    >
     </v-select>
     <h2>Statistics</h2>
     <div v-if="stats != null" class="stats-container">
       <div class="items">
         <div class="icon-wrapper" ref="totalQuizzes">
-          <animated-number :number="stats.totalQuizzes" />
+          <animated-number :number="stats.totalSignedTournaments" />
         </div>
         <div class="project-name">
-          <p>Total Quizzes Solved</p>
+          <p>Total Signed Tournaments</p>
         </div>
       </div>
       <div class="items">
         <div class="icon-wrapper" ref="totalAnswers">
-          <animated-number :number="stats.totalAnswers" />
+          <animated-number :number="stats.totalCreatedTournaments" />
         </div>
         <div class="project-name">
-          <p>Total Questions Solved</p>
+          <p>Total Created Tournaments</p>
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="totalUniqueQuestions">
-          <animated-number :number="stats.totalUniqueQuestions" />
+        <div class="icon-wrapper" ref="totalAnswers">
+          <animated-number :number="stats.attendedTournaments" />
         </div>
         <div class="project-name">
-          <p>Unique Questions Solved</p>
-        </div>
-      </div>
-      <div class="items">
-        <div class="icon-wrapper" ref="correctAnswers">
-          <animated-number :number="stats.correctAnswers">%</animated-number>
-        </div>
-        <div class="project-name">
-          <p>Total Correct Answers</p>
-        </div>
-      </div>
-      <div class="items">
-        <div class="icon-wrapper" ref="improvedCorrectAnswers">
-          <animated-number :number="stats.improvedCorrectAnswers"
-            >%</animated-number
-          >
-        </div>
-        <div class="project-name">
-          <p>Improved Correct Questions</p>
+          <p>Total Attended Tournaments</p>
         </div>
       </div>
       <div class="items">
         <div class="icon-wrapper" ref="percentageOfSeenQuestions">
           <animated-number
             :number="
-              (stats.totalUniqueQuestions * 100) / stats.totalAvailableQuestions
+              (stats.uniqueCorrectAnswersInTournaments * 100) /
+                stats.answersInTournaments
             "
             >%</animated-number
           >
         </div>
         <div class="project-name">
-          <p>Percentage of questions seen</p>
+          <p>Average Score</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="correctAnswers">
+          <animated-number
+            :number="stats.uniqueCorrectAnswersInTournaments"
+          ></animated-number>
+        </div>
+        <div class="project-name">
+          <p>Total Unique Correct Answers</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="improvedCorrectAnswers">
+          <animated-number
+            :number="stats.answersInTournaments"
+          ></animated-number>
+        </div>
+        <div class="project-name">
+          <p>Total Answers</p>
         </div>
       </div>
     </div>
@@ -65,32 +76,53 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import StudentStats from '@/models/statement/StudentStats';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
 import UserStats from '@/models/user/UserStats';
+import UserTournamentStats from '@/models/statement/UserTournamentStats';
 @Component({
   components: { AnimatedNumber }
 })
 export default class DashboardView extends Vue {
-  stats: StudentStats | null = null;
+  stats: UserTournamentStats | null = null;
   users: UserStats[] = [];
+  selected: string | null = null;
   names: string[] = [];
   user: string | null = null;
 
   async created() {
     await this.$store.dispatch('loading');
     try {
+      this.stats = null;
       this.users = await RemoteServices.getPublicDashboardUsers();
       for (let u of this.users) this.names.push(u.name);
-      this.stats = await RemoteServices.getUserStats();
+      this.stats = await RemoteServices.getTournamentStats();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
-  async changeUser(name: string) {}
+  async changeUser() {
+    await this.$store.dispatch('loading');
+    try {
+      for (let i = 0; i < this.users.length; i++) {
+        if (this.users[i].name == this.selected) {
+          await this.cleanStats();
+          this.stats = await RemoteServices.getUserTournamentStats(
+            this.users[i].id
+          );
+        }
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async cleanStats() {
+    this.stats = null;
+  }
 }
 </script>
 

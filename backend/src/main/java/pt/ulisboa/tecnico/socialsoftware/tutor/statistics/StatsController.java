@@ -31,6 +31,27 @@ public class StatsController {
         return statsService.getQuizStats(user.getId(), executionId);
     }
 
+    @GetMapping("/executions/{executionId}/stats/tournament")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public TournamentStatsDto getTournamentStats(Principal principal, @PathVariable int executionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return statsService.getTournamentStats(user.getId(), executionId);
+    }
+
+    @GetMapping("/executions/{executionId}/stats/tournament/{userId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public TournamentStatsDto getTournamentStats(@PathVariable int executionId,@PathVariable int userId) {
+
+        return statsService.getTournamentStats(userId, executionId);
+    }
+
+
+
     //2 diferentes
     //1 vai ter como param um principal e um userid + execution
     //1 vai ter como param um principal só + execution

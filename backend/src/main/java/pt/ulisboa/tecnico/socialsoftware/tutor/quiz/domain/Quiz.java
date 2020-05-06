@@ -82,8 +82,6 @@ public class Quiz implements DomainEntity {
     @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     private Tournament associatedTournament;
 
-    private boolean isTournament = false;
-
     public Quiz() {}
 
     public Quiz(QuizDto quizDto) {
@@ -115,16 +113,12 @@ public class Quiz implements DomainEntity {
     public void accept(Visitor visitor) {
         visitor.visitQuiz(this);
     }
-    public boolean isTournament() {
-        return isTournament;
-    }
 
     public Tournament getAssociatedTournament() {
         return associatedTournament;
     }
 
     public void setAssociatedTournament(Tournament associatedTournament) {
-        isTournament = true;
         this.associatedTournament = associatedTournament;
     }
 

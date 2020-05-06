@@ -17,6 +17,7 @@ import Submission from '@/models/management/Submission';
 
 import Tournament from '@/models/management/Tournament';
 import UserStats from '@/models/user/UserStats';
+import UserTournamentStats from '@/models/statement/UserTournamentStats';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -625,10 +626,37 @@ export default class RemoteServices {
     return httpClient
       .get('/users/public')
       .then(response => {
-        console.log(response);
         return response.data.map((user: any) => {
           return new UserStats(user);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getUserTournamentStats(
+    userId: number
+  ): Promise<UserTournamentStats> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats/tournament/${userId}`
+      )
+      .then(response => {
+        return new UserTournamentStats(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getTournamentStats(): Promise<UserTournamentStats> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats/tournament/`
+      )
+      .then(response => {
+        return new UserTournamentStats(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
