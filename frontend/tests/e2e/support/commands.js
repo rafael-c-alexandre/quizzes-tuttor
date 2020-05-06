@@ -154,13 +154,10 @@ Cypress.Commands.add('editSubmissionByTeacher', (oldTitle,newTitle, content, opt
         .should('have.length', 9)
         .find('[data-cy="editSubmissionTeacher"]')
         .click()
-    /*let optionFields = cy.get('[data-cy="options"]').first().clear()
+
+    let optionFields = cy.get('[data-cy="editOptions"]').first().type(options[0] , {force: true})
     for (let i=1; i < options.length ; i++) {
-        optionFields.next().clear()
-    }*/
-    let optionFields = cy.get('[data-cy="options"]').first().type(options[0])
-    for (let i=1; i < options.length ; i++) {
-        optionFields.next().type(options[i])
+        optionFields.next().type(options[i] , {force: true})
     }
     if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
     if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
@@ -215,7 +212,7 @@ Cypress.Commands.add('showSubmission', (title) => {
 
 })
 
-Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) => {
+Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification, sugestions) => {
 
     cy.contains(title)
         .parent()
@@ -225,7 +222,12 @@ Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) =>
         .find('[data-cy="evaluateSubmissionButton"]')
         .click()
 
-    if (isApproved) cy.get('[data-cy="status"]').check( {force:true})
+    if (isApproved) cy.get('[data-cy="approve"]').click()
+    if (!isApproved) cy.get('[data-cy="reject"]').click()
+    if(sugestions[0]) cy.get('[data-cy="sugestionTitle"]').check({force: true})
+    if(sugestions[1]) cy.get('[data-cy="sugestionContent"]').check({force: true})
+    if(sugestions[2]) cy.get('[data-cy="sugestionOptions"]').check({force: true})
+    if(sugestions[3]) cy.get('[data-cy="sugestionCorrectOption"]').check({force: true})
     if (justification !== '') cy.get('[data-cy="justification"]').type(justification)
     cy.get('[data-cy="saveEvaluationButton"]').click()
 })

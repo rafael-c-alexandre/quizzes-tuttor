@@ -44,7 +44,7 @@
               <v-row>
                   <v-subheader> *Approve? </v-subheader>
 
-                  <v-btn v-if='hasDecided && hasApproved' color="blue darken-1"  @click="approve" data-cy="approve">
+                  <v-btn v-if='hasDecided && hasApproved' color="blue darken-1"  @click="approve" data-cy="approve1">
                       Yes
                   </v-btn>
                   <v-btn v-if='!hasApproved' @click="approve" data-cy="approve">
@@ -52,7 +52,7 @@
                   </v-btn>
 
 
-                  <v-btn v-if='hasDecided && !hasApproved' color="blue darken-1" @click="reject" data-cy="reject">
+                  <v-btn v-if='hasDecided && !hasApproved' color="blue darken-1" @click="reject" data-cy="reject1">
                     No
                   </v-btn>
 
@@ -80,16 +80,16 @@
           <v-col cols="3"  >Suggestions to change:</v-col>
       <v-row  no-gutters>
         <v-col >
-          <v-checkbox v-model="titleInput" label="Title" value="yes"></v-checkbox>
+          <v-checkbox v-model="titleInput" label="Title" value="yes" data-cy="sugestionTitle"></v-checkbox>
         </v-col>
         <v-col >
-          <v-checkbox v-model="contentInput" label="Content" value="yes"></v-checkbox>
+          <v-checkbox v-model="contentInput" label="Content" value="yes" data-cy="sugestionContent"></v-checkbox>
         </v-col >
         <v-col >
-          <v-checkbox v-model="optionsInput" label="Options" value="yes"></v-checkbox>
+          <v-checkbox v-model="optionsInput" label="Options" value="yes" data-cy="sugestionOptions"></v-checkbox>
         </v-col >
         <v-col >
-          <v-checkbox v-model="correctInput" label="Correct Option" value="yes"></v-checkbox>
+          <v-checkbox v-model="correctInput" label="Correct Option" value="yes" data-cy="sugestionCorrectOption"></v-checkbox>
         </v-col >
       </v-row>
         </v-container>

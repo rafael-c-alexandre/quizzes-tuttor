@@ -41,7 +41,7 @@
             md12
             v-for="index in editSubmission.options.length"
             :key="index"
-            data-cy="options"
+            data-cy="editOptions"
           >
             <v-switch
               v-model="editSubmission.options[index - 1].correct"
