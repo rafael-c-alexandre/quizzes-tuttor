@@ -10,9 +10,7 @@
       <v-card-title>
         <span class="headline">
           {{
-            editSubmission && editSubmission.id === null
-              ? 'New Question'
-              : 'Re-submit Question'
+             'Edit Question'
           }}
         </span>
       </v-card-title>
@@ -62,18 +60,18 @@
       </v-card-text>
 
       <v-card-actions>
-        <v-spacer/>
+        <v-spacer />
         <v-btn
           color="blue darken-1"
           @click="$emit('dialog', false)"
-          data-cy="cancelSubmissionButton">Cancel
-        </v-btn>
+          data-cy="cancelSubmissionButton"
+          >Cancel</v-btn>
         <v-btn
           color="blue darken-1"
           @click="saveSubmission"
           data-cy="saveSubmissionButton"
-          >Save
-        </v-btn>
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -102,22 +100,24 @@ export default class EditSubmissionDialog extends Vue {
   }
 
   async saveSubmission() {
-    if (this.editSubmission && (!this.editSubmission.title || !this.editSubmission.content)) {
-      await this.$store.dispatch('error','Question must have title and content');
+    if (
+      this.editSubmission &&
+      (!this.editSubmission.title || !this.editSubmission.content)
+    ) {
+      await this.$store.dispatch(
+        'error',
+        'Question must have title and content'
+      );
       return;
     }
 
     if (this.editSubmission && this.editSubmission.id != null) {
       try {
-        const result = await RemoteServices.reSubmitSubmission(this.editSubmission);
+        const result = await RemoteServices.updateSubmission(this.editSubmission);
         this.$emit('save-submission', result);
-        confirm('Question "' + this.editSubmission.title + '" re-submitted successfully!');
-      } catch (error) {await this.$store.dispatch('error', error);}
-    } else if (this.editSubmission) {
-      try {
-        const result = await RemoteServices.createSubmission(this.editSubmission);
-        this.$emit('save-submission', result);
-        confirm('Question "' + this.editSubmission.title + '" submitted successfully!');
+        confirm(
+          'Question "' + this.editSubmission.title + '" edited successfully!'
+        );
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

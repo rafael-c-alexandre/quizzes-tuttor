@@ -140,6 +140,29 @@ Cypress.Commands.add('submitQuestion', (title, content, options, checkCorrect) =
     cy.get('[data-cy="saveSubmissionButton"]').click()
 })
 
+Cypress.Commands.add('editSubmissionByTeacher', (oldTitle,newTitle, content, options) => {
+
+    cy.contains(oldTitle)
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 9)
+        .find('[data-cy="editSubmissionTeacher"]')
+        .click()
+    /*let optionFields = cy.get('[data-cy="options"]').first().clear()
+    for (let i=1; i < options.length ; i++) {
+        optionFields.next().clear()
+    }*/
+    let optionFields = cy.get('[data-cy="options"]').first().type(options[0])
+    for (let i=1; i < options.length ; i++) {
+        optionFields.next().type(options[i])
+    }
+    if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
+    if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
+
+    cy.get('[data-cy="saveSubmissionButton"]').click()
+})
+
 Cypress.Commands.add('editSubmission', (oldTitle,newTitle, content) => {
 
     cy.contains(oldTitle)
@@ -153,6 +176,22 @@ Cypress.Commands.add('editSubmission', (oldTitle,newTitle, content) => {
     if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
     if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
 
+
+    cy.get('[data-cy="saveSubmissionButton"]').click()
+})
+
+Cypress.Commands.add('reSubmitSubmission', (oldTitle,newTitle, content) => {
+
+    cy.contains(oldTitle)
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 8)
+        .find('[data-cy="reSubmitSubmission"]')
+        .click()
+
+    if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
+    if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
 
     cy.get('[data-cy="saveSubmissionButton"]').click()
 })
@@ -185,6 +224,8 @@ Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) =>
     if (justification !== '') cy.get('[data-cy="justification"]').type(justification)
     cy.get('[data-cy="saveEvaluationButton"]').click()
 })
+
+
 
 Cypress.Commands.add('makeQuestionAvailable', (title,makeAvailable) => {
 
