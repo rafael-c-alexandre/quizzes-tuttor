@@ -85,9 +85,9 @@
             </v-tooltip>
       </template>
     </v-data-table>
-    <edit-submission-dialog
+    <edit-submission-by-teacher-dialog
       v-if="currentSubmission"
-      v-model="editSubmissionDialog"
+      v-model="editSubmissionByTeacherDialog"
       :submission="currentSubmission"
       v-on:save-submission="onSaveSubmission"
     />
@@ -122,7 +122,7 @@ import Image from '@/models/management/Image';
 import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
 import EvaluateSubmissionDialog from '@/views/teacher/studentQuestions/EvaluateSubmissionDialog.vue';
 import MakeQuestionAvailableDialog from '@/views/teacher/studentQuestions/MakeQuestionAvailableDialog.vue';
-import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog.vue';
+import EditSubmissionByTeacherDialog from '@/views/teacher/studentQuestions/EditSubmissionByTeacherDialog.vue';
 
 
 @Component({
@@ -130,7 +130,7 @@ import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog
     'show-submission-dialog': ShowSubmissionDialog,
     'make-question-available-dialog': MakeQuestionAvailableDialog,
     'evaluate-submission-dialog': EvaluateSubmissionDialog,
-    'edit-submission-dialog': EditSubmissionDialog
+    'edit-submission-by-teacher-dialog': EditSubmissionByTeacherDialog
   }
 })
 export default class StudentQuestionsView extends Vue {
@@ -140,7 +140,7 @@ export default class StudentQuestionsView extends Vue {
   search: string = '';
   submissionDialog: boolean = false;
   evaluateSubmissionDialog: boolean = false;
-  editSubmissionDialog: boolean = false;
+  editSubmissionByTeacherDialog: boolean = false;
   makeQuestionAvailableDialog: boolean = false;
 
   headers: object = [
@@ -268,7 +268,7 @@ export default class StudentQuestionsView extends Vue {
 
   editSubmission(submission: Submission) {
     this.currentSubmission = submission;
-    this.editSubmissionDialog = true;
+    this.editSubmissionByTeacherDialog = true;
   }
   async onExitQuestionAvailableDialog() {
     this.currentSubmission = null;

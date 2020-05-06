@@ -728,7 +728,16 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-
+  static reSubmitSubmission(submission: Submission): Promise<Submission> {
+    return httpClient
+        .put(`/submissions/rejected/${submission.id}`, submission)
+        .then(response => {
+          return new Submission(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+  }
   static makeSubmissionAvailable(submission: Submission): Promise<Question> {
     return httpClient
       .put(`/courses/${Store.getters.getCurrentCourse.courseId}/submissions/${submission.id}`, submission)

@@ -179,6 +179,22 @@ Cypress.Commands.add('editSubmission', (oldTitle,newTitle, content) => {
     cy.get('[data-cy="saveSubmissionButton"]').click()
 })
 
+Cypress.Commands.add('reSubmitSubmission', (oldTitle,newTitle, content) => {
+
+    cy.contains(oldTitle)
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 8)
+        .find('[data-cy="reSubmitSubmission"]')
+        .click()
+
+    if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
+    if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
+
+    cy.get('[data-cy="saveSubmissionButton"]').click()
+})
+
 
 
 Cypress.Commands.add('showSubmission', (title) => {
@@ -207,6 +223,8 @@ Cypress.Commands.add('evaluateSubmission', (title, isApproved, justification) =>
     if (justification !== '') cy.get('[data-cy="justification"]').type(justification)
     cy.get('[data-cy="saveEvaluationButton"]').click()
 })
+
+
 
 Cypress.Commands.add('makeQuestionAvailable', (title,makeAvailable) => {
 
