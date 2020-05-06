@@ -62,6 +62,7 @@ class DashboardStatisticsTest extends Specification{
     def user1, user2
     def tournament
     def courseExecutionId
+    def topicList
     def setup(){
         user1 = new User()
         user2 = new User()
@@ -87,21 +88,19 @@ class DashboardStatisticsTest extends Specification{
         topic.setName("TOPICO")
         topicRepository.save(topic)
 
-        def topicList = new ArrayList<TopicDto>()
+        topicList = new ArrayList<TopicDto>()
         topicList.add(new TopicDto((topic)))
 
 
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
-                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
-                TNMT_ID, USER_ID, topicList)
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE, USER_ID, topicList)
 
         tournament = tournamentService.createTournament(tournamentDto, user2.getId(), courseExecutionId)
     }
 
-    def "testar calculo de  torneios signed"(){
-        when: "an enrollment by user 1"
+    def "test calculus of signed tournaments total"(){
+        when: "an enrollment by user 1 in created tournament"
 
-        System.out.println(tournament.getId())
         tournamentService.enrollInTournament(1, user1.getId())
 
         then: "1 signed tournaments must be equal to the number retrieved"
@@ -109,15 +108,30 @@ class DashboardStatisticsTest extends Specification{
         tournamentStatsDto.getSignedTournaments() == 1
     }
 
-    private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate,
-                                    Integer id, Integer creator, List<TopicDto> topicList) {
+    def "test calculus of created tournaments total"(){
+        when: "an enrollment by user 1 in created tournament"
+        def tournamentDto1 = getTournamentDto("Tournament1",
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE, 1, topicList)
+        def tournamentDto2 = getTournamentDto("Tournament2",
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE, 1, topicList)
+
+        tournamentService.createTournament(tournamentDto1, user1.getId(), courseExecutionId)
+        tournamentService.createTournament(tournamentDto2, user1.getId(), courseExecutionId)
+
+        then: "2 created tournaments by user1 and 1 by user2"
+        def tournamentStatsDto1 = statsService.getTournamentStats(user1.getId(), courseExecutionId)
+        def tournamentStatsDto2 = statsService.getTournamentStats(user2.getId(), courseExecutionId)
+        tournamentStatsDto1.getCreatedTournaments() == 2
+        tournamentStatsDto2.getCreatedTournaments() == 1
+    }
+
+    private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate, Integer creator, List<TopicDto> topicList) {
 
         TournamentDto tournamentDto = new TournamentDto()
         tournamentDto.setTitle(title)
         tournamentDto.setAvailableDate(availableDate)
         tournamentDto.setConclusionDate(conclusionDate)
         tournamentDto.setCreationDate(creationDate)
-        tournamentDto.setId(id)
         tournamentDto.setTournamentCreator(creator)
         tournamentDto.setTopics(topicList)
 
