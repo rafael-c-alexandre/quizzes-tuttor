@@ -43,9 +43,13 @@
             <v-flex xs24 sm12 md8>
               <v-row>
                 <v-col cols="6">
-                  <v-subheader> *Approve? </v-subheader>
+                  <v-subheader> * Approve? </v-subheader>
                 </v-col>
                 <v-col cols="6">
+                  <v-btn color="blue darken-1" @click="$emit('dialog', false)" data-cy="cancelEvaluateButton">
+                    Cancel
+                  </v-btn>
+<!--
                   <v-switch
                     class="ma-4"
                     hint="Pick your decision here"
@@ -55,6 +59,8 @@
                     color="success"
                     single-line
                   />
+-->
+
                 </v-col>
               </v-row>
             </v-flex>
