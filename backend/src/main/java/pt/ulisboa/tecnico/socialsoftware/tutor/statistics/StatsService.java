@@ -109,6 +109,7 @@ public class StatsService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StudentQuestionStatsDto getStudentQuestionsStats(int userId) {
 
+
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         StudentQuestionStatsDto statsDto = new StudentQuestionStatsDto();

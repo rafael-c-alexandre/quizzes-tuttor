@@ -42,26 +42,23 @@
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
               <v-row>
-                <v-col cols="6">
-                  <v-subheader> * Approve? </v-subheader>
-                </v-col>
-                <v-col cols="6">
-                  <v-btn color="blue darken-1" @click="$emit('dialog', false)" data-cy="cancelEvaluateButton">
-                    Cancel
-                  </v-btn>
-<!--
-                  <v-switch
-                    class="ma-4"
-                    hint="Pick your decision here"
-                    v-model="evaluateSubmission.teacherDecision"
-                    data-cy="status"
-                    persistent-hint
-                    color="success"
-                    single-line
-                  />
--->
+                  <v-subheader> *Approve? </v-subheader>
 
-                </v-col>
+                  <v-btn v-if='hasDecided && hasApproved' color="blue darken-1"  @click="approve" data-cy="approve">
+                      Yes
+                  </v-btn>
+                  <v-btn v-if='!hasApproved' @click="approve" data-cy="approve">
+                    Yes
+                  </v-btn>
+
+
+                  <v-btn v-if='hasDecided && !hasApproved' color="blue darken-1" @click="reject" data-cy="reject">
+                    No
+                  </v-btn>
+
+                  <v-btn v-if='!hasDecided || hasApproved' @click="reject" data-cy="reject">
+                    No
+                  </v-btn>
               </v-row>
             </v-flex>
             <v-flex xs24 sm12 md12>
@@ -111,19 +108,33 @@ export default class submissionDialog extends Vue {
   @Prop({ type: Submission, required: true }) readonly submission!: Submission;
 
   evaluateSubmission!: Submission;
-
+  hasDecided : boolean = false;
+  hasApproved: boolean = false;
   created() {
     this.evaluateSubmission = new Submission(this.submission);
   }
+  async approve(){
+    this.hasDecided = true;
+    this.hasApproved=true;
+    this.evaluateSubmission.status = 'APPROVED';
+    this.evaluateSubmission.teacherDecision = true;
+  }
 
+  async reject(){
+    this.hasDecided = true;
+    this.hasApproved=false;
+    this.evaluateSubmission.status = 'REJECTED';
+    this.evaluateSubmission.teacherDecision = false;
+  }
   async saveSubmission() {
 
-    if (this.evaluateSubmission.teacherDecision == true) {
-    } else if (this.evaluateSubmission.status == 'Reject') {
-      this.evaluateSubmission.status = 'REJECTED';
+    if(this.evaluateSubmission && !this.hasDecided) {
+      await this.$store.dispatch('error', 'Error: Evaluation must have a decision');
+      return;
     }
+
     if (this.evaluateSubmission && !this.evaluateSubmission.justification) {
-      await this.$store.dispatch('error', 'Evaluation must have justification');
+      await this.$store.dispatch('error', 'Error: Evaluation must have justification');
       return;
     }
 

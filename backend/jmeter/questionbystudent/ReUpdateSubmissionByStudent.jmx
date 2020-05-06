@@ -539,7 +539,7 @@
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert question title" enabled="true">
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert submission title" enabled="true">
               <stringProp name="JSON_PATH">$.title</stringProp>
               <stringProp name="EXPECTED_VALUE">Demo_Question2</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
@@ -548,7 +548,7 @@
               <boolProp name="ISREGEX">false</boolProp>
             </JSONPathAssertion>
             <hashTree/>
-            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert question content" enabled="true">
+            <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert submission content" enabled="true">
               <stringProp name="JSON_PATH">$.content</stringProp>
               <stringProp name="EXPECTED_VALUE">Demo_Content2</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>

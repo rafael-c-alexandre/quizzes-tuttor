@@ -78,8 +78,7 @@
               v-on="on"
               @click="makeQuestionAvailable(item)"
               data-cy="makeQuestionAvailableButton"
-              >fas fa-arrow-right</v-icon
-            >
+              >fas fa-external-link-square-alt</v-icon>
           </template>
           <span>Make question available</span>
             </v-tooltip>
