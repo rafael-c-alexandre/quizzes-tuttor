@@ -31,7 +31,7 @@ public class TournamentStatsDto implements Serializable {
         this.attendededTournaments = tournamentCount;
     }
 
-    public float getAverageScore() { return attendededTournaments; }
+    public float getAverageScore() { return averageScore; }
     public void setAverageScore(float averageScore) {
         this.averageScore = averageScore;
     }

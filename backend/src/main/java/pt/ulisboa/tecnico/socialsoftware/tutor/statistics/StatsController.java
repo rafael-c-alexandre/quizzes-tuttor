@@ -31,4 +31,8 @@ public class StatsController {
         return statsService.getQuizStats(user.getId(), executionId);
     }
 
+    //2 diferentes
+    //1 vai ter como param um principal e um userid + execution
+    //1 vai ter como param um principal só + execution
+
 }
