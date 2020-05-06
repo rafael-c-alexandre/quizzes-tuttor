@@ -144,7 +144,7 @@ class StudentQuestionStatsSpockTest extends Specification{
 
         then:
         result.getTotalQuestionsSubmitted() == 3
-        result.getTotalQuestionOnHold() == 1
+        result.getTotalQuestionsOnHold() == 1
         result.getTotalQuestionsApproved() == 1
         result.getTotalQuestionsAvailable() == 0
 

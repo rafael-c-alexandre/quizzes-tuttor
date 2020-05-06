@@ -803,7 +803,6 @@ export default class RemoteServices {
     return httpClient
       .get('/users/public')
       .then(response => {
-        console.log(response);
         return response.data.map((user: any) => {
           return new StatsUser(user);
         });

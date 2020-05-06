@@ -46,7 +46,7 @@ public class StatsController {
         return statsService.getStudentQuestionsStats(user.getId());
     }
 
-    @GetMapping("/courses/{courseId}/stats/submissions")
+    @GetMapping("/courses/{courseId}/stats/users/{userId}/submissions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public StudentQuestionStatsDto getOtherStudentQuestionsStats(Principal principal, @PathVariable int courseId,@PathVariable Integer userId) {
         User user = (User) ((Authentication) principal).getPrincipal();

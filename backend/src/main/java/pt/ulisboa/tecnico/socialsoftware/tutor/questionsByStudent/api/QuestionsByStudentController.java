@@ -117,7 +117,7 @@ public class QuestionsByStudentController {
     }
 
     @PutMapping("/submissions/{submissionId}/topics")
-    @PreAuthorize("hasRole('ROLE_STUDENT')  and hasPermission(#submissionId, 'SUBMISSION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')  and hasPermission(#submissionId, 'SUBMISSION.ACCESS') or hasRole('ROLE_TEACHER')")
     public ResponseEntity updateSubmissionTopics(Principal principal, @PathVariable Integer submissionId, @RequestBody TopicDto[] topics) {
 
         User user = (User)((Authentication) principal).getPrincipal();

@@ -123,6 +123,11 @@ Cypress.Commands.add('accessStudentQuestionsPage', () => {
     cy.contains('Manage').click()
 })
 
+Cypress.Commands.add('accessStudentDashboardPage', () => {
+    cy.contains('Questions').click()
+    cy.contains('Dashboard').click()
+})
+
 Cypress.Commands.add('accessTeacherSubmissionsPage', () => {
     cy.contains('Student Questions').click()
 })
@@ -213,6 +218,15 @@ Cypress.Commands.add('assertQuestionOnAvailable', (title) => {
     cy.get('[data-cy="closeQuestionButton"]').click()
 
 })
+
+Cypress.Commands.add('checkDashboardInfo', () => {
+
+    cy.get('[data-cy="questionsSubmitted"]')
+    cy.contains('5');
+
+
+})
+
 
 
 
