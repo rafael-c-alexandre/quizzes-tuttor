@@ -4,6 +4,7 @@ export default class StatsUser {
   username!: string;
   role!: string;
   coursesNumber: number = 0;
+  privacyStatus!: boolean;
 
   constructor(jsonObj?: StatsUser) {
     if (jsonObj) {
@@ -11,6 +12,7 @@ export default class StatsUser {
       this.name = jsonObj.name;
       this.username = jsonObj.username;
       this.role = jsonObj.role;
+      this.privacyStatus = jsonObj.privacyStatus;
     }
   }
 }

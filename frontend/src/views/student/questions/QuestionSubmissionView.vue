@@ -105,15 +105,15 @@ import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
 import Image from '@/models/management/Image';
 
-import EditSubmissionTopics from '@/views/student/questions/EditSubmissionTopics.vue';
-import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
+import EditSubmissionTopics from '@/views/submission/EditSubmissionTopics.vue';
+import ShowSubmissionDialog from '@/views/submission/ShowSubmissionDialog.vue';
 import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog.vue';
 
 @Component({
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
     'edit-submission-dialog': EditSubmissionDialog,
-    'edit-submission-topics': EditSubmissionTopics,
+    'edit-submission-topics': EditSubmissionTopics
 
   }
 })

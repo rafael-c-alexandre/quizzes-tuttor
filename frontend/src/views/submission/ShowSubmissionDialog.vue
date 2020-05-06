@@ -24,8 +24,8 @@
 
 <script lang="ts">
   import { Component, Vue, Prop, Model } from 'vue-property-decorator';
-import Submission from '../../../models/management/Submission';
-import ShowSubmission from '@/views/student/questions/ShowSubmission.vue';
+import Submission from '../../models/management/Submission';
+import ShowSubmission from '@/views/submission/ShowSubmission.vue';
 
 @Component({
   components: {

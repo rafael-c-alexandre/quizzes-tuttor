@@ -855,5 +855,15 @@ export default class RemoteServices {
     });
   }
 
+  static async getUserPrivacyStatus(): Promise<StatsUser> {
+    return httpClient.get('public')
+      .then(response => {
+        return new StatsUser(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
 
 }

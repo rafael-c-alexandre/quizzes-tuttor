@@ -72,6 +72,25 @@
           </v-layout>
         </v-container>
       </v-card-text>
+
+        <v-container >
+          <v-col cols="3"  >Suggestions to change:</v-col>
+      <v-row  no-gutters>
+        <v-col >
+          <v-checkbox v-model="titleInput" label="Title" value="yes"></v-checkbox>
+        </v-col>
+        <v-col >
+          <v-checkbox v-model="contentInput" label="Content" value="yes"></v-checkbox>
+        </v-col >
+        <v-col >
+          <v-checkbox v-model="optionsInput" label="Options" value="yes"></v-checkbox>
+        </v-col >
+        <v-col >
+          <v-checkbox v-model="correctInput" label="Correct Option" value="yes"></v-checkbox>
+        </v-col >
+      </v-row>
+        </v-container>
+
       <v-card-actions>
         <v-spacer />
         <v-btn
@@ -105,12 +124,26 @@ export default class submissionDialog extends Vue {
   @Prop({ type: Submission, required: true }) readonly submission!: Submission;
 
   evaluateSubmission!: Submission;
+  titleInput: string | null = null;
+  contentInput: string | null = null;
+  optionsInput: string | null = null;
+  correctInput: string | null = null;
+
+  changeTitle: boolean = false;
+  changeContent: boolean = false;
+  changeOptions: boolean = false;
+  changeCorrect: boolean = false;
 
   created() {
     this.evaluateSubmission = new Submission(this.submission);
   }
 
+
   async saveSubmission() {
+
+    this.getSuggestions();
+
+    console.log(this.changeCorrect);
 
     if (this.evaluateSubmission.teacherDecision == true) {
     } else if (this.evaluateSubmission.status == 'Reject') {
@@ -136,6 +169,15 @@ export default class submissionDialog extends Vue {
         await this.$store.dispatch('error', error);
       }
     }
+  }
+
+  getSuggestions() {
+    if (this.titleInput == 'yes') this.changeTitle = true;
+    if (this.contentInput == 'yes') this.changeContent = true;
+    if (this.optionsInput == 'yes') this.changeOptions = true;
+    if (this.correctInput == 'yes') this.changeCorrect = true;
+
+
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

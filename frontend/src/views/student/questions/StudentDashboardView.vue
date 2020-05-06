@@ -1,5 +1,13 @@
 <template>
+
   <div class="container ">
+    <v-switch inset
+            prepend-icon="fas fa-lock-open"
+              color="#FFFFFF"
+              label="Public stats?"
+              v-if="currentUser "
+              v-model="isPublic"
+              single-line></v-switch>
     <v-select
       filled
       background-color="#FFFFFF"
@@ -75,7 +83,7 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -94,6 +102,8 @@ export default class DashboardView extends Vue {
   names: string[] = [];
   user: string | null = null;
   selected: string | null = null;
+  currentUser: boolean = true;
+  isPublic: boolean = true;
 
   async created() {
     await this.$store.dispatch('loading');
@@ -113,6 +123,7 @@ export default class DashboardView extends Vue {
       if (this.users[i].name == this.selected) {
         this.cleanStats();
         this.stats = await RemoteServices.getOtherStudentQuestionStats(this.users[i].id);
+        this.currentUser = false;
       }
     }
   }

@@ -203,4 +203,18 @@ public class QuestionsByStudentController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/public")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public UserDto getUserPrivacyStatus(Principal principal){
+
+        User user = (User)((Authentication) principal).getPrincipal();
+
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        return userService.getPrivacyStatus(user.getId());
+
+
+    }
+
 }
