@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.SubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -218,6 +219,7 @@ public class QuestionsByStudentService {
             image = new Image();
 
             submission.setImage(image);
+
             imageRepository.save(image);
         }
 
@@ -234,6 +236,7 @@ public class QuestionsByStudentService {
         if(user.getRole().equals(User.Role.STUDENT) && (submission.getSubmissionStatus().name().equals("REJECTED"))){
             submission.update(submissionDto);
             submission.setSubmissionStatus(Submission.Status.ONHOLD);
+            submission.setJustification("");
             return new SubmissionDto(submission);
         } else{
             throw new TutorException(SUBMISSION_CANNOT_BE_RESUBMITED);
@@ -258,13 +261,7 @@ public class QuestionsByStudentService {
     }
 
     private boolean hasPermissionToEdit(Submission submission,  User user){
-        if((user.getRole().equals(User.Role.TEACHER) && (submission.getSubmissionStatus().name().equals("APPROVED"))))
-            return true;
-        else if(user.getRole().equals(User.Role.STUDENT) && (submission.getSubmissionStatus().name().equals("ONHOLD")))
-            return true;
-        else{
-            return false;
-        }
+        return user.getRole().equals(User.Role.TEACHER) && (submission.getSubmissionStatus().name().equals("APPROVED"));
     }
 
     private void isSubmitionOnHold(Submission submission) {
@@ -289,17 +286,6 @@ public class QuestionsByStudentService {
             throw new TutorException(NOT_STUDENT_ERROR);
         }
         return true;
-    }
-
-    private QuestionDto generateQuestionDto(SubmissionDto submissionDto) {
-        QuestionDto questionDto = new QuestionDto();
-        questionDto.setTitle(submissionDto.getTitle());
-        questionDto.setContent(submissionDto.getContent());
-        questionDto.setOptions(submissionDto.getOptions());
-        questionDto.setImage(submissionDto.getImage());
-        questionDto.setTopics(submissionDto.getTopics());
-        questionDto.setStatus("AVAILABLE");;
-        return questionDto;
     }
 
 }
