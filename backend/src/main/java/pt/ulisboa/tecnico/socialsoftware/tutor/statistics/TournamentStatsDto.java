@@ -6,8 +6,16 @@ public class TournamentStatsDto implements Serializable {
     private Integer totalSignedTournaments = 0;
     private Integer totalCreatedTournaments = 0;
     private Integer attendedTournaments = 0;
-    private Integer uniqueCorrectAnswersInTournaments = 0;
+    private Integer totalCorrectAnswers = 0;
     private Integer answersInTournaments = 0;
+
+    public Integer getTotalCorrectAnswers() {
+        return totalCorrectAnswers;
+    }
+
+    public void setTotalCorrectAnswers(Integer totalCorrectAnswers) {
+        this.totalCorrectAnswers = totalCorrectAnswers;
+    }
 
     public Integer getTotalSignedTournaments() {
         return totalSignedTournaments;
@@ -33,14 +41,6 @@ public class TournamentStatsDto implements Serializable {
         this.attendedTournaments = attendedTournaments;
     }
 
-    public Integer getUniqueCorrectAnswersInTournaments() {
-        return uniqueCorrectAnswersInTournaments;
-    }
-
-    public void setUniqueCorrectAnswersInTournaments(Integer uniqueCorrectAnswersInTournaments) {
-        this.uniqueCorrectAnswersInTournaments = uniqueCorrectAnswersInTournaments;
-    }
-
     public Integer getAnswersInTournaments() {
         return answersInTournaments;
     }
@@ -49,12 +49,13 @@ public class TournamentStatsDto implements Serializable {
         this.answersInTournaments = answersInTournaments;
     }
 
+    @Override
     public String toString() {
         return "TournamentStatsDto{" +
                 "totalSignedTournaments=" + totalSignedTournaments +
                 ", totalCreatedTournaments=" + totalCreatedTournaments +
                 ", attendedTournaments=" + attendedTournaments +
-                ", uniqueCorrectAnswersInTournaments=" + uniqueCorrectAnswersInTournaments +
+                ", totalCorrectAnswers=" + totalCorrectAnswers +
                 ", answersInTournaments=" + answersInTournaments +
                 '}';
     }

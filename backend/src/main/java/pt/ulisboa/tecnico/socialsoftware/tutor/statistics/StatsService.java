@@ -124,19 +124,6 @@ public class StatsService {
         int createdTournaments = user.getNumberCreatedTournaments();
 
 
-        int correctAnswers = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getAssociatedTournament() != null)
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
-                .map(QuizAnswer::getQuestionAnswers)
-                .flatMap(Collection::stream)
-                .map(QuestionAnswer::getQuizQuestion)
-                .map(QuizQuestion::getQuestion)
-                .map(Question::getOptions)
-                .flatMap(Collection::stream)
-                .filter(Objects::nonNull)
-                .filter(Option::getCorrect)
-                .count();
-
         int totalAnswers = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getAssociatedTournament() != null)
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
@@ -144,38 +131,14 @@ public class StatsService {
                 .mapToLong(Collection::size)
                 .sum();
 
-        /*
-        int totalAnswers = (int) signedTournaments.stream()
-                .filter(Objects::nonNull)
-                .map(Tournament::getAssociatedQuiz)
-                .filter(Objects::nonNull)
-                .map(Quiz::getQuizAnswers)
-                .flatMap(Collection::stream)
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
-                .filter(quizAnswer -> quizAnswer.getUser().equals(user))
-                .map(QuizAnswer::getQuestionAnswers)
-                .filter(Objects::nonNull)
-                .mapToLong(Collection::size)
-                .sum();
-        */
-        float averageScore = ((float)correctAnswers)*100/totalAnswers;
-
         //signed tournaments in which answered at least 1 question
         int attendedTournaments = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getAssociatedTournament() != null)
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
-                .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
-                .map(QuizAnswer::getQuestionAnswers)
-                .flatMap(Collection::stream)
-                .collect(collectingAndThen(toCollection(() -> new TreeSet<>(
-                        comparingInt(questionAnswer -> questionAnswer.getQuizQuestion().getQuiz().getAssociatedTournament().getId()))),
-                        ArrayList::new)).stream()
-                .map(QuestionAnswer::getOption)
-                .filter(Objects::nonNull)
-                .filter(Option::getCorrect)
+                .filter(quizAnswer -> quizAnswer.getQuestionAnswers().size() > 1)
                 .count();
 
-        int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()
+        int correctAnswers = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getAssociatedTournament() != null)
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
@@ -189,7 +152,7 @@ public class StatsService {
         tournamentStatsDto.setTotalSignedTournaments(totalSignedTournaments);
         tournamentStatsDto.setTotalCreatedTournaments(createdTournaments);
         tournamentStatsDto.setAttendedTournaments(attendedTournaments);
-        tournamentStatsDto.setUniqueCorrectAnswersInTournaments(uniqueCorrectAnswers);
+        tournamentStatsDto.setTotalCorrectAnswers(correctAnswers);
         tournamentStatsDto.setAnswersInTournaments(totalAnswers);
 
         return tournamentStatsDto;

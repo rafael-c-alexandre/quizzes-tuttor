@@ -40,8 +40,7 @@
         <div class="icon-wrapper" ref="percentageOfSeenQuestions">
           <animated-number
             :number="
-              (stats.uniqueCorrectAnswersInTournaments * 100) /
-                stats.answersInTournaments
+              (stats.totalCorrectAnswers * 100) / stats.answersInTournaments
             "
             >%</animated-number
           >
@@ -53,11 +52,11 @@
       <div class="items">
         <div class="icon-wrapper" ref="correctAnswers">
           <animated-number
-            :number="stats.uniqueCorrectAnswersInTournaments"
+            :number="stats.totalCorrectAnswers"
           ></animated-number>
         </div>
         <div class="project-name">
-          <p>Total Unique Correct Answers</p>
+          <p>Total Correct Answers</p>
         </div>
       </div>
       <div class="items">

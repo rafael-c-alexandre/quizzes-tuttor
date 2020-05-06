@@ -2,7 +2,7 @@ export default class UserTournamentStats {
   totalSignedTournaments!: number;
   totalCreatedTournaments!: number;
   attendedTournaments!: number;
-  uniqueCorrectAnswersInTournaments!: number;
+  totalCorrectAnswers!: number;
   answersInTournaments!: number;
 
   constructor(jsonObj?: UserTournamentStats) {
@@ -11,8 +11,7 @@ export default class UserTournamentStats {
       this.totalSignedTournaments = jsonObj.totalSignedTournaments;
       this.totalCreatedTournaments = jsonObj.totalCreatedTournaments;
       this.attendedTournaments = jsonObj.attendedTournaments;
-      this.uniqueCorrectAnswersInTournaments =
-        jsonObj.uniqueCorrectAnswersInTournaments;
+      this.totalCorrectAnswers = jsonObj.totalCorrectAnswers;
       this.answersInTournaments = jsonObj.answersInTournaments;
       console.log(this);
     }
