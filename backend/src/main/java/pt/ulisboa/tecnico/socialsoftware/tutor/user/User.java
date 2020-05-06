@@ -192,6 +192,18 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
+    public Set<Tournament> getCreatedTournaments() {
+        return createdTournaments;
+    }
+
+    public void setCreatedTournaments(Set<Tournament> createdTournaments) {
+        this.createdTournaments = createdTournaments;
+    }
+
+    public void setSignedTournaments(Set<Tournament> signedTournaments) {
+        this.signedTournaments = signedTournaments;
+    }
+
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()

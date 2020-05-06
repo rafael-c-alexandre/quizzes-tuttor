@@ -140,6 +140,13 @@ public class TournamentService {
         if (!tournament.getTournamentCreator().equals(user)) {
             throw new TutorException(TOURNAMENT_CANCELER_IS_NOT_CREATOR);
         }
+        if(!tournament.getSignedUsers().isEmpty())
+            throw new TutorException(TOURNAMENT_ALREADY_HAS_USERS);
+
+        tournament.getTournamentCreator().getCreatedTournaments().remove(tournament);
+        tournament.getCourseExecution().getTournaments().remove(tournament);
+        tournament.getSignedUsers().forEach(user1 -> user1.getSignedTournaments().remove(tournament));
+
 
         tournamentRepository.delete(tournament);
 

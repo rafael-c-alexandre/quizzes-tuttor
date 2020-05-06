@@ -15,7 +15,7 @@ public enum ErrorMessage {
     TOURNAMENT_NO_TOPICS("This tournament has no topics"),
     TOURNAMENT_IS_NOT_OPEN("This tournament is not open, it is no possible the enrollment"),
     TOURNAMENT_TITLE_ALREADY_USED("There is already a tournament with the title %s "),
-    TOURNAMENT_ALREADY_ENROLLED("A student already enrolled in this tournament"),
+    TOURNAMENT_ALREADY_HAS_USERS("Cant delete a tournament that has signed users"),
 
     USER_IS_NOT_STUDENT("This user is not a student"),
     USER_IS_ALREADY_ENROLLED("This user is already enrolled"),

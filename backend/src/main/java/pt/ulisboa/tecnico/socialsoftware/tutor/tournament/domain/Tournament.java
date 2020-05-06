@@ -164,6 +164,7 @@ public class Tournament {
 
     public void addUser(User user) {
         this.signedUsers.add(user);
+        user.addSignedTournament(this);
     }
 
     public void addQuestion(Question question) {
