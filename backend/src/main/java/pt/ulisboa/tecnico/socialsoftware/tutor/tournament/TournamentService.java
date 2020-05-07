@@ -159,6 +159,35 @@ public class TournamentService {
         return new TournamentDto(tournament);
     }
 
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto cancelLastTournament() {
+        //get last created tournament
+        Tournament tournament = tournamentRepository.findTournamentById(tournamentRepository.getMaxTournamentId());
+
+        if (tournament == null) {
+            throw new TutorException(TOURNAMENT_ID_NOT_EXISTS);
+        }
+
+        if (tournament.isClosed()) {
+            throw new TutorException(TOURNAMENT_ALREADY_CLOSED);
+        }
+
+        /*
+        if(!tournament.getSignedUsers().isEmpty())
+            throw new TutorException(TOURNAMENT_ALREADY_HAS_USERS);
+        */
+        tournament.getTournamentCreator().getCreatedTournaments().remove(tournament);
+        tournament.getCourseExecution().getTournaments().remove(tournament);
+        tournament.getSignedUsers().forEach(user1 -> user1.getSignedTournaments().remove(tournament));
+
+        tournamentRepository.delete(tournament);
+
+        return new TournamentDto(tournament);
+    }
+
 
     @Retryable(
             value = {SQLException.class},
@@ -235,6 +264,50 @@ public class TournamentService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = tournamentRepository.findTournamentById(tournamentId);
 
+
+        if (tournament == null) {
+            throw new TutorException(TOURNAMENT_ID_NOT_EXISTS);
+        }
+
+        if (user.getRole() == User.Role.STUDENT) {
+            if (tournament.openForSignings()) {
+                for (User u : tournament.getSignedUsers()) {
+                    if (u.getId().equals(userId)) {
+                        throw new TutorException(USER_IS_ALREADY_ENROLLED);
+                    }
+                }
+                tournament.addUser(user);
+            } else {
+                throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
+            }
+        } else
+            throw new TutorException(USER_IS_NOT_STUDENT);
+
+        //Generate new quiz after user reach 2
+        if (tournament.getSignedUsers().size() == 2) {
+            Quiz quiz = new Quiz();
+            quiz.setKey(getMaxQuizKey() + 1);
+            quiz.setAssociatedTournament(tournament);
+            quiz.generate(new ArrayList<>(tournament.getQuestions()));
+            quiz.setTitle(tournament.getTitle() + " Tournament-Quiz");
+            quiz.setCourseExecution(tournament.getCourseExecution());
+            quizRepository.save(quiz);
+            tournament.setAssociatedQuiz(quiz);
+        }
+
+        return new TournamentDto(tournament);
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto enrollInLastTournament(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        //get last created tournament
+        Tournament tournament = tournamentRepository.findTournamentById(tournamentRepository.getMaxTournamentId());
+
         if (tournament == null) {
             throw new TutorException(TOURNAMENT_ID_NOT_EXISTS);
         }
@@ -266,6 +339,11 @@ public class TournamentService {
         }
 
         return new TournamentDto(tournament);
+    }
+
+    public Integer getMaxQuizKey() {
+        Integer maxQuizKey = quizRepository.getMaxQuizKey();
+        return maxQuizKey != null ? maxQuizKey : 0;
     }
 
 }

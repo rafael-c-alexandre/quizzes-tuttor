@@ -88,6 +88,24 @@ public class TournamentController {
         return tournamentService.cancelTournament(tournamentId, user.getId());
     }
 
+    //for testing means, enroll in last tournament
+    @PutMapping("/tournaments/enroll")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public TournamentDto enrollInLastTournament(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) throw new TutorException(AUTHENTICATION_ERROR);
+        return tournamentService.enrollInLastTournament(user.getId());
+    }
+
+    //for testing means, delete last tournament without user permission
+    @DeleteMapping("/tournaments/delete")
+    public TournamentDto deleteLastTournament() {
+        logger.debug("cancelTournament tournamentId: {}: ");
+        return tournamentService.cancelLastTournament();
+    }
+
+
     //enroll in tournament
     @PutMapping("/tournaments/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
