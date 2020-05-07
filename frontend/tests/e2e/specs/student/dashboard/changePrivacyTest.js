@@ -1,4 +1,4 @@
-describe('Student views questions dashboard walkthrough', () => {
+describe('Student changes dashboard privacy and see other dashboards', () => {
   beforeEach(() => {
     cy.demoStudentLogin();
     cy.accessStudentDashboardPage();
