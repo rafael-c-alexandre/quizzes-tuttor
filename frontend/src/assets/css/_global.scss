@@ -26,9 +26,14 @@ body {
   vertical-align: inherit;
 }
 
+h1 {
+  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
 h2 {
   text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 }
+
 
 .v-icon {
   padding: 0 0 0 10px;

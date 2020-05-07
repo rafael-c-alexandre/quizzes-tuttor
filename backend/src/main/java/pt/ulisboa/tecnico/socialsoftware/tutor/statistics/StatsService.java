@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -158,4 +159,46 @@ public class StatsService {
         return tournamentStatsDto;
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StudentQuestionStatsDto getStudentQuestionsStats(int userId) {
+
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        StudentQuestionStatsDto statsDto = new StudentQuestionStatsDto();
+
+        int totalQuestionsSubmitted = user.getSubmissions().size();
+
+        int totalQuestionsApproved = (int) user.getSubmissions().stream()
+                .filter(submission -> submission.getSubmissionStatus() == Submission.Status.APPROVED)
+                .count();
+
+        int totalQuestionsOnHold = (int) user.getSubmissions().stream()
+                .filter(submission -> submission.getSubmissionStatus() == Submission.Status.ONHOLD)
+                .count();
+
+        int totalQuestionsRejected = (int) user.getSubmissions().stream()
+                .filter(submission -> submission.getSubmissionStatus() == Submission.Status.REJECTED)
+                .count();
+
+        int totalQuestionsAvailable = (int) user.getSubmissions().stream()
+                .filter(submission -> submission.getSubmissionStatus() == Submission.Status.APPROVED && submission.isMadeAvailable())
+                .count();
+
+
+        statsDto.setTotalQuestionsApproved(totalQuestionsApproved);
+        statsDto.setTotalQuestionsOnHold(totalQuestionsOnHold);
+        statsDto.setTotalQuestionsRejected(totalQuestionsRejected);
+        statsDto.setTotalQuestionsAvailable(totalQuestionsAvailable);
+        statsDto.setTotalQuestionsSubmitted(totalQuestionsSubmitted);
+
+        if (totalQuestionsSubmitted != 0) {
+            statsDto.setPercentageQuestionsApproved(((float)totalQuestionsApproved)*100/totalQuestionsSubmitted);
+            statsDto.setPercentageQuestionsRejected(((float)totalQuestionsRejected)*100/totalQuestionsSubmitted);
+        }
+        return statsDto;
+    }
 }

@@ -9,7 +9,8 @@
           v-html="convertMarkDown('**[★]** ' + option.content)"
           v-bind:class="[option.correct ? 'font-weight-bold' : '']"
         />
-        <span v-else v-html="convertMarkDown(option.content)" />
+        <span v-else v-html="convertMarkDown(option.content)"
+        />
       </li>
     </ul>
     <br />

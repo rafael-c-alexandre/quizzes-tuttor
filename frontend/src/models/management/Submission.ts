@@ -1,6 +1,7 @@
 import Image from '@/models/management/Image';
 import Option from '@/models/management/Option';
 import Topic from '@/models/management/Topic';
+import { ISOtoString } from '@/services/ConvertDateService';
 
 export default class Submission {
   id: number | null = null;
@@ -9,14 +10,17 @@ export default class Submission {
   justification: string = '';
   courseId!: number;
   teacherDecision!: boolean | null;
+  madeAvailable!: boolean | null;
+  isAvailable: string = '';
   title: string = '';
   content: string = '';
   creationDate!: string | null;
   image: Image | null = null;
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   topics: Topic[] = [];
-  topicNames: string[] = []
+  topicNames: string[] = [];
   imageUrl: string = '';
+  fieldsToImprove: string[] = [];
 
   constructor(jsonObj?: Submission) {
     if (jsonObj) {
@@ -29,7 +33,12 @@ export default class Submission {
       this.title = jsonObj.title;
       this.content = jsonObj.content;
       this.image = jsonObj.image;
-      this.creationDate = jsonObj.creationDate;
+      this.creationDate = ISOtoString(jsonObj.creationDate);
+      this.madeAvailable = jsonObj.madeAvailable
+
+      if (jsonObj.madeAvailable)
+        this.isAvailable = 'Yes';
+      else this.isAvailable = 'No';
 
       this.options = jsonObj.options.map(
         (option: Option) => new Option(option)
@@ -38,6 +47,9 @@ export default class Submission {
 
       for (let i = 0; i < this.topics.length; i++)
         this.topicNames[i] = ' ' + this.topics[i].name;
+
+      for (let i = 0; i < jsonObj.fieldsToImprove.length; i++)
+        this.fieldsToImprove[i] = jsonObj.fieldsToImprove[i];
 
       if (jsonObj.image != null) {
         this.image = new Image(jsonObj.image);

@@ -29,11 +29,7 @@
           >
         </v-card-title>
       </template>
-      <template v-slot:item.content="{ item }">
-        <p
-          v-html="convertMarkDownNoFigure(item.content, null)"
-          @click="showSubmissionDialog(item)"
-      /></template>
+
       <template v-slot:item.status="{ item }">
         <v-chip v-if="item.status" :color="getStatusColor(item.status)" dark>{{
           item.status
@@ -73,14 +69,20 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editSubmission(item)" data-cy="editSubmission"
-              >edit</v-icon
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="editSubmission(item)"
+              data-cy="reSubmitSubmission"
+              >fas fa-redo</v-icon
             >
           </template>
-          <span>Edit Question</span>
+          <span>Re-Submit Question</span>
         </v-tooltip>
       </template>
     </v-data-table>
+
     <edit-submission-dialog
       v-if="currentSubmission"
       v-model="editSubmissionDialog"
@@ -89,7 +91,7 @@
     />
     <show-submission-dialog
       v-if="currentSubmission"
-      :dialog="submissionDialog"
+      v-model="submissionDialog"
       :submission="currentSubmission"
       v-on:close-show-submission-dialog="onCloseShowSubmissionDialog"
     />
@@ -104,8 +106,8 @@ import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
 import Image from '@/models/management/Image';
 
-import EditSubmissionTopics from '@/views/student/questions/EditSubmissionTopics.vue';
-import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
+import EditSubmissionTopics from '@/views/submission/EditSubmissionTopics.vue';
+import ShowSubmissionDialog from '@/views/submission/ShowSubmissionDialog.vue';
 import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog.vue';
 
 @Component({
@@ -113,6 +115,7 @@ import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog
     'show-submission-dialog': ShowSubmissionDialog,
     'edit-submission-dialog': EditSubmissionDialog,
     'edit-submission-topics': EditSubmissionTopics
+
   }
 })
 export default class QuestionSubmissionView extends Vue {
@@ -220,6 +223,7 @@ export default class QuestionSubmissionView extends Vue {
   }
 
   onCloseShowSubmissionDialog() {
+    this.currentSubmission = null;
     this.submissionDialog = false;
   }
 
@@ -234,7 +238,8 @@ export default class QuestionSubmissionView extends Vue {
     else return 'green';
   }
 
-  editSubmission(submission: Submission) {
+  editSubmission(submission: Submission, e?: Event) {
+    if (e) e.preventDefault();
     this.currentSubmission = submission;
     this.editSubmissionDialog = true;
   }
