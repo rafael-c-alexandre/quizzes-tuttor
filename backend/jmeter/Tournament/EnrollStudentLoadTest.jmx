@@ -98,16 +98,13 @@
                 <elementProp name="" elementType="HTTPArgument">
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
-	&quot;title&quot;: &quot;Title&quot;,&#xd;
-	&quot;state&quot;: &quot;CREATED&quot;,&#xd;
+	&quot;title&quot;: &quot;Title1&quot;,&#xd;
 	&quot;creationDate&quot;: &quot;2020-09-22 12:12&quot;,&#xd;
 	&quot;availableDate&quot;: &quot;2020-10-22 12:12&quot;,&#xd;
 	&quot;conclusionDate&quot;: &quot;2020-11-22 12:12&quot;,&#xd;
-	&quot;signedUsers&quot;:[701],&#xd;
 	&quot;topics&quot;:[],&#xd;
 	&quot;tournamentCreator&quot;: 700&#xd;
-}&#xd;
-</stringProp>
+}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -531,7 +528,10 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">pool</stringProp>
-          <stringProp name="query">DELETE FROM tournaments_signed_users;
+          <stringProp name="query">DELETE FROM users_created_tournaments;
+DELETE FROM users_signed_tournaments;
+DELETE FROM quizzes WHERE associated_tournament_id!=NULL;
+DELETE FROM tournaments_signed_users;
 DELETE FROM tournaments_topics;
 DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
