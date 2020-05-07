@@ -137,6 +137,7 @@ describe('Tournament Tests', () => {
 
     cy.wait(1000);
 
+    cy.accessStudentDashboardPage();
     cy.get('[data-cy="logoutButton"]').click();
   });
 });

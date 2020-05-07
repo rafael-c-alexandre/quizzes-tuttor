@@ -1,13 +1,13 @@
 <template>
   <div class="container ">
     <v-row no-gutters>
-      <v-col md="5"
+      <v-col md="5" data-cy="changeButton"
         ><v-select
           filled
           background-color="#FFFFFF"
           label="Change Dashboard View"
           v-model="defaultView"
-          :items="['Questions', 'Tournaments']"
+          :items="['Questions Statistics', 'Tournaments Statistics']"
           dense
           @change="changeMenu()"
         >

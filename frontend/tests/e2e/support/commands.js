@@ -131,7 +131,10 @@ Cypress.Commands.add('accessStudentQuestionsPage', () => {
 });
 
 Cypress.Commands.add('accessStudentDashboardPage', () => {
-  cy.contains('Dashboard').click();
+    cy.contains('Dashboard').click();
+    cy.get('[data-cy="changeButton"]').click();
+    cy.contains('Tournaments Statistics').click();
+    cy.wait(2000);
 });
 
 Cypress.Commands.add('accessTeacherSubmissionsPage', () => {
