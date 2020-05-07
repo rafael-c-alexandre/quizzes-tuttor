@@ -100,7 +100,6 @@
                   <boolProp name="HTTPArgument.always_encode">false</boolProp>
                   <stringProp name="Argument.value">{&#xd;
 	&quot;title&quot;: &quot;Title1&quot;,&#xd;
-	&quot;state&quot;: &quot;CREATED&quot;,&#xd;
 	&quot;creationDate&quot;: &quot;2020-09-22 12:12&quot;,&#xd;
 	&quot;availableDate&quot;: &quot;2020-10-22 12:12&quot;,&#xd;
 	&quot;conclusionDate&quot;: &quot;2020-11-22 12:12&quot;,&#xd;
@@ -294,7 +293,9 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">pool</stringProp>
-          <stringProp name="query">DELETE FROM quizzes WHERE associated_tournament_id=1;
+          <stringProp name="query">DELETE FROM users_created_tournaments;
+DELETE FROM users_signed_tournaments;
+DELETE FROM quizzes WHERE associated_tournament_id=1;
 DELETE FROM tournaments_signed_users;
 DELETE FROM tournaments_topics;
 DELETE FROM tournaments;</stringProp>

@@ -250,7 +250,9 @@
         <hashTree/>
         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="JDBC Request" enabled="true">
           <stringProp name="dataSource">pool</stringProp>
-          <stringProp name="query">DELETE FROM tournaments_signed_users;
+          <stringProp name="query">DELETE FROM users_signed_tournaments;
+DELETE FROM users_created_tournaments;
+DELETE FROM tournaments_signed_users;
 DELETE FROM tournaments_topics;
 DELETE FROM tournaments;</stringProp>
           <stringProp name="queryArguments"></stringProp>
