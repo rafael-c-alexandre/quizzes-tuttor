@@ -6,7 +6,7 @@ describe('Student views questions dashboard walkthrough', () => {
     cy.log('close dialog')
     cy.demoTeacherLogin()
     cy.accessTeacherSubmissionsPage()
-    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.')
+    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.', [false,false,false,false])
     cy.logout();
     cy.demoStudentLogin()
 
@@ -19,7 +19,7 @@ describe('Student views questions dashboard walkthrough', () => {
   })
 
   it('login checks his own dashboard', () => {
-    cy.accessStudentDashboardPage()
+    cy.accessDashboardPage()
 
     //hack to make DOM become available to click logout
     cy.get('[data-cy="submitted"]').click()

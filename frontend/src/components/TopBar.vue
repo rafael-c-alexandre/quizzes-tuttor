@@ -221,7 +221,7 @@
 
         <v-btn to="/student/dashboard" v-if="isStudent && currentCourse" text dark>
           Dashboard
-          <v-icon>fas fa-user</v-icon>
+          <v-icon>fas fa-chart-bar</v-icon>
         </v-btn>
 
         <v-btn

@@ -91,7 +91,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionDto.setUser(user.getId())
 
         when:
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion( user.getId(), submissionDto.getId(), true, "like it")
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion( user.getId(), submissionDto, true, "like it")
 
         then:
         def exception = thrown(TutorException)
@@ -106,7 +106,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
 
         when:
 
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submissionDto.getId(), true,"like it")
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user.getId(), submissionDto, true,"like it")
 
         then:
         def exception = thrown(TutorException)
@@ -127,7 +127,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
 
 
         when:
-        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true, "like it")
+        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), new SubmissionDto(submission), true, "like it")
 
         then: "the returned data are correct"
         result.getStatus().toString() == "APPROVED"
@@ -147,7 +147,7 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionRepository.save(submission)
 
         when:
-        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), false, "not like it")
+        def result = teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), new SubmissionDto(submission), false, "not like it")
 
         then: "the returned data are correct"
         result.getStatus().toString() == "REJECTED"
@@ -166,8 +166,8 @@ class TeacherEvaluatesSubmissionServiceSpockTest extends Specification{
         submissionRepository.save(submission)
 
         when:
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true, "like it")
-        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), submission.getId(), true, "Like it")
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), new SubmissionDto(submission), true, "like it")
+        teacherEvaluatesSubmissionService.teacherEvaluatesQuestion(user2.getId(), new SubmissionDto(submission), true, "Like it")
 
         then:
         def exception = thrown(TutorException)
