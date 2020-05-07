@@ -14,7 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
@@ -145,7 +144,7 @@ class DashboardStatisticsTest extends Specification{
 
         then: "1 signed tournaments must be equal to the number retrieved"
         def tournamentStatsDto = statsService.getTournamentStats(user1.getId(), courseExecutionId)
-        tournamentStatsDto.getSignedTournaments() == 1
+        tournamentStatsDto.getTotalSignedTournaments() == 1
     }
 
     def "test calculus of created tournaments total"(){
@@ -163,20 +162,49 @@ class DashboardStatisticsTest extends Specification{
         then: "2 created tournaments by user1 and 1 by user2"
         def tournamentStatsDto1 = statsService.getTournamentStats(user1.getId(), courseExecutionId)
         def tournamentStatsDto2 = statsService.getTournamentStats(user2.getId(), courseExecutionId)
-        tournamentStatsDto1.getCreatedTournaments() == 2
-        tournamentStatsDto2.getCreatedTournaments() == 1
+        tournamentStatsDto1.getTotalCreatedTournaments() == 2
+        tournamentStatsDto2.getTotalCreatedTournaments() == 1
     }
 
-    def "test calculus of average score"(){
-        when: "3 out of 5 answers are correct"
+    def "test calculus of correct and total answers"(){
+        when: "2 out of 5 answers are correct"
 
         tournament.addUser(user1)
-        setupTournament(user1)
+        attendTournament(user1)
 
-        then: "average score must be 60%"
+        then: "2 correct answers and 5 total answers"
         def tournamentStatsDto = statsService.getTournamentStats(user1.getId(), courseExecutionId)
-        tournamentStatsDto.getAverageScore() == 60
+        tournamentStatsDto.getTotalCorrectAnswers() == 2
+        tournamentStatsDto.getAnswersInTournaments() == 5
     }
+
+    def "test calculus of attended tournaments"() {
+        when:"enroll 3 tournaments but only answer to 1"
+        def tournamentDto1 = getTournamentDto("Tournament1",
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE, 1, topicList, NUM_Q)
+        def tournamentDto2 = getTournamentDto("Tournament2",
+                AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE, 1, topicList, NUM_Q)
+
+        def tournament1 = new Tournament(tournamentDto1)
+        def tournament2 = new Tournament(tournamentDto2)
+        tournament1.setTournamentCreator(user2)
+        tournament2.setTournamentCreator(user2)
+
+        //enrollment
+        tournament1.addUser(user1)
+        tournament2.addUser(user1)
+        tournament.addUser(user1)
+
+        //answer to tournament
+        attendTournament(user1)
+
+        then:"1 attended tournaments and 3 enrolled"
+        def tournamentStatsDto = statsService.getTournamentStats(user1.getId(), courseExecutionId)
+        tournamentStatsDto.getAttendedTournaments() == 1
+        tournamentStatsDto.getTotalSignedTournaments() == 3
+    }
+
+
 
 
     private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate,
@@ -195,103 +223,79 @@ class DashboardStatisticsTest extends Specification{
         return tournamentDto
     }
 
-    private void setupTournament(User user){
+    private void attendTournament(User user){
         Quiz tQuiz = new Quiz()
         quizRepository.save(tQuiz)
         tQuiz.setCourseExecution(courseExecution)
         tQuiz.setType(Quiz.QuizType.GENERATED.toString())
 
         // correct answers
-        question1 = new Question()
-        question1.setTitle("question 1")
-        question1.setContent("content 1")
-        questionRepository.save(question1)
         def option1 = new Option()
         option1.setCorrect(true)
         option1.setContent("option 1")
         option1.setSequence(1)
-        question1.addOption(option1)
         optionRepository.save(option1)
-        tournament.addQuestion(question1)
-
+        //quiz question
         QuizQuestion tQuizQuestion1 = new QuizQuestion()
-        tQuizQuestion1.setQuestion(question1)
         tQuizQuestion1.setQuiz(tQuiz)
+        //question answer
         QuestionAnswer tQuestionAnswer1 = new QuestionAnswer()
+        tQuestionAnswer1.setOption(option1)
         tQuestionAnswer1.setQuizQuestion(tQuizQuestion1)
         quizQuestionRepository.save(tQuizQuestion1)
         questionAnswerRepository.save(tQuestionAnswer1)
 
-        question2 = new Question()
-        question2.setTitle("question 2")
-        question2.setContent("content 2")
         def option2 = new Option()
         option2.setContent("option 2")
         option2.setCorrect(true)
         option2.setSequence(1)
-        question2.addOption(option2)
-        questionRepository.save(question2)
         optionRepository.save(option2)
-        tournament.addQuestion(question2)
-
+        //quiz question
         QuizQuestion tQuizQuestion2 = new QuizQuestion()
-        tQuizQuestion2.setQuestion(question2)
         tQuizQuestion2.setQuiz(tQuiz)
+        //question answer
         QuestionAnswer tQuestionAnswer2 = new QuestionAnswer()
         tQuestionAnswer2.setQuizQuestion(tQuizQuestion2)
+        tQuestionAnswer2.setOption(option2)
 
         quizQuestionRepository.save(tQuizQuestion2)
         questionAnswerRepository.save(tQuestionAnswer2)
 
         //wrong answers
-        question3 = new Question()
-        question3.setTitle("question 3")
-        question3.setContent("content 3")
-        QuizQuestion tQuizQuestion3 = new QuizQuestion()
         def option3 = new Option()
         option3.setContent("option 3")
         option3.setCorrect(false)
         option3.setSequence(1)
-        question3.addOption(option3)
-        questionRepository.save(question3)
         optionRepository.save(option3)
-        tournament.addQuestion(question3)
 
-        tQuizQuestion3.setQuestion(question3)
+        QuizQuestion tQuizQuestion3 = new QuizQuestion()
         tQuizQuestion3.setQuiz(tQuiz)
         QuestionAnswer tQuestionAnswer3 = new QuestionAnswer()
         tQuestionAnswer3.setQuizQuestion(tQuizQuestion3)
+        tQuestionAnswer3.setOption(option3)
 
         quizQuestionRepository.save(tQuizQuestion3)
         questionAnswerRepository.save(tQuestionAnswer3)
 
-        question4 = new Question()
-        question4.setTitle("question 4")
-        question4.setContent("content 4")
         def option4 = new Option()
         option4.setContent("option 4")
         option4.setCorrect(false)
         option4.setSequence(1)
-        question4.addOption(option4)
-        questionRepository.save(question4)
         optionRepository.save(option4)
-        tournament.addQuestion(question4)
 
         QuizQuestion tQuizQuestion4 = new QuizQuestion()
-        tQuizQuestion4.setQuestion(question4)
         tQuizQuestion4.setQuiz(tQuiz)
         QuestionAnswer tQuestionAnswer4 = new QuestionAnswer()
         tQuestionAnswer4.setQuizQuestion(tQuizQuestion4)
+        tQuestionAnswer4.setOption(option4)
+
         quizQuestionRepository.save(tQuizQuestion4)
         questionAnswerRepository.save(tQuestionAnswer4)
 
         //repeated question
-        QuizQuestion tQuizQuestion5 = new QuizQuestion()
-        tQuizQuestion5.setQuestion(question2)
         QuestionAnswer tQuestionAnswer5 = new QuestionAnswer()
-        tQuestionAnswer5.setQuizQuestion(tQuizQuestion5)
-        tQuizQuestion5.setQuiz(tQuiz)
-        quizQuestionRepository.save(tQuizQuestion5)
+        tQuestionAnswer5.setQuizQuestion(tQuizQuestion4)
+        tQuestionAnswer5.setOption(option4)
         questionAnswerRepository.save(tQuestionAnswer5)
 
         List<QuestionAnswer> tQuestionAnswers = new ArrayList<>(5)
@@ -306,8 +310,6 @@ class DashboardStatisticsTest extends Specification{
         tQuizAnswer.setUser(user)
         tQuizAnswer.setCompleted(true)
         quizAnswerRepository.save(tQuizAnswer)
-
-
 
         tQuiz.addQuizAnswer(tQuizAnswer)
         tQuizAnswer.setQuiz(tQuiz)
