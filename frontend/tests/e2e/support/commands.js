@@ -131,7 +131,6 @@ Cypress.Commands.add('accessStudentQuestionsPage', () => {
 });
 
 Cypress.Commands.add('accessStudentDashboardPage', () => {
-  cy.contains('Questions').click();
   cy.contains('Dashboard').click();
 });
 
