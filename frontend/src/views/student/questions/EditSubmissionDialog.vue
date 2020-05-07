@@ -74,7 +74,7 @@
               outline
               rows="10"
               v-model="editSubmission.options[index - 1].content"
-              label="Content"
+              label="Option content"
             ></v-textarea>
           </v-flex>
         </v-container>

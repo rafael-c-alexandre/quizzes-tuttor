@@ -298,6 +298,7 @@ export default class StudentQuestionsView extends Vue {
     this.submissions = this.submissions.filter(q => q.id !== submission.id);
     this.submissions.unshift(submission);
     this.editSubmissionByTeacherDialog = false;
+    this.evaluateSubmissionDialog = false;
     this.currentSubmission = null;
     this.customSorter();
   }
