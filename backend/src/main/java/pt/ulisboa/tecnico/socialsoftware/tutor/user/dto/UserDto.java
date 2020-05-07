@@ -23,6 +23,8 @@ public class UserDto implements Serializable {
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
+        if(user.getPublicDashboards() == null)
+            user.setPublicDashboards(true);
         this.privacyStatus = user.getPublicDashboards();
     }
 
