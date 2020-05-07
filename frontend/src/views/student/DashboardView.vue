@@ -21,7 +21,7 @@
               ><v-icon left>visibility</v-icon> Public</v-btn
             >
           </template>
-          <span>Change Privacy Status</span>
+          <span>Change info privacy</span>
         </v-tooltip>
         <v-tooltip v-if="!isPublic" bottom>
           <template v-slot:activator="{ on }">
@@ -29,7 +29,7 @@
               ><v-icon left>visibility_off</v-icon> Private</v-btn
             >
           </template>
-          <span>Change Privacy Status</span>
+          <span>Change info privacy </span>
         </v-tooltip>
       </v-col>
       <v-spacer></v-spacer>

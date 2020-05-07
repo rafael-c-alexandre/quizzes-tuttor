@@ -23,7 +23,10 @@
             "
           />
           <ul>
-            <li v-for="option in evaluateSubmission.options" :key="option.number">
+            <li
+              v-for="option in evaluateSubmission.options"
+              :key="option.number"
+            >
               <span
                 v-if="option.correct"
                 v-html="convertMarkDown('**[★]** ', null)"
@@ -42,64 +45,103 @@
           <v-layout column wrap>
             <v-flex xs24 sm12 md8>
               <v-row>
-                  <v-subheader> *Approve? </v-subheader>
+                <v-subheader style="font-size: medium; ;"> *Approve? </v-subheader>
 
-                  <v-btn v-if='hasDecided && hasApproved' color="blue darken-1"  @click="approve" data-cy="approve">
-                      Yes
-                  </v-btn>
-                  <v-btn v-if='!hasApproved' @click="approve" data-cy="approve">
-                    Yes
-                  </v-btn>
+                <v-btn
+                  v-if="hasDecided && hasApproved"
+                  color="blue darken-1"
+                  @click="approve"
+                  data-cy="approve1"
+                >
+                  Yes
+                </v-btn>
+                <v-btn v-if="!hasApproved" @click="approve" data-cy="approve">
+                  Yes
+                </v-btn>
 
+                <v-btn
+                  v-if="hasDecided && !hasApproved"
+                  color="blue darken-1"
+                  @click="reject"
+                  data-cy="reject1"
+                >
+                  No
+                </v-btn>
 
-                  <v-btn v-if='hasDecided && !hasApproved' color="blue darken-1" @click="reject" data-cy="reject">
-                    No
-                  </v-btn>
-
-                  <v-btn v-if='!hasDecided || hasApproved' @click="reject" data-cy="reject">
-                    No
-                  </v-btn>
+                <v-btn
+                  v-if="!hasDecided || hasApproved"
+                  @click="reject"
+                  data-cy="reject"
+                >
+                  No
+                </v-btn>
               </v-row>
             </v-flex>
-            <v-flex xs24 sm12 md12>
-              <v-textarea
-                clearable
-                outline
-                rows="5"
-                v-model="evaluateSubmission.justification"
-                label="*Justification"
-                placeholder="Explain your decision here"
-                data-cy="justification"
-              ></v-textarea>
-            </v-flex>
+            <p></p>
+            <v-row>
+              <v-flex xs24 sm12 md12>
+                <v-subheader style="font-size: medium"
+                  >*Justification</v-subheader
+                >
+                <v-textarea
+                  clearable
+                  outline
+                  rows="5"
+                  v-model="evaluateSubmission.justification"
+                  placeholder="Explain your decision here"
+                  data-cy="justification"
+                ></v-textarea>
+              </v-flex>
+            </v-row>
           </v-layout>
         </v-container>
       </v-card-text>
 
-        <v-container >
-          <v-col cols="3"  >Suggestions to change:</v-col>
-      <v-row  no-gutters>
-        <v-col >
-          <v-checkbox v-model="titleInput" label="Title" value="yes"></v-checkbox>
-        </v-col>
-        <v-col >
-          <v-checkbox v-model="contentInput" label="Content" value="yes"></v-checkbox>
-        </v-col >
-        <v-col >
-          <v-checkbox v-model="optionsInput" label="Options" value="yes"></v-checkbox>
-        </v-col >
-        <v-col >
-          <v-checkbox v-model="correctInput" label="Correct Option" value="yes"></v-checkbox>
-        </v-col >
-      </v-row>
-        </v-container>
+      <v-container>
+        <v-col cols="4"
+          ><v-subheader style="font-size: medium"
+            >Suggestions to change:</v-subheader
+          ></v-col
+        >
+        <v-row no-gutters >
+          <v-col>
+            <v-checkbox
+              v-model="titleInput"
+              label="Title"
+              value="yes"
+              data-cy="sugestionTitle"
+            ></v-checkbox>
+          </v-col>
+          <v-col>
+            <v-checkbox
+              v-model="contentInput"
+              label="Content"
+              value="yes"
+              data-cy="sugestionContent"
+            ></v-checkbox>
+          </v-col>
+          <v-col>
+            <v-checkbox
+              v-model="optionsInput"
+              label="Options"
+              value="yes"
+              data-cy="sugestionOptions"
+            ></v-checkbox>
+          </v-col>
+          <v-col>
+            <v-checkbox
+              v-model="correctInput"
+              label="Correct Option"
+              value="yes"
+              data-cy="sugestionCorrectOption"
+            ></v-checkbox>
+          </v-col>
+        </v-row>
+      </v-container>
 
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          color="blue darken-1"
-          @click="$emit('dialog', false)"
-          data-cy="cancelEvaluateButton"
+        <v-btn @click="$emit('dialog', false)" data-cy="cancelEvaluateButton"
           >Cancel</v-btn
         >
         <v-btn
@@ -138,50 +180,71 @@ export default class submissionDialog extends Vue {
   changeOptions: boolean = false;
   changeCorrect: boolean = false;
 
-  hasDecided : boolean = false;
+  hasDecided: boolean = false;
   hasApproved: boolean = false;
 
   created() {
     this.evaluateSubmission = new Submission(this.submission);
   }
-  async approve(){
+  async approve() {
     this.hasDecided = true;
-    this.hasApproved=true;
+    this.hasApproved = true;
     this.evaluateSubmission.status = 'APPROVED';
     this.evaluateSubmission.teacherDecision = true;
   }
 
-
-  async reject(){
+  async reject() {
     this.hasDecided = true;
-    this.hasApproved=false;
+    this.hasApproved = false;
     this.evaluateSubmission.status = 'REJECTED';
     this.evaluateSubmission.teacherDecision = false;
   }
 
   async saveSubmission() {
-
-    if(this.evaluateSubmission && !this.hasDecided && !this.evaluateSubmission.justification) {
-      await this.$store.dispatch('error', 'Error: Evaluation must have a decision and justification');
+    if (
+      this.evaluateSubmission &&
+      !this.hasDecided &&
+      !this.evaluateSubmission.justification
+    ) {
+      await this.$store.dispatch(
+        'error',
+        'Error: Evaluation must have a decision and justification'
+      );
       return;
     }
 
-    if(this.evaluateSubmission && !this.hasDecided) {
-      await this.$store.dispatch('error', 'Error: Evaluation must have a decision');
+    if (this.evaluateSubmission && !this.hasDecided) {
+      await this.$store.dispatch(
+        'error',
+        'Error: Evaluation must have a decision'
+      );
       return;
     }
 
     if (this.evaluateSubmission && !this.evaluateSubmission.justification) {
-      await this.$store.dispatch('error', 'Error: Evaluation must have justification');
+      await this.$store.dispatch(
+        'error',
+        'Error: Evaluation must have justification'
+      );
       return;
     }
 
-    if(this.evaluateSubmission && this.hasApproved && (this.correctInput || this.titleInput || this.contentInput || this.optionsInput)) {
-      await this.$store.dispatch('error', 'Error: Evaluation cannot have suggestions when submission is approved');
+    if (
+      this.evaluateSubmission &&
+      this.hasApproved &&
+      (this.correctInput ||
+        this.titleInput ||
+        this.contentInput ||
+        this.optionsInput)
+    ) {
+      await this.$store.dispatch(
+        'error',
+        'Error: Evaluation cannot have suggestions when submission is approved'
+      );
       return;
     }
 
-    this.getSuggestions()
+    this.getSuggestions();
 
     if (this.evaluateSubmission && this.evaluateSubmission.id != null) {
       try {
@@ -210,21 +273,15 @@ export default class submissionDialog extends Vue {
     if (this.contentInput == 'yes') {
       this.changeContent = true;
       this.evaluateSubmission.fieldsToImprove.push('content');
-
     }
     if (this.optionsInput == 'yes') {
       this.changeOptions = true;
       this.evaluateSubmission.fieldsToImprove.push('options');
-
     }
     if (this.correctInput == 'yes') {
       this.changeCorrect = true;
       this.evaluateSubmission.fieldsToImprove.push('correct option');
-
-
     }
-
-
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

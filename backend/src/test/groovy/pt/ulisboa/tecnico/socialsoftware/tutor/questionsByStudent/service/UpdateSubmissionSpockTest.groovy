@@ -168,7 +168,7 @@ class UpdateSubmissionSpockTest extends Specification{
         teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
         userRepository.save(teacher)
         and: 'a submission rejection'
-        submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), false,"don't like it")
+        submission.setSubmissionStatus(Submission.Status.REJECTED);
 
         and: 'anthoer  submisionDto'
         def submissionDto2 = new SubmissionDto()
@@ -205,7 +205,7 @@ class UpdateSubmissionSpockTest extends Specification{
         teacher = new User(NAME, USERNAME2, KEY + 1, User.Role.TEACHER)
         userRepository.save(teacher)
         and: 'a submission acception'
-        submissionService.teacherEvaluatesQuestion(teacher.getId(), submission.getId(), true,"like it")
+        submission.setSubmissionStatus(Submission.Status.APPROVED);
 
         and: 'another  submisionDto'
         def submissionDto2 = new SubmissionDto()

@@ -350,7 +350,7 @@ org.apache.commons.io.FileUtils.writeStringToFile(new File(&quot;submissionsOnHo
             <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Data to get submissions" enabled="true">
               <stringProp name="filename">submissionsOnHoldResult.csv</stringProp>
               <stringProp name="fileEncoding"></stringProp>
-              <stringProp name="variableNames">courseId,userId,id,creationDate,justification, teacherDecision,title,image,status, content,key</stringProp>
+              <stringProp name="variableNames">courseId,changeTitle, changeOption,creationDate,changeContent,title,changeCorrect,content,userId,teacherDecision,id,justification, image,status,key,notRelevant, notRelevant</stringProp>
               <boolProp name="ignoreFirstLine">false</boolProp>
               <stringProp name="delimiter">,</stringProp>
               <boolProp name="quotedData">false</boolProp>
