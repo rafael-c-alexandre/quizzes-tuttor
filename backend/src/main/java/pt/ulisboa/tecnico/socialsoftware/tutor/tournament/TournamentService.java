@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
@@ -65,6 +66,9 @@ public class TournamentService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private QuizService quizService;
 
 
     @Retryable(
@@ -140,8 +144,9 @@ public class TournamentService {
         if (!tournament.getTournamentCreator().equals(user)) {
             throw new TutorException(TOURNAMENT_CANCELER_IS_NOT_CREATOR);
         }
-        if(!tournament.getSignedUsers().isEmpty())
-            throw new TutorException(TOURNAMENT_ALREADY_HAS_USERS);
+        if(tournament.getAssociatedQuiz() != null)
+            quizService.removeQuiz(tournament.getAssociatedQuiz().getId());
+
 
         tournament.getTournamentCreator().getCreatedTournaments().remove(tournament);
         tournament.getCourseExecution().getTournaments().remove(tournament);
@@ -249,7 +254,7 @@ public class TournamentService {
             throw new TutorException(USER_IS_NOT_STUDENT);
 
         //Generate new quiz after user reach 2
-        if (tournament.getSignedUsers().size() == 2) {
+        if (tournament.getSignedUsers().size() == 1) {
             Quiz quiz = new Quiz();
             quiz.setKey(getMaxQuizKey() + 1);
             quiz.setAssociatedTournament(tournament);
