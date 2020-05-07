@@ -16,12 +16,6 @@ describe('Student resubmits questions walkthrough', () => {
 
   afterEach(() => {
     cy.contains('Logout').click();
-    cy.exec(
-      'PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM options WHERE content = \'ES\' or content = \'AMS\' or content = \'GESTAO\' or content = \'LP\'" '
-    );
-    cy.exec(
-      'PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM submissions WHERE title = \'Demo Question\'"'
-    );
   });
 
   it('login submits question, then it is rejected by teacher, then resubmits', () => {
@@ -37,6 +31,12 @@ describe('Student resubmits questions walkthrough', () => {
       ['ES', 'AMS', 'SD', 'SO']
     );
     cy.log('close dialog');
+    cy.exec(
+      'PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM options WHERE content = \'ES\' or content = \'AMS\' or content = \'SD\' or content = \'SO\'" '
+    );
+    cy.exec(
+      'PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM submissions WHERE title = \'Demo Question edited\'"'
+    );
   });
 
   it('login submits question, then it is approved by teacher, then tries to resubmit', () => {
@@ -58,5 +58,12 @@ describe('Student resubmits questions walkthrough', () => {
     cy.closeErrorMessage();
     cy.log('close dialog');
     cy.get('[data-cy="cancelSubmissionButton"]').click();
+
+    cy.exec(
+      'PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM options WHERE content = \'ES\' or content = \'AMS\' or content = \'GESTAO\' or content = \'LP\'" '
+    );
+    cy.exec(
+      'PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM submissions WHERE title = \'Demo Question\'"'
+    );
   });
 });
