@@ -256,7 +256,7 @@ public class TournamentService {
         //Generate new quiz after user reach 2
         if (tournament.getSignedUsers().size() == 2) {
             Quiz quiz = new Quiz();
-            quiz.setKey(getMaxQuizKey() + 1);
+            quiz.setKey(quizService.getMaxQuizKey() + 1);
             quiz.setAssociatedTournament(tournament);
             quiz.generate(new ArrayList<>(tournament.getQuestions()));
             quiz.setTitle(tournament.getTitle() + " Tournament-Quiz");
@@ -266,11 +266,6 @@ public class TournamentService {
         }
 
         return new TournamentDto(tournament);
-    }
-
-    public Integer getMaxQuizKey() {
-        Integer maxQuizKey = quizRepository.getMaxQuizKey();
-        return maxQuizKey != null ? maxQuizKey : 0;
     }
 
 }
