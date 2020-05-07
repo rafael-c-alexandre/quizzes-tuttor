@@ -130,6 +130,14 @@ Cypress.Commands.add('accessStudentQuestionsPage', () => {
   cy.contains('Manage').click();
 });
 
+
+Cypress.Commands.add('accessStudentDashboardPage', () => {
+    cy.contains('Dashboard').click();
+    cy.get('[data-cy="changeButton"]').click();
+    cy.contains('Tournaments Statistics').click();
+    cy.wait(2000);
+});
+
 Cypress.Commands.add('accessDashboardPage', () => {
   cy.contains('Dashboard').click();
 });
@@ -191,7 +199,6 @@ Cypress.Commands.add(
         .type('{selectall}{backspace}')
         .type(options[i]);
     }
-
     cy.get('[data-cy="saveSubmissionButton"]').click();
   }
 );
@@ -241,6 +248,14 @@ Cypress.Commands.add('showSubmission', title => {
     .find('[data-cy="showSubmission"]')
     .click();
   cy.get('[data-cy = "closeSubmissionButton"]').click();
+});
+
+Cypress.Commands.add('startQuiz', () => {
+  cy.get('[data-cy="startQuiz"]').click({ force: true });
+  cy.wait(1000);
+  cy.get('[data-cy="endQuiz"]').click({ force: true });
+  cy.wait(1000);
+  cy.get('[date-cy="concludeQuiz"]').click({ force: true });
 });
 
 Cypress.Commands.add(

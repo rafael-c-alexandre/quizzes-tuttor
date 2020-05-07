@@ -1,13 +1,13 @@
 <template>
   <div class="container ">
     <v-row no-gutters>
-      <v-col md="5"
+      <v-col md="5" data-cy="changeButton"
         ><v-select
           filled
           background-color="#FFFFFF"
           label="Change Dashboard View"
           v-model="defaultView"
-          :items="['Questions', 'Tournaments']"
+          :items="['Questions Statistics', 'Tournaments Statistics']"
           dense
           @change="changeMenu()"
         >
@@ -17,7 +17,7 @@
       <v-col
         ><v-tooltip v-if="isPublic" bottom>
           <template v-slot:activator="{ on }">
-            <v-btn @click="changePrivacy" color="green" dark v-on="on"
+            <v-btn data-cy="public" @click="changePrivacy" color="green" dark v-on="on"
               ><v-icon left>visibility</v-icon> Public</v-btn
             >
           </template>
@@ -25,7 +25,7 @@
         </v-tooltip>
         <v-tooltip v-if="!isPublic" bottom>
           <template v-slot:activator="{ on }">
-            <v-btn @click="changePrivacy" color="red" dark v-on="on"
+            <v-btn data-cy="private" @click="changePrivacy" color="red" dark v-on="on"
               ><v-icon left>visibility_off</v-icon> Private</v-btn
             >
           </template>
@@ -33,7 +33,7 @@
         </v-tooltip>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col md="5">
+      <v-col data-cy="users_dashboard" md="5">
         <v-select
           filled
           background-color="#FFFFFF"

@@ -1,0 +1,1 @@
+INSERT INTO tournaments_signed_users VALUES (3, 700);
