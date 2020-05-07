@@ -343,6 +343,7 @@ class DashboardStatisticsTest extends Specification{
             return new AnswerService()
         }
 
+
         @Bean
         QuestionService questionService() {
             return new QuestionService()
