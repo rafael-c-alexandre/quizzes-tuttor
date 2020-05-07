@@ -1,4 +1,4 @@
-describe('Teacher evaluates submissions walkthrough', () => {
+describe('Teacher makes submission available walkthrough', () => {
   beforeEach(() => {
     cy.demoStudentLogin();
     cy.accessStudentQuestionsPage();

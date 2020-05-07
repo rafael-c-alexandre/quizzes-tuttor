@@ -20,12 +20,6 @@ describe('Student views questions dashboard walkthrough', () => {
   it('login checks his own dashboard', () => {
     cy.accessDashboardPage()
 
-    //hack to make DOM become available to click logout
-    cy.get('[data-cy="submitted"]').click()
-    //cy.checkDashboardInfo()
-
-
-
   });
 
 
