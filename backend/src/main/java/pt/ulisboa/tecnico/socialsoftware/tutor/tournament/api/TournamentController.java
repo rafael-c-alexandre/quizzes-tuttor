@@ -98,25 +98,6 @@ public class TournamentController {
         return tournamentService.enrollInTournament(tournamentId, user.getId());
     }
 
-    @PutMapping("/users/privacy")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity changeUserDashboardPrivacy(Principal principal){
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        if (user == null) throw new TutorException(AUTHENTICATION_ERROR);
-
-        userService.changeUserDashboardPrivacy(user.getId());
-
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/users/public")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<UserDto> getPublicDashboardUsers(){
-        return userService.getPublicDashboardUsers();
-    }
-
-
     private void formatDates(TournamentDto tournament) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 

@@ -26,14 +26,14 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import QuestionSubmissionView from '@/views/student/questions/QuestionSubmissionView.vue';
-import StudentQuestionsView from '@/views/teacher/studentQuestions/EvaluateQuestionsView.vue';
+import StudentQuestionsView from '@/views/teacher/studentQuestions/TeacherQuestionsView.vue';
 
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
 import OpenTournamentsView from '@/views/student/tournaments/OpenTournamentsView.vue';
 import AllTournamentsView from '@/views/student/tournaments/AllTournamentsView.vue';
 import ClosedTournamentsView from '@/views/student/tournaments/ClosedTournamentsView.vue';
 import SignableTournamentsView from '@/views/student/tournaments/SignableTournamentsView.vue';
-import DashboardView from '@/views/student/tournaments/DashboardView.vue';
+import DashboardView from '@/views/student/DashboardView.vue';
 
 Vue.use(Router);
 
@@ -182,15 +182,6 @@ let router = new Router({
               }
             },
             {
-              path: 'dashboard',
-              name: 'student-dashboard',
-              component: DashboardView,
-              meta: {
-                title: process.env.VUE_APP_NAME + ' - Student Dashboard',
-                requiredAuth: 'Student'
-              }
-            },
-            {
               path: 'signable',
               name: 'signable-tournaments',
               component: SignableTournamentsView,
@@ -270,6 +261,15 @@ let router = new Router({
           component: QuestionSubmissionView,
           meta: {
             title: process.env.VUE_APP_NAME + '- Submit Questions',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'dashboard',
+          name: 'student-dashboard',
+          component: DashboardView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - Dashboard',
             requiredAuth: 'Student'
           }
         }

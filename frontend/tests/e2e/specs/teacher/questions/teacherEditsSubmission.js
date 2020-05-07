@@ -1,4 +1,4 @@
-describe('Teacher evaluates submissions walkthrough', () => {
+describe('Teacher edits submissions walkthrough', () => {
 
   beforeEach(() => {
     cy.demoStudentLogin()
@@ -13,33 +13,23 @@ describe('Teacher evaluates submissions walkthrough', () => {
     cy.contains('Logout').click()
     cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM options WHERE content = \'ES\' or content = \'AMS\' or content = \'GESTAO\' or content = \'LP\'" ')
     cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM submissions WHERE title = \'Demo Question\'"')
-
   })
 
-  it('login evaluates a question with on hold status', () => {
+  it('login approves question and edits it', () => {
     cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.')
     cy.log('close dialog')
+    cy.editSubmissionByTeacher('Demo Question','Demo Question edited', 'What is the best subject in the Computer engineering course at IST-Alameda?',['ES','AMS', 'SD', 'LP'])
+    cy.log('close dialog')
+    cy.get('[data-cy="cancelSubmissionButton"]').click()
   });
 
-  it('login tries to evaluate question without providing justification', () => {
-    cy.evaluateSubmission('Demo Question',false,'')
-    cy.closeErrorMessage()
 
+  it('login rejects question and tries to edit it', () => {
+    cy.evaluateSubmission('Demo Question',false,'Question is dumb.')
     cy.log('close dialog')
-
-    cy.get('[data-cy="cancelEvaluateButton"]').click()
+    cy.editSubmissionByTeacher('Demo Question','Demo Question edit', 'What is the best subject in the Computer engineering course at IST-Alameda?',['ES','AMS', 'SD', 'LP'])
+    cy.closeErrorMessage()
+    cy.log('close dialog')
+    cy.get('[data-cy="cancelSubmissionButton"]').click()
   });
-
-  it('login tries to evaluate a previously evaluated question', () => {
-    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.')
-    cy.log('close dialog')
-
-    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.')
-    cy.closeErrorMessage()
-
-    cy.log('close dialog')
-
-    cy.get('[data-cy="cancelEvaluateButton"]').click()
-   });
-
 });

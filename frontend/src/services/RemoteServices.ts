@@ -16,8 +16,9 @@ import { QuizAnswers } from '@/models/management/QuizAnswers';
 import Submission from '@/models/management/Submission';
 
 import Tournament from '@/models/management/Tournament';
-import UserStats from '@/models/user/UserStats';
 import UserTournamentStats from '@/models/statement/UserTournamentStats';
+import StatsUser from '@/models/user/StatsUser';
+import StudentSubmissionStats from '@/models/statement/StudentSubmissionStats';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -622,19 +623,6 @@ export default class RemoteServices {
       });
   }
 
-  static async getPublicDashboardUsers(): Promise<UserStats[]> {
-    return httpClient
-      .get('/users/public')
-      .then(response => {
-        return response.data.map((user: any) => {
-          return new UserStats(user);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static async getUserTournamentStats(
     userId: number
   ): Promise<UserTournamentStats> {
@@ -664,7 +652,7 @@ export default class RemoteServices {
   }
 
   static async changeUserDashboardPrivacy() {
-    return httpClient.put('/users/privacy').catch(async error => {
+    return httpClient.put('/users/public').catch(async error => {
       throw Error(await this.errorMessage(error));
     });
   }
@@ -789,6 +777,29 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+  static reSubmitSubmission(submission: Submission): Promise<Submission> {
+    return httpClient
+      .put(`/submissions/rejected/${submission.id}`, submission)
+      .then(response => {
+        return new Submission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  static makeSubmissionAvailable(submission: Submission): Promise<Question> {
+    return httpClient
+      .put(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/submissions/${submission.id}`,
+        submission
+      )
+      .then(response => {
+        return new Question(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
 
   static async exportAll() {
     return httpClient
@@ -846,5 +857,57 @@ export default class RemoteServices {
       console.log(error);
       return 'Unknown Error - Contact admin';
     }
+  }
+
+  static async getPublicDashboardUsers(): Promise<StatsUser[]> {
+    return httpClient
+      .get('/users/public')
+      .then(response => {
+        return response.data.map((user: any) => {
+          return new StatsUser(user);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getStudentQuestionStats(): Promise<StudentSubmissionStats> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/stats/submissions`
+      )
+      .then(response => {
+        return new StudentSubmissionStats(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getOtherStudentQuestionStats(
+    id: number
+  ): Promise<StudentSubmissionStats> {
+    return httpClient
+      .get(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/stats/users/${id}/submissions`
+      )
+      .then(response => {
+        return new StudentSubmissionStats(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getUserPrivacyStatus(): Promise<StatsUser> {
+    return httpClient
+      .get('/users/privacy')
+      .then(response => {
+        return new StatsUser(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 }

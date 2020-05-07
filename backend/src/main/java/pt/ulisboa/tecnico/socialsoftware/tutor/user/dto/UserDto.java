@@ -11,6 +11,7 @@ public class UserDto implements Serializable {
     private String name;
     private User.Role role;
     private String creationDate;
+    private boolean privacyStatus;
 
 
     public UserDto(){
@@ -22,6 +23,7 @@ public class UserDto implements Serializable {
         this.name = user.getName();
         this.role = user.getRole();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
+        this.privacyStatus = user.getPublicDashboards();
     }
 
     public int getId() {
@@ -60,6 +62,14 @@ public class UserDto implements Serializable {
         this.creationDate = creationDate;
     }
 
+    public boolean isPrivacyStatus() {
+        return privacyStatus;
+    }
+
+    public void setPrivacyStatus(boolean privacyStatus) {
+        this.privacyStatus = privacyStatus;
+    }
+
     @Override
     public String toString() {
         return "UserDto{" +
@@ -67,7 +77,8 @@ public class UserDto implements Serializable {
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", role=" + role +
-                ", creationDate=" + creationDate +
+                ", creationDate='" + creationDate + '\'' +
+                ", privacyStatus=" + privacyStatus +
                 '}';
     }
 }
