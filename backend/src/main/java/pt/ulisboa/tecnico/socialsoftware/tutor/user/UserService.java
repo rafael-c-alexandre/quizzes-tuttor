@@ -164,4 +164,15 @@ public class UserService {
         else
             user.setPublicDashboards(false);
     }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public UserDto getPrivacyStatus(int userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        return new UserDto(user);
+    }
+
 }

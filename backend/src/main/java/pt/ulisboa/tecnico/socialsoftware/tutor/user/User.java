@@ -112,14 +112,6 @@ public class User implements UserDetails, DomainEntity {
         this.key = key;
     }
 
-    public Boolean getPublicDashboards() {
-        return this.publicDashboards;
-    }
-
-    public void setPublicDashboards(Boolean publicDashboards) {
-        this.publicDashboards = publicDashboards;
-    }
-
     @Override
     public String getUsername() {
         return username;
@@ -501,5 +493,13 @@ public class User implements UserDetails, DomainEntity {
         }
 
         return result;
+    }
+
+    public Boolean getPublicDashboards() {
+        return publicDashboards;
+    }
+
+    public void setPublicDashboards(Boolean publicDashboards) {
+        this.publicDashboards = publicDashboards;
     }
 }

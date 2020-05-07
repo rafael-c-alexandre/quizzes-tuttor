@@ -107,11 +107,14 @@ public class Option implements DomainEntity {
     }
 
     public Submission getSubmission() {
+
         return submission;
     }
 
     public void setSubmission(Submission submission) {
+
         this.submission = submission;
+        submission.addOption(this);
     }
 
     @Override

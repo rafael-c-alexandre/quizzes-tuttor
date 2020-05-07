@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.QuestionsByStudentService;
@@ -16,6 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submiss
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.SubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -43,7 +47,7 @@ public class QuestionsByStudentController {
     private QuestionsByStudentService questionsByStudentService;
 
     @Autowired
-    private QuestionService questionService;
+    private UserService userService;
 
     @Value("${figures.dir}")
     private String figuresDir;
@@ -72,10 +76,25 @@ public class QuestionsByStudentController {
         return questionsByStudentService.findCourseSubmissions(courseId);
     }
 
+    @PutMapping("/courses/{courseId}/submissions/{submissionId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public QuestionDto makeQuestionAvailable(Principal principal, @PathVariable int courseId, @PathVariable int submissionId ) {
+
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        return questionsByStudentService.makeQuestionAvailable(courseId, submissionId);
+    }
+
+
+
+
 
     @PostMapping("/courses/{courseId}/submissions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public SubmissionDto createSubmission( Principal principal, @PathVariable int courseId, @Valid @RequestBody SubmissionDto submissionDto) {
+
         User user = (User)((Authentication) principal).getPrincipal();
 
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
@@ -93,18 +112,19 @@ public class QuestionsByStudentController {
 
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
 
-        SubmissionDto result = questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId(), submissionDto.getTeacherDecision(), submissionDto.getJustification());
+        return questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto, submissionDto.getTeacherDecision(), submissionDto.getJustification());
 
-        questionService.createQuestion(courseId,generateQuestionDto(result));
-
-        return result;
     }
 
     @PutMapping("/submissions/{submissionId}/topics")
-    @PreAuthorize("hasRole('ROLE_STUDENT')  and hasPermission(#submissionId, 'SUBMISSION.ACCESS')")
-    public ResponseEntity updateSubmissionTopics(@PathVariable Integer submissionId, @RequestBody TopicDto[] topics) {
+    @PreAuthorize("hasRole('ROLE_STUDENT')  and hasPermission(#submissionId, 'SUBMISSION.ACCESS') or hasRole('ROLE_TEACHER')")
+    public ResponseEntity updateSubmissionTopics(Principal principal, @PathVariable Integer submissionId, @RequestBody TopicDto[] topics) {
 
-        questionsByStudentService.updateSubmissionTopics(submissionId, topics);
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        questionsByStudentService.updateSubmissionTopics(submissionId, topics, user);
 
         return ResponseEntity.ok().build();
     }
@@ -137,21 +157,26 @@ public class QuestionsByStudentController {
         return Paths.get(fileLocation);
     }
 
-    private QuestionDto generateQuestionDto(SubmissionDto submissionDto) {
-        QuestionDto questionDto = new QuestionDto();
-        questionDto.setTitle(submissionDto.getTitle());
-        questionDto.setContent(submissionDto.getContent());
-        questionDto.setOptions(submissionDto.getOptions());
-        questionDto.setImage(submissionDto.getImage());
-        questionDto.setTopics(submissionDto.getTopics());
-        questionDto.setStatus("AVAILABLE");
-       return questionDto;
-    }
 
     @PutMapping("/submissions/{submissionId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS')")
-    public SubmissionDto updateSubmission(@PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
-        return this.questionsByStudentService.updateSubmission(submissionId, submission);
+    @PreAuthorize("hasRole('ROLE_TEACHER') ")
+    public SubmissionDto updateSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
+
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        return this.questionsByStudentService.updateSubmission(submissionId, submission, user);
     }
 
+    @PutMapping("/submissions/rejected/{submissionId}")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') and hasPermission(#submissionId, 'SUBMISSION.ACCESS'))")
+    public SubmissionDto reSubmitSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
+
+        User user = (User)((Authentication) principal).getPrincipal();
+
+        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
+
+        return this.questionsByStudentService.reSubmitSubmission(submissionId, submission, user);
+    }
 }

@@ -20,17 +20,11 @@
           />
         </v-card-title>
       </template>
-      <template v-slot:item.content="{ item }">
-        <p
-          v-html="convertMarkDownNoFigure(item.content, null)"
-          @click="showSubmissionDialog(item)"
-      /></template>
-      <template >
+
+      <template>
         <v-list-item>
           <v-list-item-content>
-            <v-chip   dark>
-              ola
-              </v-chip>
+            <v-chip dark> </v-chip>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -39,37 +33,88 @@
           item.status
         }}</v-chip>
       </template>
+      <template v-slot:item.isAvailable="{ item }">
+        <v-chip v-if="item.isAvailable" :color="getAvailableColor()" dark>{{
+          item.isAvailable
+        }}</v-chip>
+      </template>
+      <template v-slot:item.topics="{ item }">
+        <edit-submission-topics
+          :submission="item"
+          :topics="topics"
+          v-on:submission-changed-topics="onSubmissionChangedTopics"
+        />
+      </template>
+
       <template v-slot:item.action="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              small
-              class="mr-2"
-              v-on="on"
-              @click="showSubmissionDialog(item)"
-              >visibility</v-icon
-            >
-          </template>
-          <span>Show Submission</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              small
-              class="mr-2"
-              v-on="on"
-              @click="evaluateSubmission(item)"
-              data-cy="evaluateSubmissionButton"
-              >fas fa-marker</v-icon
-            >
-          </template>
-          <span>Evaluate Submission</span>
-        </v-tooltip>
+        <v-row>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                small
+                class="mr-2"
+                v-on="on"
+                @click="showSubmissionDialog(item)"
+                >visibility</v-icon
+              >
+            </template>
+            <span>Show Submission</span>
+          </v-tooltip>
+
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                small
+                class="mr-2"
+                v-on="on"
+                @click="evaluateSubmission(item)"
+                data-cy="evaluateSubmissionButton"
+                >fas fa-pen-fancy</v-icon
+              >
+            </template>
+            <span>Evaluate Submission</span>
+          </v-tooltip>
+        </v-row>
+        <p></p>
+        <v-row>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                small
+                class="mr-2"
+                v-on="on"
+                @click="editSubmission(item)"
+                data-cy="editSubmissionTeacher"
+                >edit</v-icon
+              >
+            </template>
+            <span>Edit Submission</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-icon
+                small
+                class="mr-2"
+                v-on="on"
+                @click="makeQuestionAvailable(item)"
+                data-cy="makeQuestionAvailableButton"
+                >fas fa-external-link-square-alt</v-icon
+              >
+            </template>
+            <span>Make question available</span>
+          </v-tooltip>
+        </v-row>
       </template>
     </v-data-table>
+    <edit-submission-by-teacher-dialog
+      v-if="currentSubmission"
+      v-model="editSubmissionByTeacherDialog"
+      :submission="currentSubmission"
+      v-on:save-submission="onSaveSubmission"
+    />
     <show-submission-dialog
       v-if="currentSubmission"
-      :dialog="submissionDialog"
+      v-model="submissionDialog"
       :submission="currentSubmission"
       v-on:close-show-submission-dialog="onCloseShowSubmissionDialog"
     />
@@ -78,6 +123,12 @@
       v-model="evaluateSubmissionDialog"
       :submission="currentSubmission"
       v-on:save-submission="onSaveSubmission"
+    />
+    <make-question-available-dialog
+      v-if="currentSubmission"
+      v-model="makeQuestionAvailableDialog"
+      :submission="currentSubmission"
+      v-on:save-submission="onExitQuestionAvailableDialog"
     />
   </v-card>
 </template>
@@ -90,13 +141,19 @@ import Submission from '@/models/management/Submission';
 import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
 import Image from '@/models/management/Image';
-import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
+import ShowSubmissionDialog from '@/views/submission/ShowSubmissionDialog.vue';
 import EvaluateSubmissionDialog from '@/views/teacher/studentQuestions/EvaluateSubmissionDialog.vue';
+import MakeQuestionAvailableDialog from '@/views/teacher/studentQuestions/MakeQuestionAvailableDialog.vue';
+import EditSubmissionByTeacherDialog from '@/views/teacher/studentQuestions/EditSubmissionByTeacherDialog.vue';
+import EditSubmissionTopics from '@/views/submission/EditSubmissionTopics.vue';
 
 @Component({
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
-    'evaluate-submission-dialog': EvaluateSubmissionDialog
+    'make-question-available-dialog': MakeQuestionAvailableDialog,
+    'evaluate-submission-dialog': EvaluateSubmissionDialog,
+    'edit-submission-by-teacher-dialog': EditSubmissionByTeacherDialog,
+    'edit-submission-topics': EditSubmissionTopics
   }
 })
 export default class StudentQuestionsView extends Vue {
@@ -106,13 +163,15 @@ export default class StudentQuestionsView extends Vue {
   search: string = '';
   submissionDialog: boolean = false;
   evaluateSubmissionDialog: boolean = false;
+  editSubmissionByTeacherDialog: boolean = false;
+  makeQuestionAvailableDialog: boolean = false;
 
   headers: object = [
     { text: 'Title', value: 'title', align: 'center' },
     { text: 'Question', value: 'content', align: 'left' },
     {
       text: 'Topics',
-      value: 'topicNames',
+      value: 'topics',
       align: 'center',
       sortable: false
     },
@@ -122,17 +181,21 @@ export default class StudentQuestionsView extends Vue {
       align: 'center'
     },
     { text: 'Status', value: 'status', align: 'center' },
-
-    {
-      text: 'Creation Date',
-      value: 'creationDate',
-      align: 'center',
-    },
     {
       text: 'Image',
       value: 'imageUrl',
       align: 'center',
       sortable: false
+    },
+    {
+      text: 'Creation Date',
+      value: 'creationDate',
+      align: 'center'
+    },
+    {
+      text: 'Available?',
+      value: 'isAvailable',
+      align: 'center'
     },
     {
       text: 'Actions',
@@ -145,6 +208,13 @@ export default class StudentQuestionsView extends Vue {
   @Watch('evaluateSubmissionDialog')
   closeError() {
     if (!this.evaluateSubmissionDialog) {
+      this.currentSubmission = null;
+    }
+  }
+
+  @Watch('makeQuestionAvailableDialog')
+  closeAvailableDialog() {
+    if (!this.makeQuestionAvailableDialog) {
       this.currentSubmission = null;
     }
   }
@@ -201,10 +271,22 @@ export default class StudentQuestionsView extends Vue {
     this.submissionDialog = true;
   }
 
+  onSubmissionChangedTopics(submissionId: Number, changedTopics: Topic[]) {
+    let submission = this.submissions.find(
+      (submission: Submission) => submission.id == submissionId
+    );
+    if (submission) {
+      submission.topics = changedTopics;
+    }
+  }
+
   getStatusColor(status: string) {
     if (status === 'REJECTED') return 'red';
     else if (status === 'ONHOLD') return 'orange';
     else return 'green';
+  }
+  getAvailableColor() {
+    return 'blue';
   }
 
   evaluateSubmission(submission: Submission) {
@@ -215,16 +297,31 @@ export default class StudentQuestionsView extends Vue {
   async onSaveSubmission(submission: Submission) {
     this.submissions = this.submissions.filter(q => q.id !== submission.id);
     this.submissions.unshift(submission);
-    this.evaluateSubmissionDialog = false;
+    this.editSubmissionByTeacherDialog = false;
     this.currentSubmission = null;
-    this.customSorter()
+    this.customSorter();
   }
 
+  editSubmission(submission: Submission) {
+    this.currentSubmission = submission;
+    this.editSubmissionByTeacherDialog = true;
+  }
+  async onExitQuestionAvailableDialog() {
+    this.currentSubmission = null;
+    this.makeQuestionAvailableDialog = false;
+    this.submissions = await RemoteServices.getAllSubmissions();
+    this.customSorter();
+  }
+
+  makeQuestionAvailable(submission: Submission) {
+    this.currentSubmission = submission;
+    this.makeQuestionAvailableDialog = true;
+  }
 
   customSorter() {
     let aux, a, b;
     for (let i = 0; i < this.submissions.length - 1; i++) {
-      for (let j = i + 1; j < this.submissions.length ; j++) {
+      for (let j = i + 1; j < this.submissions.length; j++) {
         a = this.submissions[i];
         b = this.submissions[j];
         if (a.status === 'REJECTED') {
