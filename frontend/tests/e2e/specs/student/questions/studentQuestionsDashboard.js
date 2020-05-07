@@ -14,18 +14,11 @@ describe('Student views questions dashboard walkthrough', () => {
 
   afterEach(() => {
     cy.logout();
-    cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM options WHERE content = \'ES\' or content = \'AMS\' or content = \'GESTAO\' or content = \'LP\'" ')
-    cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM submissions WHERE title = \'Demo Question\'"')
+    cy.exec( 'psql tutordb < tests/e2e/specs/sql/deleteSubmission.sql')
   })
 
   it('login checks his own dashboard', () => {
     cy.accessDashboardPage()
-
-    //hack to make DOM become available to click logout
-    cy.get('[data-cy="submitted"]').click()
-    //cy.checkDashboardInfo()
-
-
 
   });
 

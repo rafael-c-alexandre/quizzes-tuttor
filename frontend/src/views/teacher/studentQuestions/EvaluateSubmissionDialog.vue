@@ -98,7 +98,7 @@
       </v-card-text>
 
       <v-container>
-        <v-col cols="3"
+        <v-col cols="4"
           ><v-subheader style="font-size: medium"
             >Suggestions to change:</v-subheader
           ></v-col

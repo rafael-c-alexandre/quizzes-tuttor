@@ -11,8 +11,7 @@ describe('Teacher evaluates submissions walkthrough', () => {
 
   afterEach(() => {
     cy.contains('Logout').click()
-    cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM options WHERE content = \'ES\' or content = \'AMS\' or content = \'GESTAO\' or content = \'LP\'" ')
-    cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM submissions WHERE title = \'Demo Question\'"')
+    cy.exec('psql tutordb < tests/e2e/specs/sql/deleteSubmission.sql');
 
   })
 
