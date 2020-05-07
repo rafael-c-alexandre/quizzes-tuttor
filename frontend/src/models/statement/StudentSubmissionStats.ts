@@ -1,5 +1,5 @@
 export default class StudentSubmissionStats {
-  totalQuestionSubmitted!: number;
+  totalQuestionsSubmitted!: number;
   totalQuestionsOnHold!: number;
   totalQuestionsApproved!: number;
   totalQuestionsRejected!: number;
@@ -10,7 +10,7 @@ export default class StudentSubmissionStats {
 
   constructor(jsonObj?: StudentSubmissionStats) {
     if (jsonObj) {
-      this.totalQuestionSubmitted = jsonObj.totalQuestionSubmitted;
+      this.totalQuestionsSubmitted = jsonObj.totalQuestionsSubmitted;
       this.totalQuestionsApproved = jsonObj.totalQuestionsApproved;
       this.totalQuestionsRejected = jsonObj.totalQuestionsRejected;
       this.totalQuestionsAvailable = jsonObj.totalQuestionsAvailable;

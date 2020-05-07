@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
 import java.io.Serializable;
 
-public class StatsDto implements Serializable {
+public class QuizStatsDto implements Serializable {
     private Integer totalQuizzes = 0;
     private Integer totalAnswers = 0;
     private Integer totalUniqueQuestions = 0;

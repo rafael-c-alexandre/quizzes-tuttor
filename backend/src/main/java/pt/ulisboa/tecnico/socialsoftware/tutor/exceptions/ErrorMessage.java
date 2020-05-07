@@ -15,6 +15,7 @@ public enum ErrorMessage {
     TOURNAMENT_NO_TOPICS("This tournament has no topics"),
     TOURNAMENT_IS_NOT_OPEN("This tournament is not open, it is no possible the enrollment"),
     TOURNAMENT_TITLE_ALREADY_USED("There is already a tournament with the title %s "),
+    TOURNAMENT_ALREADY_HAS_USERS("Cant delete a tournament that has signed users"),
 
     USER_IS_NOT_STUDENT("This user is not a student"),
     USER_IS_ALREADY_ENROLLED("This user is already enrolled"),
@@ -51,15 +52,12 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
     SUBMISSION_ALREADY_EVALUATED("Submission was previously evaluated"),
-<<<<<<< HEAD
-    SUBMISSION_CANNOT_BE_EDITED("Submission cannot be edited"),
-    SUBMISSION_CANNOT_BE_RESUBMITED("Submission was evaluated and cannot be resubmited"),
-=======
-    SUBMISSION_CANNOT_BE_EDITED("Submission was evaluated and cannot be edited"),
-    SUBMISSION_CANNOT_BE_RESUBMITED("Submission is approved and cannot be re-submited"),
->>>>>>> cf12ece24b45d6699c47d969539ec95775969887
+
+    SUBMISSION_CANNOT_BE_EDITED("Submission was not approved and cannot be edited"),
+    SUBMISSION_CANNOT_BE_RESUBMITED("Submission is approved and cannot be re-submitted"),
     QUESTION_CANNOT_BE_AVAILABLE("Questions not approved cannot be made available"),
     QUESTION_ALREADY_AVAILABLE("Question is already available"),
+    TOPICS_CANNOT_BE_EDITED("Topics cannot be edited in this stage"),
 
 
     TOPIC_NOT_FOUND("Topic not found with id %d"),

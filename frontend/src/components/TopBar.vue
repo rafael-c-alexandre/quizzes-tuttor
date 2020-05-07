@@ -126,19 +126,11 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Manage</v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/questionDashboard">
-              <v-list-item-action>
-                <v-icon>fas fa-user</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Dashboard</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-menu>
-        
+
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
@@ -225,6 +217,11 @@
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
+        </v-btn>
+
+        <v-btn to="/student/dashboard" v-if="isStudent && currentCourse" text dark>
+          Dashboard
+          <v-icon>fas fa-chart-bar</v-icon>
         </v-btn>
 
         <v-btn
@@ -366,8 +363,7 @@
             <v-list-item-action>
               <v-icon>fas fa-tasks</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Manage
-            </v-list-item-content>
+            <v-list-item-content>Manage </v-list-item-content>
           </v-list-item>
 
           <v-list-item

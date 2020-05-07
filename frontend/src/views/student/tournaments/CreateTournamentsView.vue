@@ -33,15 +33,13 @@
             v-model="tournament.availableDate"
             label="*Available Date"
           />
-          <v-datetime-picker
+          <VueCtkDateTimePicker
             v-if="!maADate"
             label="*Available Date"
-            format="yyyy-MM-dd HH:mm"
             v-model="tournament.availableDate"
-            date-format="yyyy-MM-dd"
-            time-format="HH:mm"
+            format="YYYY-MM-DD HH:mm"
           >
-          </v-datetime-picker>
+          </VueCtkDateTimePicker>
         </v-col>
         <v-col sm="1">
           <v-tooltip bottom>
@@ -66,15 +64,13 @@
             v-model="tournament.conclusionDate"
             label="*Conclusion Date"
           />
-          <v-datetime-picker
+          <VueCtkDateTimePicker
             v-if="!maCDate"
             label="*Conclusion Date"
-            format="yyyy-MM-dd HH:mm"
             v-model="tournament.conclusionDate"
-            date-format="yyyy-MM-dd"
-            time-format="HH:mm"
+            format="YYYY-MM-DD HH:mm"
           >
-          </v-datetime-picker>
+          </VueCtkDateTimePicker>
         </v-col>
         <v-col cols="12" sm="1">
           <v-tooltip bottom>

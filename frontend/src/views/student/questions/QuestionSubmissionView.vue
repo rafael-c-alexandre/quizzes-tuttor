@@ -100,20 +100,21 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Submission from '@/models/management/Submission';
 import Question from '@/models/management/Question';
 import Topic from '@/models/management/Topic';
 import Image from '@/models/management/Image';
 
-import EditSubmissionTopics from '@/views/student/questions/EditSubmissionTopics.vue';
-import ShowSubmissionDialog from '@/views/student/questions/ShowSubmissionDialog.vue';
+import EditSubmissionTopics from '@/views/submission/EditSubmissionTopics.vue';
+import ShowSubmissionDialog from '@/views/submission/ShowSubmissionDialog.vue';
 import EditSubmissionDialog from '@/views/student/questions/EditSubmissionDialog.vue';
 
 @Component({
   components: {
     'show-submission-dialog': ShowSubmissionDialog,
     'edit-submission-dialog': EditSubmissionDialog,
-    'edit-submission-topics': EditSubmissionTopics,
+    'edit-submission-topics': EditSubmissionTopics
 
   }
 })
@@ -198,6 +199,10 @@ export default class QuestionSubmissionView extends Vue {
     if (submission) {
       submission.topics = changedTopics;
     }
+  }
+
+  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 
   async handleFileUpload(event: File, submission: Submission) {

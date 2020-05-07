@@ -19,7 +19,6 @@ import ResultsView from './views/student/quiz/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
 import ScanView from './views/student/ScanView.vue';
 
-
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
@@ -27,14 +26,14 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import QuestionSubmissionView from '@/views/student/questions/QuestionSubmissionView.vue';
-import StudentQuestionsView from '@/views/teacher/studentQuestions/EvaluateQuestionsView.vue';
+import StudentQuestionsView from '@/views/teacher/studentQuestions/TeacherQuestionsView.vue';
 
 import CreateTournamentsView from '@/views/student/tournaments/CreateTournamentsView.vue';
 import OpenTournamentsView from '@/views/student/tournaments/OpenTournamentsView.vue';
 import AllTournamentsView from '@/views/student/tournaments/AllTournamentsView.vue';
 import ClosedTournamentsView from '@/views/student/tournaments/ClosedTournamentsView.vue';
 import SignableTournamentsView from '@/views/student/tournaments/SignableTournamentsView.vue';
-import StudentDashboardView from '@/views/student/questions/StudentDashboardView.vue';
+import DashboardView from '@/views/student/DashboardView.vue';
 
 Vue.use(Router);
 
@@ -266,14 +265,14 @@ let router = new Router({
           }
         },
         {
-          path: 'questionDashboard',
-          name: 'student-question-dashboard',
-          component: StudentDashboardView,
+          path: 'dashboard',
+          name: 'student-dashboard',
+          component: DashboardView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Questions Dashboard',
+            title: process.env.VUE_APP_NAME + ' - Dashboard',
             requiredAuth: 'Student'
           }
-        },
+        }
       ]
     },
     {

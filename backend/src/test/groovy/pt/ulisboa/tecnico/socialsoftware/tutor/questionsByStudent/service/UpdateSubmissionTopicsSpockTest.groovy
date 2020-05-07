@@ -158,9 +158,7 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
         submission.getTopics().contains(topicOne)
         submission.getTopics().contains(topicTwo)
         submission.getTopics().contains(topicThree)
-        topicOne.getSubmissions().size() == 1
-        topicTwo.getSubmissions().size() == 1
-        topicThree.getSubmissions().size() == 1
+
     }
 
     def "remove one topic of onHold submission"() {
@@ -194,7 +192,7 @@ class UpdateSubmissionTopicsSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.errorMessage == ErrorMessage.SUBMISSION_CANNOT_BE_EDITED
+        exception.errorMessage == ErrorMessage.TOPICS_CANNOT_BE_EDITED
     }
 
 

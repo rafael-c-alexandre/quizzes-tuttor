@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -18,12 +21,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class CancelTournamentTest extends Specification{
+class CancelTournamentTest extends Specification {
 
     public static final String TOURNAMENT_TITLE = "Tournament"
     public static final String CREATION_DATE = "2020-09-22 12:12"
     public static final String AVAILABLE_DATE = "2020-09-23 12:12"
     public static final String CONCLUSION_DATE = "2020-09-24 12:12"
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final Integer ID = 2
     public static final Integer USER = 1
 
@@ -40,12 +46,24 @@ class CancelTournamentTest extends Specification{
     @Autowired
     UserRepository userRepository
 
-    def setup(){
+    @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    def setup() {
 
     }
 
-    def "cancel existing tournament by creator"(){
-        def topicList = new ArrayList<TopicDto>();
+    def "cancel existing tournament by creator"() {
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+
+        def topicList = new ArrayList<TopicDto>()
 
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
@@ -55,20 +73,20 @@ class CancelTournamentTest extends Specification{
         user.setKey(1)
         userRepository.save(user)
 
-        tournamentService.createTournament(tournamentDto,USER)
+        tournamentService.createTournament(tournamentDto, USER, courseExecution.getId())
 
         when:
-        tournamentService.cancelTournament(1,USER)
+        tournamentService.cancelTournament(1, USER)
 
         then:
-        tournamentRepository.findById(1).isEmpty() == true
+        tournamentRepository.findById(1).isEmpty()
 
     }
 
-    def "cancel non existing tournamet"(){
+    def "cancel non existing tournamet"() {
 
         when:
-        tournamentService.cancelTournament(1,null)
+        tournamentService.cancelTournament(1, null)
 
         then:
         def exception = thrown(TutorException)
@@ -76,7 +94,7 @@ class CancelTournamentTest extends Specification{
 
     }
 
-    def "cancel tournament with invalid user"(){
+    def "cancel tournament with invalid user"() {
 
         def tournamentDto = getTournamentDto(TOURNAMENT_TITLE,
                 AVAILABLE_DATE, CONCLUSION_DATE, CREATION_DATE,
@@ -88,7 +106,7 @@ class CancelTournamentTest extends Specification{
 
         when:
 
-        tournamentService.cancelTournament(tournamentRepository.findAll().get(0).getId(),30)
+        tournamentService.cancelTournament(tournamentRepository.findAll().get(0).getId(), 30)
 
 
         then:
@@ -99,7 +117,7 @@ class CancelTournamentTest extends Specification{
 
 
     private static getTournamentDto(String title, String availableDate, String conclusionDate, String creationDate,
-                                    Integer id, Integer creator, List<TopicDto> topicList){
+                                    Integer id, Integer creator, List<TopicDto> topicList) {
 
         TournamentDto tournamentDto = new TournamentDto()
         tournamentDto.setTitle(title)
@@ -110,7 +128,7 @@ class CancelTournamentTest extends Specification{
         tournamentDto.setTournamentCreator(creator)
         tournamentDto.setTopics(topicList)
 
-        return tournamentDto;
+        return tournamentDto
     }
 
 

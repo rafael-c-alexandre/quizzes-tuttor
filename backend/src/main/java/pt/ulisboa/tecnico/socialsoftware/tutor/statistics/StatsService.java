@@ -18,6 +18,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.domain.Submiss
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament ;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz ;
+
 
 import java.sql.SQLException;
 import java.util.*;
@@ -40,14 +45,18 @@ public class StatsService {
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
+    @Autowired
+    private TournamentRepository tournamentRepository;
+
+
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatsDto getStats(int userId, int executionId) {
+    public QuizStatsDto getQuizStats(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        StatsDto statsDto = new StatsDto();
+        QuizStatsDto quizStatsDto = new QuizStatsDto();
 
         int totalQuizzes = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
@@ -92,15 +101,62 @@ public class StatsService {
 
         int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
-        statsDto.setTotalQuizzes(totalQuizzes);
-        statsDto.setTotalAnswers(totalAnswers);
-        statsDto.setTotalUniqueQuestions(uniqueQuestions);
-        statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
+        quizStatsDto.setTotalQuizzes(totalQuizzes);
+        quizStatsDto.setTotalAnswers(totalAnswers);
+        quizStatsDto.setTotalUniqueQuestions(uniqueQuestions);
+        quizStatsDto.setTotalAvailableQuestions(totalAvailableQuestions);
         if (totalAnswers != 0) {
-            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
-            statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
+            quizStatsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
+            quizStatsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
         }
-        return statsDto;
+        return quizStatsDto;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentStatsDto getTournamentStats(int userId, int executionId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        TournamentStatsDto tournamentStatsDto = new TournamentStatsDto();
+
+        int totalSignedTournaments = user.getSignedTournaments().size();
+        int createdTournaments = user.getNumberCreatedTournaments();
+
+
+        int totalAnswers = (int) user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getAssociatedTournament() != null)
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .map(QuizAnswer::getQuestionAnswers)
+                .mapToLong(Collection::size)
+                .sum();
+
+        //signed tournaments in which answered at least 1 question
+        int attendedTournaments = (int) user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getAssociatedTournament() != null)
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.getQuestionAnswers().size() > 1)
+                .count();
+
+        int correctAnswers = (int) user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getAssociatedTournament() != null)
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
+                .map(QuizAnswer::getQuestionAnswers)
+                .flatMap(Collection::stream)
+                .map(QuestionAnswer::getOption)
+                .filter(Objects::nonNull)
+                .filter(Option::getCorrect)
+                .count();
+
+        tournamentStatsDto.setTotalSignedTournaments(totalSignedTournaments);
+        tournamentStatsDto.setTotalCreatedTournaments(createdTournaments);
+        tournamentStatsDto.setAttendedTournaments(attendedTournaments);
+        tournamentStatsDto.setTotalCorrectAnswers(correctAnswers);
+        tournamentStatsDto.setAnswersInTournaments(totalAnswers);
+
+        return tournamentStatsDto;
     }
 
     @Retryable(
@@ -109,11 +165,12 @@ public class StatsService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StudentQuestionStatsDto getStudentQuestionsStats(int userId) {
 
+
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         StudentQuestionStatsDto statsDto = new StudentQuestionStatsDto();
 
-        int totalquestionsSubmitted = user.getSubmissions().size();
+        int totalQuestionsSubmitted = user.getSubmissions().size();
 
         int totalQuestionsApproved = (int) user.getSubmissions().stream()
                 .filter(submission -> submission.getSubmissionStatus() == Submission.Status.APPROVED)
@@ -136,11 +193,11 @@ public class StatsService {
         statsDto.setTotalQuestionsOnHold(totalQuestionsOnHold);
         statsDto.setTotalQuestionsRejected(totalQuestionsRejected);
         statsDto.setTotalQuestionsAvailable(totalQuestionsAvailable);
-        statsDto.setTotalQuestionsSubmitted(totalquestionsSubmitted);
+        statsDto.setTotalQuestionsSubmitted(totalQuestionsSubmitted);
 
-        if (totalquestionsSubmitted != 0) {
-            statsDto.setPercentageQuestionsApproved(((float)totalQuestionsApproved)*100/totalquestionsSubmitted);
-            statsDto.setPercentageQuestionsRejected(((float)totalQuestionsRejected)*100/totalquestionsSubmitted);
+        if (totalQuestionsSubmitted != 0) {
+            statsDto.setPercentageQuestionsApproved(((float)totalQuestionsApproved)*100/totalQuestionsSubmitted);
+            statsDto.setPercentageQuestionsRejected(((float)totalQuestionsRejected)*100/totalQuestionsSubmitted);
         }
         return statsDto;
     }

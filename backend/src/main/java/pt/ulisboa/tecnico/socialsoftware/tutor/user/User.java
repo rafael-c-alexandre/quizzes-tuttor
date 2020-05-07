@@ -52,13 +52,13 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectInClassAnswers;
     private Integer numberOfCorrectStudentAnswers;
 
+    private Boolean publicDashboards = true;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
-
-    private Boolean publicDashboards = true;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
@@ -133,6 +133,12 @@ public class User implements UserDetails, DomainEntity {
         return enrolledCoursesAcronyms;
     }
 
+    public Set<Tournament> getSignedTournaments() { return signedTournaments;}
+    public void addSignedTournament(Tournament t) { signedTournaments.add(t);}
+
+    public int getNumberCreatedTournaments() { return createdTournaments.size();}
+    public void addCreatedTournaments(Tournament t) { createdTournaments.add(t);}
+
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
     }
@@ -176,6 +182,18 @@ public class User implements UserDetails, DomainEntity {
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
+    }
+
+    public Set<Tournament> getCreatedTournaments() {
+        return createdTournaments;
+    }
+
+    public void setCreatedTournaments(Set<Tournament> createdTournaments) {
+        this.createdTournaments = createdTournaments;
+    }
+
+    public void setSignedTournaments(Set<Tournament> signedTournaments) {
+        this.signedTournaments = signedTournaments;
     }
 
     public Integer getNumberOfTeacherQuizzes() {

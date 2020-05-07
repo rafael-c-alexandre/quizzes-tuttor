@@ -124,6 +124,7 @@ public class QuestionsByStudentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void makeSubmissionApproved( String justification, Submission submission){
+
         submission.setJustification(justification);
         submission.setSubmissionStatus(Submission.Status.APPROVED);
 
@@ -153,6 +154,7 @@ public class QuestionsByStudentService {
 
             makeSubmissionRejected(justification, submission);
         }
+
         return new SubmissionDto(submission);
     }
 
@@ -160,15 +162,24 @@ public class QuestionsByStudentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public SubmissionDto teacherEvaluatesQuestion(int userId, int submissionId, boolean isApproved, String justification) {
+    public SubmissionDto teacherEvaluatesQuestion(int userId, SubmissionDto submissionDto, boolean isApproved, String justification) {
 
         isTeacher(userId);
 
-        Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
+        Submission submission = submissionRepository.findById(submissionDto.getId()).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionDto.getId()));
 
         isSubmitionOnHold(submission);
 
         submission.setTeacherDecision(isApproved);
+
+
+        //clear input fields
+        submission.setChangeTitle(false);
+        submission.setChangeContent(false);
+        submission.setChangeOptions(false);
+        submission.setChangeCorrect(false);
+
+        submission.checkImproveFields(submissionDto);
 
         return makeDecision( isApproved, submission, justification);
     }
@@ -196,10 +207,13 @@ public class QuestionsByStudentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void updateSubmissionTopics(Integer submissionId, TopicDto[] topics, User user) {
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
-        if(hasPermissionToEdit(submission, user)) {
+        if((user.getRole().equals(User.Role.TEACHER) && (submission.getSubmissionStatus().name().equals("APPROVED"))) ||
+        (user.getRole().equals(User.Role.STUDENT) && (submission.getSubmissionStatus().name().equals("ONHOLD") || submission.getSubmissionStatus().name().equals("REJECTED") ))
+)
+        {
             submission.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(submission.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
         } else{
-            throw new TutorException(SUBMISSION_CANNOT_BE_EDITED);
+            throw new TutorException(TOPICS_CANNOT_BE_EDITED);
         }
     }
 
@@ -249,7 +263,7 @@ public class QuestionsByStudentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto, User user) {
         Submission submission = submissionRepository.findById(submissionId).orElseThrow(() -> new TutorException(SUBMISSION_NOT_FOUND, submissionId));
-        if(hasPermissionToEdit(submission, user)) {
+        if((user.getRole().equals(User.Role.TEACHER) && (submission.getSubmissionStatus().name().equals("APPROVED")))){
             submission.update(submissionDto);
             return new SubmissionDto(submission);
         } else{
@@ -260,9 +274,6 @@ public class QuestionsByStudentService {
         }
     }
 
-    private boolean hasPermissionToEdit(Submission submission,  User user){
-        return user.getRole().equals(User.Role.TEACHER) && (submission.getSubmissionStatus().name().equals("APPROVED"));
-    }
 
     private void isSubmitionOnHold(Submission submission) {
         if(!submission.getSubmissionStatus().toString().equals("ONHOLD")){

@@ -9,9 +9,7 @@
     <v-card>
       <v-card-title>
         <span class="headline">
-          {{
-             'Edit Question'
-          }}
+          {{ 'Edit Question' }}
         </span>
       </v-card-title>
 
@@ -22,7 +20,7 @@
               clearable
               v-model="editSubmission.title"
               label="*Title"
-              data-cy="Title"
+              data-cy="editTitle"
             />
           </v-flex>
           <v-flex xs24 sm12 md12>
@@ -32,7 +30,7 @@
               rows="10"
               v-model="editSubmission.content"
               label="*Content"
-              data-cy="Content"
+              data-cy="editContent"
             ></v-textarea>
           </v-flex>
           <v-flex
@@ -41,7 +39,7 @@
             md12
             v-for="index in editSubmission.options.length"
             :key="index"
-            data-cy="options"
+            data-cy="editOptions"
           >
             <v-switch
               v-model="editSubmission.options[index - 1].correct"
@@ -53,7 +51,7 @@
               outline
               rows="10"
               v-model="editSubmission.options[index - 1].content"
-              label="Content"
+              label="Option content"
             ></v-textarea>
           </v-flex>
         </v-container>
@@ -62,10 +60,10 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
           @click="$emit('dialog', false)"
           data-cy="cancelSubmissionButton"
-          >Cancel</v-btn>
+          >Cancel</v-btn
+        >
         <v-btn
           color="blue darken-1"
           @click="saveSubmission"
@@ -90,8 +88,7 @@ export default class EditSubmissionDialog extends Vue {
   editSubmission!: Submission;
 
   created() {
-   this.updateSubmission();
-
+    this.updateSubmission();
   }
 
   @Watch('submission', { immediate: true, deep: true })
@@ -113,7 +110,9 @@ export default class EditSubmissionDialog extends Vue {
 
     if (this.editSubmission && this.editSubmission.id != null) {
       try {
-        const result = await RemoteServices.updateSubmission(this.editSubmission);
+        const result = await RemoteServices.updateSubmission(
+          this.editSubmission
+        );
         this.$emit('save-submission', result);
         confirm(
           'Question "' + this.editSubmission.title + '" edited successfully!'

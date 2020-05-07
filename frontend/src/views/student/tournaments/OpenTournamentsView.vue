@@ -12,6 +12,7 @@
         class="list-row"
         v-for="tournament in tournaments"
         :key="tournament.id"
+        @click="solveQuiz(tournament.id)"
       >
         <div class="col">
           {{ tournament.title }}
@@ -33,6 +34,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Tournament from '@/models/management/Tournament';
 import RemoteServices from '@/services/RemoteServices';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import StatementManager from '@/models/statement/StatementManager';
 
 @Component
 export default class OpenTournamentsView extends Vue {
@@ -46,6 +49,18 @@ export default class OpenTournamentsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async solveQuiz(tournamentId: number) {
+    try {
+      let statementManager: StatementManager = StatementManager.getInstance;
+      statementManager.statementQuiz = await RemoteServices.getTournamentQuiz(
+        tournamentId
+      );
+      await this.$router.push({ name: 'solve-quiz' });
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 }
 </script>

@@ -61,7 +61,7 @@ export default class MakeQuestionAvailableDialog extends Vue {
           this.approvedSubmission
         );
         this.$emit('save-submission', result);
-        confirm(
+        alert(
           'Question "' +
           this.approvedSubmission.title +
           '" successfully made public!'

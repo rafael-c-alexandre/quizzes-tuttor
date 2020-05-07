@@ -112,12 +112,12 @@ public class QuestionsByStudentController {
 
         if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
 
-        return questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto.getId(), submissionDto.getTeacherDecision(), submissionDto.getJustification());
+        return questionsByStudentService.teacherEvaluatesQuestion(user.getId(),submissionDto, submissionDto.getTeacherDecision(), submissionDto.getJustification());
 
     }
 
     @PutMapping("/submissions/{submissionId}/topics")
-    @PreAuthorize("hasRole('ROLE_STUDENT')  and hasPermission(#submissionId, 'SUBMISSION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')  and hasPermission(#submissionId, 'SUBMISSION.ACCESS') or hasRole('ROLE_TEACHER')")
     public ResponseEntity updateSubmissionTopics(Principal principal, @PathVariable Integer submissionId, @RequestBody TopicDto[] topics) {
 
         User user = (User)((Authentication) principal).getPrincipal();
@@ -179,28 +179,4 @@ public class QuestionsByStudentController {
 
         return this.questionsByStudentService.reSubmitSubmission(submissionId, submission, user);
     }
-
-    @GetMapping("/users/public")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<UserDto> getPublicDashboardUsers(Principal principal){
-        User user = (User)((Authentication) principal).getPrincipal();
-
-        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
-        return userService.getPublicDashboardUsers();
-    }
-
-    @PutMapping("users/public")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public ResponseEntity changeUserDashboardPrivacy(Principal principal){
-
-        User user = (User)((Authentication) principal).getPrincipal();
-
-
-        if(user == null) throw new TutorException(AUTHENTICATION_ERROR);
-
-        userService.changeUserDashboardPrivacy(user.getId());
-
-        return ResponseEntity.ok().build();
-    }
-
 }

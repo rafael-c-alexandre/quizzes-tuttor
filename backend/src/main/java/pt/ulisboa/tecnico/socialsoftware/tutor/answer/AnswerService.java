@@ -12,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
@@ -27,6 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -80,19 +80,19 @@ public class AnswerService {
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
+        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
         if (!quizAnswer.isCompleted()) {
-            quizAnswer.setAnswerDate(DateHandler.now());
+            quizAnswer.setAnswerDate(LocalDateTime.now());
             quizAnswer.setCompleted(true);
         }
 
         // In class quiz when student submits before resultsDate
         if (quizAnswer.getQuiz().getResultsDate() != null &&
             quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
-            DateHandler.now().isBefore(quizAnswer.getQuiz().getResultsDate())) {
+            LocalDateTime.now().isBefore(quizAnswer.getQuiz().getResultsDate())) {
 
             return new ArrayList<>();
         }
@@ -122,11 +122,13 @@ public class AnswerService {
             throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getQuiz().getId()), user.getUsername());
         }
 
-        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now())) {
+        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(LocalDateTime.now())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
+        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
+            System.out.println(quizAnswer.getQuiz().getAvailableDate());
+            System.out.println(LocalDateTime.now());
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
@@ -147,7 +149,7 @@ public class AnswerService {
 
                 questionAnswer.setOption(option);
                 questionAnswer.setTimeTaken(answer.getTimeTaken());
-                quizAnswer.setAnswerDate(DateHandler.now());
+                quizAnswer.setAnswerDate(LocalDateTime.now());
             }
         }
     }

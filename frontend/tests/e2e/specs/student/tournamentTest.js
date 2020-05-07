@@ -1,131 +1,143 @@
 describe('Tournament Tests', () => {
-    beforeEach(()=> {
+  beforeEach(() => {});
 
-    })
+  afterEach(() => {});
 
-    afterEach( () => {
+  it('login checks tournaments list', () => {
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments (id,available_date,conclusion_date,creation_date,title,course_execution_id,user_id) VALUES (1001 , \'2020-08-20 14:19:00\' , \'2020-08-20 14:20:00\' , \'2020-08-19 15:18:25\' , \'Torneio1\' , 11 , 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments (id,available_date,conclusion_date,creation_date,title,course_execution_id,user_id) VALUES (1002 , \'2020-08-18 14:19:00\' , \'2020-08-25 14:20:00\' , \'2020-08-17 14:19:00\' , \'Torneio2\' , 11, 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments (id,available_date,conclusion_date,creation_date,title,course_execution_id,user_id) VALUES (1004 , \'2020-08-18 18:00:00\' , \'2022-08-25 14:20:00\' , \'2020-08-17 14:19:00\' , \'Torneio5\' , 11, 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments (id,available_date,conclusion_date,creation_date,title,course_execution_id,user_id) VALUES (1003 , \'2020-08-18 14:19:00\' , \'2020-08-19 14:20:00\' , \'2020-08-18 14:19:00\' , \'Torneio3\' , 11, 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments (id,available_date,conclusion_date,creation_date,title,course_execution_id,user_id) VALUES (1005 , \'2020-04-17 10:19:00\' , \'2020-04-19 14:20:00\' , \'2020-04-16 14:19:00\' , \'Torneio4\' , 11, 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1001 , 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1002 , 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1003 , 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1004 , 676);" '
+    );
+    cy.exec(
+      'PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1005 , 676);" '
+    );
 
-    })
+    cy.demoStudentLogin();
+    cy.listTournaments();
+  });
 
+  it('login checks closed tournaments list, ', () => {
+    cy.listClosedTournaments();
 
-    it('login checks open tournaments list', () => {
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments VALUES (1001 , \'2020-04-20 14:19:00\' , \'2020-04-20 14:20:00\' , \'2020-04-19 15:18:25\' , \'Torneio1\' , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments VALUES (1002 , \'2020-04-18 14:19:00\' , \'2020-04-25 14:20:00\' , \'2020-04-17 14:19:00\' , \'Torneio2\' , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments VALUES (1004 , \'2020-04-18 18:00:00\' , \'2022-04-25 14:20:00\' , \'2020-04-17 14:19:00\' , \'Torneio5\' , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments VALUES (1003 , \'2020-04-18 14:19:00\' , \'2020-04-19 14:20:00\' , \'2020-04-18 14:19:00\' , \'Torneio3\' , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments VALUES (1005 , \'2020-04-17 10:19:00\' , \'2020-04-19 14:20:00\' , \'2020-04-16 14:19:00\' , \'Torneio4\' , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1001 , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1002 , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1003 , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1004 , 676);" ')
-        cy.exec('PGPASSWORD=tgllvg99 psql -d tutordb -U pedro -h localhost -c "INSERT INTO tournaments_signed_users VALUES (1005 , 676);" ')
+    //asserts
+    cy.contains('Torneio4')
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 3);
 
+  });
 
-        cy.demoStudentLogin()
-        cy.listTournaments()
+  it('login tries to cancel a  closed tournament', () => {
+    cy.listTournaments();
+    cy.cancelTournament('Torneio4');
+    cy.closeErrorMessage();
+  });
 
-        cy.listOpenTournaments()
+  it('login tries to sign into a  closed tournament', () => {
+    cy.listTournaments();
+    cy.enrollTournament('Torneio4');
+    cy.closeErrorMessage();
+  });
 
-        //asserts
-        cy.contains('Torneio5')
-            .parent()
-            .should('have.length', 1)
-            .children()
-            .should('have.length', 4)
+  it('login tries to sign into an open tournament', () => {
+    cy.listTournaments();
+    cy.enrollTournament('Torneio2');
+    cy.closeErrorMessage();
+  });
 
-        cy.contains('Torneio2')
-            .parent()
-            .should('have.length', 1)
-            .children()
-            .should('have.length', 4)
+  it('login creates two tournaments with same name and deletes it', () => {
+    cy.listTournaments();
 
-    });
+    cy.createTournament(
+      'Tournament Title2',
+      '2020-09-22 12:12',
+      '2020-10-22 12:12',
+      '5',
+      ['Adventure Builder']
+    );
 
-    it('login checks closed tournaments list, ', () => {
-        cy.listClosedTournaments()
+    cy.log('try to create with the same name');
 
-        //asserts
-        cy.contains('Torneio4')
-            .parent()
-            .should('have.length', 1)
-            .children()
-            .should('have.length', 3)
+    cy.createTournament(
+      'Tournament Title2',
+      '2020-09-23 12:12',
+      '2020-10-24 12:12',
+      '5',
+      ['Adventure Builder']
+    );
 
-        cy.contains('Torneio3')
-            .parent()
-            .should('have.length', 1)
-            .children()
-            .should('have.length', 3)
+    cy.closeErrorMessage();
 
-    });
+    cy.log('close dialog');
 
-    it('login tries to cancel a  closed tournament', () => {
-        cy.listTournaments()
-        cy.cancelTournament('Torneio4')
-        cy.closeErrorMessage()
-    });
+    cy.get('[data-cy="closeButton"]').click();
 
-    it('login tries to sign into a  closed tournament', () => {
-        cy.listTournaments()
-        cy.enrollTournament('Torneio4')
-        cy.closeErrorMessage()
-    });
+    cy.listTournaments();
 
-    it('login tries to sign into an open tournament', () => {
-        cy.listTournaments()
-        cy.enrollTournament('Torneio2')
-        cy.closeErrorMessage()
-    });
+    cy.cancelTournament('Tournament Title2');
+  });
 
+  it('login creates tournament and tries to enroll twice', () => {
+    cy.listTournaments();
 
-    it('login creates two tournaments with same name and deletes it', () => {
-        cy.listTournaments()
+    cy.createTournament(
+      'Tournament Title2',
+      '2020-09-22 12:12',
+      '2020-10-22 12:12',
+      '5',
+      ['Adventure Builder']
+    );
 
-        cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
+    cy.enrollTournament('Tournament Title2');
 
-        cy.log('try to create with the same name')
+    cy.log('try to enroll twice');
 
-        cy.createTournament('Tournament Title2','2020-09-23 12:12','2020-10-24 12:12','5',['Adventure Builder'])
+    cy.enrollTournament('Tournament Title2');
 
-        cy.closeErrorMessage()
+    cy.closeErrorMessage();
 
-        cy.log('close dialog')
+    cy.log('close dialog');
 
-        cy.get('[data-cy="closeButton"]').click()
+    cy.cancelTournament('Tournament Title2');
+  });
 
-        cy.listTournaments()
+  it('login creates a tournament, enrolls in it and deletes it', () => {
+    cy.listTournaments();
 
-        cy.cancelTournament('Tournament Title2')
-    });
+    cy.createTournament(
+      'Tournament Title1',
+      '2020-09-22 12:12',
+      '2020-10-22 12:12',
+      '5',
+      ['Adventure Builder']
+    );
 
+    cy.enrollTournament('Tournament Title1');
 
-    it('login creates tournament and tries to enroll twice', () => {
-        cy.listTournaments()
-
-        cy.createTournament('Tournament Title2','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
-
-        cy.enrollTournament('Tournament Title2')
-
-        cy.log('try to enroll twice')
-
-        cy.enrollTournament('Tournament Title2')
-
-        cy.closeErrorMessage()
-
-        cy.log('close dialog')
-
-        cy.cancelTournament('Tournament Title2')
-    });
-
-    it('login creates a tournament, enrolls in it and deletes it', () => {
-        cy.listTournaments()
-
-        cy.createTournament('Tournament Title1','2020-09-22 12:12','2020-10-22 12:12','5',['Adventure Builder'])
-
-        cy.enrollTournament('Tournament Title1')
-
-        cy.cancelTournament('Tournament Title1')
-
-    });
-
+    cy.cancelTournament('Tournament Title1');
+  });
 });

@@ -6,12 +6,20 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
@@ -22,12 +30,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -50,178 +57,187 @@ public class TournamentService {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired
+    private QuizRepository quizRepository;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
 
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listTournaments(){
+    public List<TournamentDto> listTournaments() {
         return tournamentRepository.findTournaments().stream()
-                .map(tournament -> new TournamentDto(tournament))
+                .map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listOpenTournaments(Integer userId){
+    public List<TournamentDto> listOpenTournaments(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+
+        Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
+                .map(QuizAnswer::getQuiz)
+                .map(Quiz::getId)
+                .collect(Collectors.toSet());
+
         return tournamentRepository.findOpenTournaments().stream()
-                .map(tournament -> new TournamentDto(tournament))
-                .filter(tournament -> tournament.getSignedUsers().contains(userId))
+                .map(TournamentDto::new)
+                .filter(tournament -> tournament.getSignedUsers().contains(userId)
+                        && tournament.getAssociatedQuiz() != null
+                        && !studentQuizIds.contains(tournament.getAssociatedQuiz().getId()))
                 .collect(Collectors.toList());
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listSignableTournaments(Integer userId){
+    public List<TournamentDto> listSignableTournaments(Integer userId) {
         return tournamentRepository.findSignableTournaments().stream()
-                .map(tournament -> new TournamentDto(tournament))
+                .map(TournamentDto::new)
                 .filter(tournament -> !tournament.getSignedUsers().contains(userId))
                 .collect(Collectors.toList());
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> listClosedTournaments(){
+    public List<TournamentDto> listClosedTournaments() {
         return tournamentRepository.findClosedTournaments().stream()
-                .map(tournament -> new TournamentDto(tournament))
+                .map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TournamentDto cancelTournament(Integer tournamentId,Integer creatorId){
+    public TournamentDto cancelTournament(Integer tournamentId, Integer creatorId) {
         Tournament tournament = tournamentRepository.findTournamentById(tournamentId);
 
-        if(tournament == null){
+        if (tournament == null) {
             throw new TutorException(TOURNAMENT_ID_NOT_EXISTS);
         }
 
-        Optional<User> user = userRepository.findById(creatorId);
+        User user = userRepository.findById(creatorId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, creatorId));
 
-        if(tournament.isClosed()){
+
+        if (tournament.isClosed()) {
             throw new TutorException(TOURNAMENT_ALREADY_CLOSED);
         }
-        if(!user.isPresent()){
-            throw new TutorException(USER_NOT_FOUND,creatorId);
-        }
-        if(!tournament.getTournamentCreator().equals(user.get())){
+        if (!tournament.getTournamentCreator().equals(user)) {
             throw new TutorException(TOURNAMENT_CANCELER_IS_NOT_CREATOR);
         }
+        if(!tournament.getSignedUsers().isEmpty())
+            throw new TutorException(TOURNAMENT_ALREADY_HAS_USERS);
 
-        entityManager.remove(tournament);
+        tournament.getTournamentCreator().getCreatedTournaments().remove(tournament);
+        tournament.getCourseExecution().getTournaments().remove(tournament);
+        tournament.getSignedUsers().forEach(user1 -> user1.getSignedTournaments().remove(tournament));
+
+
+        tournamentRepository.delete(tournament);
+
 
         return new TournamentDto(tournament);
     }
 
 
-
-
-
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TournamentDto createTournament(TournamentDto tournamentDto,Integer creatorId){
-         Integer maxId;
-         Random rand = new Random();
-         User user;
-         List<Question> questions = questionRepository.findAll();
-         List<Tournament> tournaments = tournamentRepository.findAll();
+    public TournamentDto createTournament(TournamentDto tournamentDto, Integer creatorId, Integer executionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        Integer maxId;
+        Random rand = new Random();
+        User user = userRepository.findById(creatorId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, creatorId));
+        List<Question> questions = questionRepository.findAll();
+        List<Tournament> tournaments = tournamentRepository.findAll();
 
 
-        if(userRepository.findById(creatorId).isPresent())
-            user = userRepository.findById(creatorId).get();
-        else
-            throw new TutorException(USER_NOT_FOUND,creatorId);
-
-        for (Tournament t : tournaments){
+        for (Tournament t : tournaments) {
             if (tournamentDto.getTitle().equals(t.getTitle()))
-                throw new TutorException(TOURNAMENT_TITLE_ALREADY_USED,tournamentDto.getTitle());
+                throw new TutorException(TOURNAMENT_TITLE_ALREADY_USED, tournamentDto.getTitle());
         }
 
 
         Tournament tournament = new Tournament(tournamentDto);
         tournament.setTournamentCreator(user);
+        tournament.setCourseExecution(courseExecution);
 
 
-        tournament.setCreationDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        tournament.setCreationDate(DateHandler.now().truncatedTo(ChronoUnit.SECONDS));
 
 
-         for(TopicDto topicDto: tournamentDto.getTopics()){
-             Optional<Topic> t = topicRepository.findById(topicDto.getId());
-             if(t.isPresent())
-                tournament.addTopic(t.get());
-             else
-                 throw new TutorException(TOPIC_NOT_FOUND,topicDto.getId());
-         }
+        for (TopicDto topicDto : tournamentDto.getTopics()) {
+            Topic t = topicRepository.findById(topicDto.getId()).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicDto.getId()));
+            tournament.addTopic(t);
+        }
 
-         //SET SOME RANDOM QUESTION
-        if((Integer) tournamentDto.getNumberOfQuestions() != null){
-            for(int i = 0; i < tournamentDto.getNumberOfQuestions(); i++){
-                while(true) {
-                    boolean done = false;
-                    int randomIndex = rand.nextInt(questions.size());
-                    Question q = questions.get(randomIndex);
-                    for(Topic t1 : q.getTopics()){
-                        for(Topic t2 : tournament.getTopics()){
-                            if(t1.getId() == t2.getId()) {
-                                tournament.addQuestion(q);
-                                questions.remove(randomIndex);
-                                done = true;
-                                break;
-                            }
-                        }
-                        if(done)
+        //SET SOME RANDOM QUESTION
+        for (int i = 0; i < tournamentDto.getNumberOfQuestions(); i++) {
+            while (true) {
+                boolean done = false;
+                int randomIndex = rand.nextInt(questions.size());
+                Question q = questions.get(randomIndex);
+                for (Topic t1 : q.getTopics()) {
+                    for (Topic t2 : tournament.getTopics()) {
+                        if (t1.getId().equals(t2.getId())) {
+                            tournament.addQuestion(q);
+                            questions.remove(randomIndex);
+                            done = true;
                             break;
+                        }
                     }
-                    if(done)
+                    if (done)
                         break;
                 }
+                if (done)
+                    break;
             }
         }
 
         tournamentRepository.save(tournament);
 
         maxId = tournamentRepository.getMaxTournamentId();
-        if(maxId == null) {
+        if (maxId == null) {
             tournamentDto.setId(1);
-        }
-        else{
+        } else {
             tournamentDto.setId(maxId + 1);
         }
-        return  new TournamentDto(tournament);
+        return new TournamentDto(tournament);
     }
 
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TournamentDto enrollInTournament(Integer tournamentId, Integer userId){
-        User user = userRepository.findById(userId).get();
+    public TournamentDto enrollInTournament(Integer tournamentId, Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = tournamentRepository.findTournamentById(tournamentId);
-        if(user == null){
-            throw new TutorException(USER_NOT_FOUND,userId);
-        }
-        if(tournament == null){
+
+        if (tournament == null) {
             throw new TutorException(TOURNAMENT_ID_NOT_EXISTS);
         }
 
-
-        if(user.getRole() == User.Role.STUDENT) {
+        if (user.getRole() == User.Role.STUDENT) {
             if (tournament.openForSignings()) {
-                for(User u : tournament.getSignedUsers()){
-                    if(u.getId() == userId) {
+                for (User u : tournament.getSignedUsers()) {
+                    if (u.getId().equals(userId)) {
                         throw new TutorException(USER_IS_ALREADY_ENROLLED);
                     }
                 }
@@ -229,10 +245,27 @@ public class TournamentService {
             } else {
                 throw new TutorException(TOURNAMENT_IS_NOT_OPEN);
             }
-        }
-        else
+        } else
             throw new TutorException(USER_IS_NOT_STUDENT);
+
+        //Generate new quiz after user reach 2
+        if (tournament.getSignedUsers().size() == 1) {
+            Quiz quiz = new Quiz();
+            quiz.setKey(getMaxQuizKey() + 1);
+            quiz.setAssociatedTournament(tournament);
+            quiz.generate(new ArrayList<>(tournament.getQuestions()));
+            quiz.setTitle(tournament.getTitle() + " Tournament-Quiz");
+            quiz.setCourseExecution(tournament.getCourseExecution());
+            quizRepository.save(quiz);
+            tournament.setAssociatedQuiz(quiz);
+        }
 
         return new TournamentDto(tournament);
     }
+
+    public Integer getMaxQuizKey() {
+        Integer maxQuizKey = quizRepository.getMaxQuizKey();
+        return maxQuizKey != null ? maxQuizKey : 0;
+    }
+
 }

@@ -25,6 +25,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -64,6 +66,9 @@ public class StatementService {
 
     @Autowired
     private AnswerService answerService;
+
+    @Autowired
+    private TournamentRepository tournamentRepository;
 
     @Retryable(
       value = { SQLException.class },
@@ -183,6 +188,26 @@ public class StatementService {
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StatementQuizDto getTournamentQuiz(int userId, int tournamentId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Tournament tournament = tournamentRepository.findTournamentById(tournamentId);
+        if (tournament == null)
+            throw new TutorException(TOURNAMENT_ID_NOT_EXISTS,tournamentId);
+
+        Quiz quiz = tournament.getAssociatedQuiz();
+        if(quiz == null)
+            throw new TutorException(QUIZ_NOT_FOUND);
+
+        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+        quizAnswerRepository.save(quizAnswer);
+
+        return new StatementQuizDto(quizAnswer);
     }
 
     @Retryable(

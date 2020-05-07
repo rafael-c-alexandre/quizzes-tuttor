@@ -7,13 +7,11 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import spock.lang.Specification
 
-
 @DataJpaTest
-class ListTournamentTest extends Specification{
+class ListTournamentTest extends Specification {
 
 
     @Autowired
@@ -30,7 +28,7 @@ class ListTournamentTest extends Specification{
     def t3 = new Tournament()
     def t4 = new Tournament()
 
-    def setup(){
+    def setup() {
         tournamentRepository.save(t1)
         tournamentRepository.save(t2)
         tournamentRepository.save(t3)
@@ -38,7 +36,7 @@ class ListTournamentTest extends Specification{
     }
 
 
-    def "successfully list all tournament"(){
+    def "successfully list all tournament"() {
 
         given: "a list of open tournaments"
         def result = tournamentService.listTournaments()

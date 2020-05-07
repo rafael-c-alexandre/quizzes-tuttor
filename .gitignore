@@ -4,5 +4,8 @@
 
 scripts
 
+jmeter.log
+frontend/package-lock.json
+
 backend/src/main/resources/static/images/questions/
 data/
