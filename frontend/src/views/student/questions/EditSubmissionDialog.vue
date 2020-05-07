@@ -112,7 +112,6 @@ export default class EditSubmissionDialog extends Vue {
   editSubmission!: Submission;
 
   created() {
-    console.log(this.submission.fieldsToImprove);
    this.updateSubmission();
 
   }

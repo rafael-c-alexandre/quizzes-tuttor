@@ -19,7 +19,7 @@ describe('Teacher evaluates submissions walkthrough', () => {
   })
 
   it('login makes an approved question available to the students', () => {
-    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.')
+    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.', [false,false,false,false])
     cy.makeQuestionAvailable('Demo Question', true);
 
     cy.assertQuestionOnAvailable('Demo Question');
@@ -40,7 +40,7 @@ describe('Teacher evaluates submissions walkthrough', () => {
 
   it('login tries make an already available question available', () => {
 
-    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.')
+    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.',[false,false,false,false])
     cy.log('close dialog')
     cy.makeQuestionAvailable('Demo Question', true);
     cy.makeQuestionAvailable('Demo Question', true);

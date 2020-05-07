@@ -130,10 +130,9 @@ Cypress.Commands.add('accessStudentQuestionsPage', () => {
   cy.contains('Manage').click();
 });
 
-Cypress.Commands.add('accessStudentDashboardPage', () => {
-    cy.contains('Questions').click()
-    cy.contains('Dashboard').click()
-})
+Cypress.Commands.add('accessDashboardPage', () => {
+  cy.contains('Dashboard').click();
+});
 
 Cypress.Commands.add('accessTeacherSubmissionsPage', () => {
   cy.contains('Student Questions').click();
@@ -152,7 +151,6 @@ Cypress.Commands.add(
     for (let i = 1; i < options.length; i++) {
       optionFields.next().type(options[i]);
     }
-<<<<<<< HEAD
     if (checkCorrect)
       cy.get('[data-cy="options"]')
         .get('[type="checkbox"]')
@@ -162,101 +160,77 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('editSubmission', (oldTitle, newTitle, content) => {
-  cy.contains(oldTitle)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 8)
-    .find('[data-cy="editSubmission"]')
-    .click();
-
-  if (newTitle !== '')
-    cy.get('[data-cy="Title"]')
-      .clear()
-      .type(newTitle);
-  if (content !== '')
-    cy.get('[data-cy="Content"]')
-      .clear()
-      .type(content);
-
-  cy.get('[data-cy="saveSubmissionButton"]').click();
-});
-=======
-    if (checkCorrect) cy.get('[data-cy="options"]').get('[type="checkbox"]').first().check({force:true})
-    cy.get('[data-cy="saveSubmissionButton"]').click()
-})
-
-Cypress.Commands.add('editSubmissionByTeacher', (oldTitle,newTitle, content, options) => {
-
+Cypress.Commands.add(
+  'editSubmissionByTeacher',
+  (oldTitle, newTitle, content, options) => {
     cy.contains(oldTitle)
-        .parent()
-        .should('have.length', 1)
-        .children()
-        .should('have.length', 9)
-        .find('[data-cy="editSubmissionTeacher"]')
-        .click()
-    /*let optionFields = cy.get('[data-cy="options"]').first().clear()
-    for (let i=1; i < options.length ; i++) {
-        optionFields.next().clear()
-    }*/
-    let optionFields = cy.get('[data-cy="options"]').first().type(options[0])
-    for (let i=1; i < options.length ; i++) {
-        optionFields.next().type(options[i])
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 9)
+      .find('[data-cy="editSubmissionTeacher"]')
+      .click();
+
+    if (newTitle !== '')
+      cy.get('[data-cy="editTitle"]')
+        .clear()
+        .type(newTitle);
+    if (content !== '')
+      cy.get('[data-cy="editContent"]')
+        .clear()
+        .type(content);
+
+    let optionFields = cy
+      .get('[data-cy="editOptions"]')
+      .first()
+      .type('{selectall}{backspace}')
+      .type(options[0]);
+    for (let i = 1; i < options.length; i++) {
+      optionFields
+        .next()
+        .type('{selectall}{backspace}')
+        .type(options[i]);
     }
-    if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
-    if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
 
-    cy.get('[data-cy="saveSubmissionButton"]').click()
-})
+    cy.get('[data-cy="saveSubmissionButton"]').click();
+  }
+);
 
-Cypress.Commands.add('editSubmission', (oldTitle,newTitle, content) => {
-
+Cypress.Commands.add(
+  'reSubmitSubmission',
+  (oldTitle, newTitle, content, options) => {
     cy.contains(oldTitle)
-        .parent()
-        .should('have.length', 1)
-        .children()
-        .should('have.length', 8)
-        .find('[data-cy="editSubmission"]')
-        .click()
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 8)
+      .find('[data-cy="reSubmitSubmission"]')
+      .click();
 
-    if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
-    if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
+    if (newTitle !== '')
+      cy.get('[data-cy="Title"]')
+        .clear()
+        .type(newTitle);
+    if (content !== '')
+      cy.get('[data-cy="Content"]')
+        .clear()
+        .type(content);
 
+    let optionFields = cy
+      .get('[data-cy="options"]')
+      .first()
+      .type('{selectall}{backspace}')
+      .type(options[0]);
+    for (let i = 1; i < options.length; i++) {
+      optionFields
+        .next()
+        .type('{selectall}{backspace}')
+        .type(options[i]);
+    }
 
-    cy.get('[data-cy="saveSubmissionButton"]').click()
-})
-
-Cypress.Commands.add('reSubmitSubmission', (oldTitle,newTitle, content) => {
-
-    cy.contains(oldTitle)
-        .parent()
-        .should('have.length', 1)
-        .children()
-        .should('have.length', 8)
-        .find('[data-cy="reSubmitSubmission"]')
-        .click()
-
-    if (newTitle !== '')cy.get('[data-cy="Title"]').clear().type(newTitle)
-    if (content !== '')cy.get('[data-cy="Content"]').clear().type(content)
-
-    cy.get('[data-cy="saveSubmissionButton"]').click()
-})
-
-
-
-Cypress.Commands.add('showSubmission', (title) => {
-    cy.contains(title)
-        .parent()
-        .should('have.length', 1)
-        .children()
-        .should('have.length', 8)
-        .find('[data-cy="showSubmission"]')
-        .click()
-    cy.get('[data-cy = "closeSubmissionButton"]').click()
-
-})
->>>>>>> 50b2344c86a2736b4aa355f035ad2cda89ab6fae
+    cy.get('[data-cy="saveSubmissionButton"]').click();
+  }
+);
 
 Cypress.Commands.add('showSubmission', title => {
   cy.contains(title)
@@ -271,76 +245,57 @@ Cypress.Commands.add('showSubmission', title => {
 
 Cypress.Commands.add(
   'evaluateSubmission',
-  (title, isApproved, justification) => {
-    cy.contains(title)
-<<<<<<< HEAD
-      .parent()
-      .should('have.length', 1)
-      .children()
-      .should('have.length', 8)
-      .find('[data-cy="evaluateSubmissionButton"]')
-      .click();
-
-    if (isApproved) cy.get('[data-cy="status"]').check({ force: true });
-    if (justification !== '')
-      cy.get('[data-cy="justification"]').type(justification);
-    cy.get('[data-cy="saveEvaluationButton"]').click();
-  }
-);
-=======
-        .parent()
-        .should('have.length', 1)
-        .children()
-        .should('have.length', 9)
-        .find('[data-cy="evaluateSubmissionButton"]')
-        .click()
-
-    if (isApproved) cy.get('[data-cy="status"]').check( {force:true})
-    if (justification !== '') cy.get('[data-cy="justification"]').type(justification)
-    cy.get('[data-cy="saveEvaluationButton"]').click()
-})
-
-
-
-Cypress.Commands.add('makeQuestionAvailable', (title,makeAvailable) => {
-
+  (title, isApproved, justification, sugestions) => {
     cy.contains(title)
       .parent()
       .should('have.length', 1)
       .children()
       .should('have.length', 9)
-      .find('[data-cy="makeQuestionAvailableButton"]')
-      .click()
+      .find('[data-cy="evaluateSubmissionButton"]')
+      .click();
 
-    if (makeAvailable) cy.get('[data-cy="yesButton"]').click()
-    else cy.get('[data-cy="notButton"]').click()
-})
+    if (isApproved) cy.get('[data-cy="approve"]').click();
+    if (!isApproved) cy.get('[data-cy="reject"]').click();
+    if (sugestions[0])
+      cy.get('[data-cy="sugestionTitle"]').check({ force: true });
+    if (sugestions[1])
+      cy.get('[data-cy="sugestionContent"]').check({ force: true });
+    if (sugestions[2])
+      cy.get('[data-cy="sugestionOptions"]').check({ force: true });
+    if (sugestions[3])
+      cy.get('[data-cy="sugestionCorrectOption"]').check({ force: true });
+    if (justification !== '')
+      cy.get('[data-cy="justification"]').type(justification);
+    cy.get('[data-cy="saveEvaluationButton"]').click();
+  }
+);
 
-Cypress.Commands.add('assertQuestionOnAvailable', (title) => {
+Cypress.Commands.add('makeQuestionAvailable', (title, makeAvailable) => {
+  cy.contains(title)
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 9)
+    .find('[data-cy="makeQuestionAvailableButton"]')
+    .click();
 
-    cy.get('[data-cy="managementButton"]').click()
-    cy.contains('Questions').click()
+  if (makeAvailable) cy.get('[data-cy="yesButton"]').click();
+  else cy.get('[data-cy="notButton"]').click();
+});
 
-    //assert
-    cy.contains(title)
-      .parent()
-      .should('have.length', 1)
-      .click()
-    cy.get('[data-cy="closeQuestionButton"]').click()
+Cypress.Commands.add('assertQuestionOnAvailable', title => {
+  cy.get('[data-cy="managementButton"]').click();
+  cy.contains('Questions').click();
 
-})
+  //assert
+  cy.contains(title)
+    .parent()
+    .should('have.length', 1)
+    .click();
+  cy.get('[data-cy="closeQuestionButton"]').click();
+});
 
 Cypress.Commands.add('checkDashboardInfo', () => {
-
-    cy.get('[data-cy="questionsSubmitted"]')
-    cy.contains('5');
-
-
-})
-
-
-
-
-
-
->>>>>>> 50b2344c86a2736b4aa355f035ad2cda89ab6fae
+  cy.get('[data-cy="questionsSubmitted"]');
+  cy.contains('5');
+});
