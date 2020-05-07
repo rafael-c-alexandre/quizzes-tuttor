@@ -13,7 +13,7 @@ public enum ErrorMessage {
     TOURNAMENT_INVALID_DATE("This tournament date is invalid"),
     TOURNAMENT_EMPTY_DATE("This tournament date is empty"),
     TOURNAMENT_NO_TOPICS("This tournament has no topics"),
-    TOURNAMENT_IS_NOT_OPEN("This tournament is not open, it is no possible the enrollment"),
+    TOURNAMENT_IS_NOT_OPEN("Tournament is already closed"),
     TOURNAMENT_TITLE_ALREADY_USED("There is already a tournament with the title %s "),
     TOURNAMENT_ALREADY_HAS_USERS("Cant delete a tournament that has signed users"),
 

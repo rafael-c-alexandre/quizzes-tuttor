@@ -226,7 +226,7 @@ public class Tournament {
     }
 
     public boolean openForSignings() {
-        return LocalDateTime.now().isBefore(this.availableDate);
+        return LocalDateTime.now().isBefore(this.conclusionDate);
     }
 
     public boolean isOpen() {

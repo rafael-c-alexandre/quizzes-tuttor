@@ -202,4 +202,14 @@ Cypress.Commands.add(
       cy.get('[data-cy="justification"]').type(justification);
     cy.get('[data-cy="saveEvaluationButton"]').click();
   }
+
 );
+
+Cypress.Commands.add('startQuiz', () => {
+    cy.get('[data-cy="startQuiz"]').click({force:true});
+    cy.wait(1000);
+    cy.get('[data-cy="endQuiz"]').click({force:true});
+    cy.wait(1000);
+    cy.get('[date-cy="concludeQuiz"]').click({force:true});
+
+});
