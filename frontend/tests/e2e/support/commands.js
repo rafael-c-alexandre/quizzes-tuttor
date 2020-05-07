@@ -130,11 +130,16 @@ Cypress.Commands.add('accessStudentQuestionsPage', () => {
   cy.contains('Manage').click();
 });
 
+
 Cypress.Commands.add('accessStudentDashboardPage', () => {
     cy.contains('Dashboard').click();
     cy.get('[data-cy="changeButton"]').click();
     cy.contains('Tournaments Statistics').click();
     cy.wait(2000);
+});
+
+Cypress.Commands.add('accessDashboardPage', () => {
+  cy.contains('Dashboard').click();
 });
 
 Cypress.Commands.add('accessTeacherSubmissionsPage', () => {
@@ -173,17 +178,42 @@ Cypress.Commands.add(
       .should('have.length', 9)
       .find('[data-cy="editSubmissionTeacher"]')
       .click();
-    /*let optionFields = cy.get('[data-cy="options"]').first().clear()
-    for (let i=1; i < options.length ; i++) {
-        optionFields.next().clear()
-    }*/
+
+    if (newTitle !== '')
+      cy.get('[data-cy="editTitle"]')
+        .clear()
+        .type(newTitle);
+    if (content !== '')
+      cy.get('[data-cy="editContent"]')
+        .clear()
+        .type(content);
+
     let optionFields = cy
-      .get('[data-cy="options"]')
+      .get('[data-cy="editOptions"]')
       .first()
+      .type('{selectall}{backspace}')
       .type(options[0]);
     for (let i = 1; i < options.length; i++) {
-      optionFields.next().type(options[i]);
+      optionFields
+        .next()
+        .type('{selectall}{backspace}')
+        .type(options[i]);
     }
+    cy.get('[data-cy="saveSubmissionButton"]').click();
+  }
+);
+
+Cypress.Commands.add(
+  'reSubmitSubmission',
+  (oldTitle, newTitle, content, options) => {
+    cy.contains(oldTitle)
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 8)
+      .find('[data-cy="reSubmitSubmission"]')
+      .click();
+
     if (newTitle !== '')
       cy.get('[data-cy="Title"]')
         .clear()
@@ -193,62 +223,21 @@ Cypress.Commands.add(
         .clear()
         .type(content);
 
+    let optionFields = cy
+      .get('[data-cy="options"]')
+      .first()
+      .type('{selectall}{backspace}')
+      .type(options[0]);
+    for (let i = 1; i < options.length; i++) {
+      optionFields
+        .next()
+        .type('{selectall}{backspace}')
+        .type(options[i]);
+    }
+
     cy.get('[data-cy="saveSubmissionButton"]').click();
   }
 );
-
-Cypress.Commands.add('editSubmission', (oldTitle, newTitle, content) => {
-  cy.contains(oldTitle)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 8)
-    .find('[data-cy="editSubmission"]')
-    .click();
-
-  if (newTitle !== '')
-    cy.get('[data-cy="Title"]')
-      .clear()
-      .type(newTitle);
-  if (content !== '')
-    cy.get('[data-cy="Content"]')
-      .clear()
-      .type(content);
-
-  cy.get('[data-cy="saveSubmissionButton"]').click();
-});
-
-Cypress.Commands.add('reSubmitSubmission', (oldTitle, newTitle, content) => {
-  cy.contains(oldTitle)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 8)
-    .find('[data-cy="reSubmitSubmission"]')
-    .click();
-
-  if (newTitle !== '')
-    cy.get('[data-cy="Title"]')
-      .clear()
-      .type(newTitle);
-  if (content !== '')
-    cy.get('[data-cy="Content"]')
-      .clear()
-      .type(content);
-
-  cy.get('[data-cy="saveSubmissionButton"]').click();
-});
-
-Cypress.Commands.add('showSubmission', title => {
-  cy.contains(title)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 8)
-    .find('[data-cy="showSubmission"]')
-    .click();
-  cy.get('[data-cy = "closeSubmissionButton"]').click();
-});
 
 Cypress.Commands.add('showSubmission', title => {
   cy.contains(title)
@@ -271,7 +260,7 @@ Cypress.Commands.add('startQuiz', () => {
 
 Cypress.Commands.add(
   'evaluateSubmission',
-  (title, isApproved, justification) => {
+  (title, isApproved, justification, sugestions) => {
     cy.contains(title)
       .parent()
       .should('have.length', 1)
@@ -280,7 +269,16 @@ Cypress.Commands.add(
       .find('[data-cy="evaluateSubmissionButton"]')
       .click();
 
-    if (isApproved) cy.get('[data-cy="status"]').check({ force: true });
+    if (isApproved) cy.get('[data-cy="approve"]').click();
+    if (!isApproved) cy.get('[data-cy="reject"]').click();
+    if (sugestions[0])
+      cy.get('[data-cy="sugestionTitle"]').check({ force: true });
+    if (sugestions[1])
+      cy.get('[data-cy="sugestionContent"]').check({ force: true });
+    if (sugestions[2])
+      cy.get('[data-cy="sugestionOptions"]').check({ force: true });
+    if (sugestions[3])
+      cy.get('[data-cy="sugestionCorrectOption"]').check({ force: true });
     if (justification !== '')
       cy.get('[data-cy="justification"]').type(justification);
     cy.get('[data-cy="saveEvaluationButton"]').click();

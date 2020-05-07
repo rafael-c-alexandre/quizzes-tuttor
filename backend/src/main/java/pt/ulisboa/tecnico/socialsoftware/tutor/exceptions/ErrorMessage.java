@@ -53,8 +53,8 @@ public enum ErrorMessage {
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
     SUBMISSION_ALREADY_EVALUATED("Submission was previously evaluated"),
 
-    SUBMISSION_CANNOT_BE_EDITED("Submission was not approved and cannot be edited"),
-    SUBMISSION_CANNOT_BE_RESUBMITED("Submission is approved and cannot be re-submitted"),
+    SUBMISSION_CANNOT_BE_EDITED("Question was not approved so it cannot be edited"),
+    SUBMISSION_CANNOT_BE_RESUBMITED("Question is approved and cannot be re-submitted"),
     QUESTION_CANNOT_BE_AVAILABLE("Questions not approved cannot be made available"),
     QUESTION_ALREADY_AVAILABLE("Question is already available"),
     TOPICS_CANNOT_BE_EDITED("Topics cannot be edited in this stage"),

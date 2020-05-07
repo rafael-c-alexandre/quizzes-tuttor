@@ -6,7 +6,7 @@ describe('Student views questions dashboard walkthrough', () => {
     cy.log('close dialog')
     cy.demoTeacherLogin()
     cy.accessTeacherSubmissionsPage()
-    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.')
+    cy.evaluateSubmission('Demo Question',true,'Question well structured and scientifically correct.', [false,false,false,false])
     cy.logout();
     cy.demoStudentLogin()
 
@@ -14,18 +14,11 @@ describe('Student views questions dashboard walkthrough', () => {
 
   afterEach(() => {
     cy.logout();
-    cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM options WHERE content = \'ES\' or content = \'AMS\' or content = \'GESTAO\' or content = \'LP\'" ')
-    cy.exec('PGPASSWORD= psql -d tutordb -U ist189528 -h localhost -c "DELETE FROM submissions WHERE title = \'Demo Question\'"')
+    cy.exec( 'psql tutordb < tests/e2e/specs/sql/deleteSubmission.sql')
   })
 
   it('login checks his own dashboard', () => {
-    cy.accessStudentDashboardPage()
-
-    //hack to make DOM become available to click logout
-    cy.get('[data-cy="submitted"]').click()
-    //cy.checkDashboardInfo()
-
-
+    cy.accessDashboardPage()
 
   });
 

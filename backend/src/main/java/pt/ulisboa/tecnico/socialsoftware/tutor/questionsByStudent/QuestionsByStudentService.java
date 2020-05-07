@@ -22,7 +22,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.dto.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsByStudent.repository.SubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -229,11 +228,12 @@ public class QuestionsByStudentService {
 
         Image image = submission.getImage();
 
+
+
         if (image == null) {
             image = new Image();
 
             submission.setImage(image);
-
             imageRepository.save(image);
         }
 
