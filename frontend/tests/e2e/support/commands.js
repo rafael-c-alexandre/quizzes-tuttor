@@ -130,11 +130,14 @@ Cypress.Commands.add('accessStudentQuestionsPage', () => {
   cy.contains('Manage').click();
 });
 
+
 Cypress.Commands.add('accessStudentDashboardPage', () => {
     cy.contains('Dashboard').click();
     cy.get('[data-cy="changeButton"]').click();
     cy.contains('Tournaments Statistics').click();
     cy.wait(2000);
+});
+
 Cypress.Commands.add('accessDashboardPage', () => {
   cy.contains('Dashboard').click();
 });
@@ -196,7 +199,6 @@ Cypress.Commands.add(
         .type('{selectall}{backspace}')
         .type(options[i]);
     }
-
     cy.get('[data-cy="saveSubmissionButton"]').click();
   }
 );
